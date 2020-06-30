@@ -2,11 +2,11 @@
 
 import base64
 import binascii
+import datetime
 import json
 import requests
 
 from credentials import (
-    MARKET_ID,
     NODE_URL,
     WALLETSERVER_URL,
     WALLET_NAME,
@@ -58,16 +58,26 @@ else:
 
 assert pubKey != ""
 
+### Next, get a Market ID ###
+url = "{base}/markets".format(base=NODE_URL)
+response = requests.get(url)
+check(response)
+marketID = response.json()["markets"][0]["id"]
+
 ### Next, prepare a SubmitOrder ###
+response = requests.get("{base}/time".format(base=NODE_URL))
+check(response)
+blockchaintime = int(response.json()["timestamp"])
+expiresAt = str(int(blockchaintime + 120 * 1e9))  # expire in 2 minutes
 req = {
     "submission": {
-        "marketID": MARKET_ID,
+        "marketID": marketID,
         "partyID": pubKey,
         "price": "100000",
         "size": "100",
         "side": "Buy",
         "timeInForce": "GTT",
-        "expiresAt": "2000000000000000000",
+        "expiresAt": expiresAt,
         "type": "LIMIT",
     }
 }

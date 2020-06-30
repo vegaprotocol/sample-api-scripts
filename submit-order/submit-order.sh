@@ -2,11 +2,6 @@
 
 source credentials.sh || exit 1
 
-if test "$MARKET_ID" == AMARKETID ; then
-    echo "Please set MARKET_ID in credentials.sh"
-    exit 1
-fi
-
 if echo "$NODE_URL" | grep -q example.com ; then
     echo "Please set NODE_URL in credentials.sh"
     exit 1
@@ -59,17 +54,26 @@ fi
 test -n "$pubKey" || exit 1
 test "$pubKey" == null && exit 1
 
+### Next, get a Market ID ###
+url="$NODE_URL/markets"
+response="$(curl -s "$url")"
+marketID="$(echo "$response" | jq -r '.markets[0].id')"
+
 ### Next, prepare a SubmitOrder ###
+url="$NODE_URL/time"
+response="$(curl -s "$url")"
+blockchaintime="$(echo "$response" | jq -r .timestamp)"
+expiresAt="$((blockchaintime+120*10**9))" # expire in 2 minutes
 cat >req.json <<EOF
 {
     "submission": {
-        "marketID": "$MARKET_ID",
+        "marketID": "$marketID",
         "partyID": "$pubKey",
         "price": "100000",
         "size": "100",
         "side": "Buy",
         "timeInForce": "GTT",
-        "expiresAt": "2000000000000000000",
+        "expiresAt": "$expiresAt",
         "type": "LIMIT"
     }
 }
