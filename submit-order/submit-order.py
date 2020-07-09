@@ -12,6 +12,8 @@ from credentials import (
     WALLET_NAME,
     WALLET_PASSPHRASE,
 )
+assert NODE_URL.startswith("https://")
+assert WALLETSERVER_URL.startswith("https://")
 
 
 def check(r: requests.Response):
