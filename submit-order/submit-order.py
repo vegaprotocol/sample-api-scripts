@@ -75,10 +75,10 @@ req = {
         "partyID": pubKey,
         "price": "100000",
         "size": "100",
-        "side": "Buy",
-        "timeInForce": "GTT",
+        "side": "SIDE_BUY",
+        "timeInForce": "TIF_GTT",
         "expiresAt": expiresAt,
-        "type": "LIMIT",
+        "type": "TYPE_LIMIT",
     }
 }
 print(
