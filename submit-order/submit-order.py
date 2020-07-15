@@ -6,13 +6,13 @@ import json
 import requests
 
 from credentials import (
-    NODE_URL,
+    NODE_URL_REST,
     WALLETSERVER_URL,
     WALLET_NAME,
     WALLET_PASSPHRASE,
 )
 
-assert NODE_URL.startswith("https://")
+assert NODE_URL_REST.startswith("https://")
 assert WALLETSERVER_URL.startswith("https://")
 
 
@@ -61,13 +61,13 @@ else:
 assert pubKey != ""
 
 # Next, get a Market ID
-url = "{base}/markets".format(base=NODE_URL)
+url = "{base}/markets".format(base=NODE_URL_REST)
 response = requests.get(url)
 check(response)
 marketID = response.json()["markets"][0]["id"]
 
 # Next, prepare a SubmitOrder
-response = requests.get("{base}/time".format(base=NODE_URL))
+response = requests.get("{base}/time".format(base=NODE_URL_REST))
 check(response)
 blockchaintime = int(response.json()["timestamp"])
 expiresAt = str(int(blockchaintime + 120 * 1e9))  # expire in 2 minutes
@@ -88,7 +88,7 @@ print(
         json.dumps(req, indent=2, sort_keys=True)
     )
 )
-url = "{base}/orders/prepare".format(base=NODE_URL)
+url = "{base}/orders/prepare".format(base=NODE_URL_REST)
 response = requests.post(url, json=req)
 check(response)
 preparedOrder = response.json()
@@ -127,7 +127,7 @@ print(
         json.dumps(req, indent=2, sort_keys=True)
     )
 )
-url = "{base}/transaction".format(base=NODE_URL)
+url = "{base}/transaction".format(base=NODE_URL_REST)
 response = requests.post(url, json=req)
 check(response)
 
