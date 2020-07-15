@@ -3,7 +3,8 @@
 | Language | Talks to                        | App/Library |
 | :------- | :------------------------------ | :---------- |
 | bash     | wallet (REST), Vega node (REST) | curl        |
-| python3  | wallet (REST), Vega node (REST) | requests    |
+| python3  | wallet (REST), Vega node (REST) | REST: [requests](https://pypi.org/project/requests/) |
+| python3  | wallet (REST), Vega node (gRPC) | REST: [requests](https://pypi.org/project/requests/); gRPC: [Vega-API-client](https://pypi.org/project/Vega-API-client/) |
 
 These test scripts connect to a Vega Wallet server and a Vega API node, and:
 
