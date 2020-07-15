@@ -1,7 +1,11 @@
 # Submit Order
 
-These test scripts (bash and python) connect to a Vega Wallet server and a Vega
-API node, and:
+| Language | Talks to                        | App/Library |
+| :------- | :------------------------------ | :---------- |
+| bash     | wallet (REST), Vega node (REST) | curl        |
+| python3  | wallet (REST), Vega node (REST) | requests    |
+
+These test scripts connect to a Vega Wallet server and a Vega API node, and:
 
 1. Wallet server: creates a new wallet, or logs in to an existing one
 1. Wallet server: creates a keypair, if one has not already been created
