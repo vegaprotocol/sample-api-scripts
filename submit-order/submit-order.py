@@ -88,7 +88,7 @@ print(
         json.dumps(req, indent=2, sort_keys=True)
     )
 )
-url = "{base}/orders/prepare".format(base=NODE_URL_REST)
+url = "{base}/orders/prepare/submit".format(base=NODE_URL_REST)
 response = requests.post(url, json=req)
 check(response)
 preparedOrder = response.json()

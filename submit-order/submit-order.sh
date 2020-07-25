@@ -2,8 +2,8 @@
 
 source credentials.sh || exit 1
 
-if echo "$NODE_URL" | grep -q example.com ; then
-    echo "Please set NODE_URL in credentials.sh"
+if echo "$NODE_URL_REST" | grep -q example.com ; then
+    echo "Please set NODE_URL_REST in credentials.sh"
     exit 1
 fi
 
@@ -55,12 +55,13 @@ test -n "$pubKey" || exit 1
 test "$pubKey" == null && exit 1
 
 ### Next, get a Market ID ###
-url="$NODE_URL/markets"
+url="$NODE_URL_REST/markets"
+echo "get market ID url: $url"
 response="$(curl -s "$url")"
 marketID="$(echo "$response" | jq -r '.markets[0].id')"
 
 ### Next, prepare a SubmitOrder ###
-url="$NODE_URL/time"
+url="$NODE_URL_REST/time"
 response="$(curl -s "$url")"
 blockchaintime="$(echo "$response" | jq -r .timestamp)"
 expiresAt="$((blockchaintime+120*10**9))" # expire in 2 minutes
@@ -79,7 +80,7 @@ cat >req.json <<EOF
 }
 EOF
 echo "Request for PrepareSubmitOrder: $(cat req.json)"
-url="$NODE_URL/orders/prepare"
+url="$NODE_URL_REST/orders/prepare/submit"
 response="$(curl -s -XPOST -d "$(cat req.json)" "$url")"
 echo "Response from PrepareSubmitOrder: $response"
 
@@ -114,7 +115,7 @@ cat >req.json <<EOF
 }
 EOF
 echo "Request for SubmitTransaction: $(cat req.json)"
-url="$NODE_URL/transaction"
+url="$NODE_URL_REST/transaction"
 response="$(curl -s -XPOST -d "$(cat req.json)" "$url")"
 
 if ! echo "$response" | jq -r .success | grep -q '^true$' ; then
