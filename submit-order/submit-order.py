@@ -116,11 +116,7 @@ print(
 
 # Vega node: Submit the signed transaction
 req = {
-    "tx": {
-        "data": blob,
-        "sig": signedTx["sig"],
-        "pubKey": base64.b64encode(binascii.unhexlify(pubKey)).decode("ascii"),
-    }
+    "tx": signedTx
 }
 print(
     "Request for SubmitTransaction: {}".format(
