@@ -17,6 +17,7 @@ if test -z "$WALLET_NAME" -o -z "$WALLET_PASSPHRASE" ; then
 	exit 1
 fi
 
+# __create_wallet:
 CREATE_NEW_WALLET=no
 if test "$CREATE_NEW_WALLET" == yes ; then
 	### EITHER: Create new wallet ###
@@ -34,8 +35,9 @@ response="$(curl -s -XPOST -d "$req" "$url")"
 token="$(echo "$response" | jq -r .token)"
 test "$token" == null && exit 1
 hdr="Authorization: Bearer $token"
+# :create_wallet__
 
-
+# __generate_keypair:
 GENERATE_NEW_KEYPAIR=no
 pubKey=""
 if test "$GENERATE_NEW_KEYPAIR" == yes ; then
@@ -50,17 +52,21 @@ else
 	response="$(curl -s -XGET -H "$hdr" "$url")"
 	pubKey="$(echo "$response" | jq -r '.keys[0].pub')"
 fi
+# :generate_keypair__
 
 test -n "$pubKey" || exit 1
 test "$pubKey" == null && exit 1
 
+# __get_market:
 ### Next, get a Market ID ###
 url="$NODE_URL_REST/markets"
 echo "get market ID url: $url"
 response="$(curl -s "$url")"
 marketID="$(echo "$response" | jq -r '.markets[0].id')"
+# :get_market__
 
-### Next, prepare a SubmitOrder ###
+# __prepare_order:
+### Next, prepare an Order Submission ###
 url="$NODE_URL_REST/time"
 response="$(curl -s "$url")"
 blockchaintime="$(echo "$response" | jq -r .timestamp)"
@@ -83,7 +89,9 @@ echo "Request for PrepareSubmitOrder: $(cat req.json)"
 url="$NODE_URL_REST/orders/prepare/submit"
 response="$(curl -s -XPOST -d "$(cat req.json)" "$url")"
 echo "Response from PrepareSubmitOrder: $response"
+# :prepare_order__
 
+# __sign_tx:
 ### Wallet server: Sign the prepared transaction ###
 blob="$(echo "$response" | jq -r .blob)"
 test "$blob" == null && exit 1
@@ -99,8 +107,10 @@ url="$WALLETSERVER_URL/api/v1/messages"
 response="$(curl -s -XPOST -H "$hdr" -d "$(cat req.json)" "$url")"
 signedTx="$(echo "$response" | jq .signedTx)"
 echo "Response from SignTx: $signedTx"
+# :sign_tx__
 test "$signedTx" == null && exit 1
 
+# __submit_tx:
 ### Vega node: Submit the signed transaction ###
 cat >req.json <<EOF
 {
@@ -110,6 +120,7 @@ EOF
 echo "Request for SubmitTransaction: $(cat req.json)"
 url="$NODE_URL_REST/transaction"
 response="$(curl -s -XPOST -d "$(cat req.json)" "$url")"
+# :submit_tx__
 
 if ! echo "$response" | jq -r .success | grep -q '^true$' ; then
 	echo "Failed"
