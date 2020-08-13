@@ -67,6 +67,10 @@ marketID="$(echo "$response" | jq -r '.markets[0].id')"
 
 # __prepare_order:
 ### Next, prepare an Order Submission ###
+
+# Note: price is an integer. For example 123456 is a price of 1.23456,
+# assuming 5 decimal places.
+
 url="$NODE_URL_REST/time"
 response="$(curl -s "$url")"
 blockchaintime="$(echo "$response" | jq -r .timestamp)"

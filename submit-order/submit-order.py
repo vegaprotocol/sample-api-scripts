@@ -77,12 +77,13 @@ response = requests.get("{base}/time".format(base=NODE_URL_REST))
 check(response)
 blockchaintime = int(response.json()["timestamp"])
 expiresAt = str(int(blockchaintime + 120 * 1e9))  # expire in 2 minutes
+
 req = {
     "submission": {
         "marketID": marketID,
         "partyID": pubKey,
-        "price": "100000",
-        "size": "100",
+        "price": "100000",       # Note: price is an integer. For example 123456 
+        "size": "100",           # is a price of 1.23456, assuming 5 decimal places.
         "side": "SIDE_BUY",
         "timeInForce": "TIF_GTT",
         "expiresAt": expiresAt,
