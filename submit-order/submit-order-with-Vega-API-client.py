@@ -19,6 +19,7 @@ def check(r: requests.Response):
     assert r.status_code == 200, "HTTP {} {}".format(r.status_code, r.text)
 
 
+# __create_wallet:
 # Vega node: Create client for accessing public data
 datacli = vac.VegaTradingDataClient(NODE_URL_GRPC)
 
@@ -28,11 +29,15 @@ tradingcli = vac.VegaTradingClient(NODE_URL_GRPC)
 # Wallet server: Create a walletclient (see above for details)
 walletclient = vac.WalletClient(WALLETSERVER_URL)
 walletclient.login(WALLET_NAME, WALLET_PASSPHRASE)
+# :create_wallet__
 
+# __get_market:
 # Get a list of markets
 markets = datacli.Markets(Empty()).markets
 marketID = markets[0].id
+# :get_market__
 
+# __generate_keypair:
 GENERATE_NEW_KEYPAIR = False
 if GENERATE_NEW_KEYPAIR:
     # If you don't already have a keypair, generate one.
@@ -46,7 +51,9 @@ else:
     keys = response.json()["keys"]
     assert len(keys) > 0
     pubKey = keys[0]["pub"]
+# :generate_keypair__
 
+# __prepare_order:
 # Vega node: Prepare the SubmitOrder
 order = vac.api.trading.SubmitOrderRequest(
     submission=vac.vega.OrderSubmission(
@@ -64,7 +71,9 @@ order = vac.api.trading.SubmitOrderRequest(
 print(f"Request for PrepareSubmitOrder: {order}")
 response = tradingcli.PrepareSubmitOrder(order)
 print(f"Response from PrepareSubmitOrder: {response}")
+# :prepare_order__
 
+# __sign_tx:
 # Wallet server: Sign the prepared transaction
 blob_base64 = base64.b64encode(response.blob).decode("ascii")
 print(f"Request for SignTx: blob={blob_base64}, pubKey={pubKey}")
@@ -73,7 +82,9 @@ check(response)
 responsejson = response.json()
 print(f"Response from SignTx: {responsejson}")
 signedTx = responsejson["signedTx"]
+# :sign_tx__
 
+# __submit_tx:
 # Vega node: Submit the signed transaction
 request = vac.api.trading.SubmitTransactionRequest(
     tx=vac.vega.SignedBundle(
@@ -84,5 +95,6 @@ request = vac.api.trading.SubmitTransactionRequest(
 )
 print(f"Request for SubmitTransaction: {request}")
 response = tradingcli.SubmitTransaction(request)
+# :submit_tx__
 assert response.success
 print("All is well.")
