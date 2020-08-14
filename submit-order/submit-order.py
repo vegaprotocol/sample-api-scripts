@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+# Note: this file uses smart-tags within comments to section parts
+# of the code to show as snippets in our documentation. They are not
+# necessary to include when creating your own custom code.
+# Examples of smart-tags:  __create_wallet:  and  :create_wallet__
+
 import base64
 import binascii
 import json

@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Note: this file uses smart-tags within comments to section parts
+# of the code to show as snippets in our documentation. They are not
+# necessary to include when creating your own custom code.
+# Examples of smart-tags:  __create_wallet:  and  :create_wallet__
+
 source credentials.sh || exit 1
 
 if echo "$NODE_URL_REST" | grep -q example.com ; then
@@ -66,7 +71,7 @@ marketID="$(echo "$response" | jq -r '.markets[0].id')"
 # :get_market__
 
 # __prepare_order:
-### Next, prepare an Order Submission ###
+### Next, prepare a SubmitOrder ###
 
 # Note: price is an integer. For example 123456 is a price of 1.23456,
 # assuming 5 decimal places.

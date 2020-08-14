@@ -1,11 +1,18 @@
 #!/usr/bin/python3
 
+# Note: this file uses smart-tags within comments to section parts
+# of the code to show as snippets in our documentation. They are not
+# necessary to include when creating your own custom code.
+# Examples of smart-tags:  __create_wallet:  and  :create_wallet__
+
 import base64
 import binascii
 import requests
 
 from google.protobuf.empty_pb2 import Empty
+# __import_client:
 import vegaapiclient as vac
+# :import_client__
 
 from credentials import (
     NODE_URL_GRPC,
