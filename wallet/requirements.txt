@@ -3,7 +3,7 @@ chardet==3.0.4
 googleapis-common-protos==1.52.0
 grpcio==1.30.0
 idna==2.10
-protobuf==3.12.2
+protobuf==3.13.0
 requests==2.24.0
 six==1.15.0
 urllib3==1.25.9
