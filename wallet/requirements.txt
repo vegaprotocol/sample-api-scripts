@@ -6,5 +6,5 @@ idna==2.10
 protobuf==3.12.2
 requests==2.24.0
 six==1.15.0
-urllib3==1.25.9
+urllib3==1.25.10
 Vega-API-client==0.22.0
