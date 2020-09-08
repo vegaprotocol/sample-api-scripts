@@ -14,7 +14,7 @@ assert WALLETSERVER_URL.startswith("https://")
 
 
 def check(r: requests.Response):
-    assert r.status_code == 200, "HTTP {} {}".format(r.status_code, r.text)
+    assert r.status_code == 200, f"HTTP {r.status_code} {r.text}"
 
 
 walletclient = vac.WalletClient(WALLETSERVER_URL)
@@ -23,38 +23,38 @@ CREATE_NEW_WALLET = False
 if CREATE_NEW_WALLET:
     # If this is your first time: create a new wallet.
     response = walletclient.create(WALLET_NAME, WALLET_PASSPHRASE)
-    check(response)
 else:
     # If this is *not* your first time: log in to an existing wallet.
     response = walletclient.login(WALLET_NAME, WALLET_PASSPHRASE)
-    check(response)
+check(response)
 
-GENERATE_NEW_KEYPAIR = False
-if GENERATE_NEW_KEYPAIR:
-    # If you don't already have a keypair, generate one.
-    response = walletclient.generatekey(WALLET_PASSPHRASE, [])
-    check(response)
-    # Print key information. Note that the private key is *not* returned.
-    print("Key: {}".format(response.json()["key"]))
-else:
-    # List keypairs
-    response = walletclient.listkeys()
-    check(response)
-    for key in response.json()["keys"]:
-        print("Key: {}".format(key))
+# Generate a new keypair.
+response = walletclient.generatekey(WALLET_PASSPHRASE, [])
+check(response)
+# Print key information. Note that the private key is *not* returned.
+myPubKey = response.json()["key"]
+print(f"Generated new keypair: {myPubKey}")
+
+# Get all keypairs
+response = walletclient.listkeys()
+check(response)
+keys = response.json()["keys"]
+for key in keys:
+    print(f"(listkeys) Key: {key}")
 
 # Get one keypair
-myPubKey = "1122aabb..."  # hex-encoded public key
-response = walletclient.getkey(myPubKey)
+response = walletclient.getkey(keys[0]["pub"])
 check(response)
-print("Key: {}".format(response.json()["key"]))
+key = response.json()["key"]
+print(f"(getkey) Key: {key}")
 
 # Sign a transaction
 blob = b"data returned from a Vega node 'Prepare' call"
 tx = base64.b64encode(blob).decode("ascii")
-response = walletclient.signtx(tx, myPubKey)
+response = walletclient.signtx(tx, myPubKey["pub"])
 check(response)
-print("Signed tx: {}".format(response.json()["signedTx"]))
+signedTx = response.json()["signedTx"]
+print(f"Signed tx: {signedTx}")
 
 # When finished with the wallet, log out.
 response = walletclient.logout()

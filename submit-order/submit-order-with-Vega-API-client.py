@@ -95,10 +95,13 @@ signedTx = responsejson["signedTx"]
 # Vega node: Submit the signed transaction
 request = vac.api.trading.SubmitTransactionRequest(
     tx=vac.vega.SignedBundle(
-        data=base64.b64decode(signedTx["data"]),
-        sig=base64.b64decode(signedTx["sig"]),
-        pubKey=binascii.unhexlify(signedTx["pubKey"]),
-    )
+        tx=base64.b64decode(signedTx["tx"]),
+        sig=vac.vega.Signature(
+            sig=base64.b64decode(signedTx["sig"]["sig"]),
+            algo="vega/ed25519",
+            version=1,
+        ),
+    ),
 )
 print(f"Request for SubmitTransaction: {request}")
 response = tradingcli.SubmitTransaction(request)

@@ -24,6 +24,7 @@ assert WALLETSERVER_URL.startswith("https://")
 def check(r: requests.Response):
     assert r.status_code == 200, "HTTP {} {}".format(r.status_code, r.text)
 
+
 # __create_wallet:
 CREATE_NEW_WALLET = False
 if CREATE_NEW_WALLET:
@@ -87,8 +88,8 @@ req = {
     "submission": {
         "marketID": marketID,
         "partyID": pubKey,
-        "price": "100000",       # Note: price is an integer. For example 123456 
-        "size": "100",           # is a price of 1.23456, assuming 5 decimal places.
+        "price": "100000",  # Note: price is an integer. For example 123456
+        "size": "100",  # is a price of 1.23456, assuming 5 decimal places.
         "side": "SIDE_BUY",
         "timeInForce": "TIF_GTT",
         "expiresAt": expiresAt,
@@ -131,9 +132,7 @@ print(
 
 # __submit_tx:
 # Vega node: Submit the signed transaction
-req = {
-    "tx": signedTx
-}
+req = {"tx": signedTx}
 print(
     "Request for SubmitTransaction: {}".format(
         json.dumps(req, indent=2, sort_keys=True)

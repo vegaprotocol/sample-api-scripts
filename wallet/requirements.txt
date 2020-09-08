@@ -7,4 +7,4 @@ protobuf==3.13.0
 requests==2.24.0
 six==1.15.0
 urllib3==1.25.10
-Vega-API-client==0.23.1
+Vega-API-client==0.24.0
