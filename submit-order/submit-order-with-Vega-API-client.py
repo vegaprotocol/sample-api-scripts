@@ -1,9 +1,26 @@
 #!/usr/bin/python3
 
-# Note: this file uses smart-tags within comments to section parts
-# of the code to show as snippets in our documentation. They are not
-# necessary to include when creating your own custom code.
-# Examples of smart-tags:  __vega_wallet:  and  :vega_wallet__
+"""
+Script language: Python3
+
+Talks to:
+- Vega wallet (REST)
+- Vega node (gRPC)
+
+Apps/Libraries:
+- REST: Vega-API-client (https://pypi.org/project/Vega-API-client/)
+- gRPC: Vega-API-client (https://pypi.org/project/Vega-API-client/)
+"""
+
+# Note: this file uses smart-tags in comments to section parts of the code to
+# show them as snippets in our documentation. They are not necessary to be
+# included when creating your own custom code.
+#
+# Example of smart-tags:
+#  __something:
+# some code here
+# :something__
+
 
 import base64
 import os
