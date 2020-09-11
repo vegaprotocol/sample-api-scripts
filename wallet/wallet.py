@@ -1,61 +1,76 @@
 #!/usr/bin/python3
 
+"""
+Script language: Python3
+
+Talks to:
+- Vega wallet (REST)
+
+Apps/Libraries:
+- REST: Vega-API-client (https://pypi.org/project/Vega-API-client/)
+"""
+
 import base64
-import requests
+import json
+import os
+
 import vegaapiclient as vac
 
-from credentials import (
-    WALLETSERVER_URL,
-    WALLET_NAME,
-    WALLET_PASSPHRASE,
-)
-
-assert WALLETSERVER_URL.startswith("https://")
+import helpers
 
 
-def check(r: requests.Response):
-    assert r.status_code == 200, f"HTTP {r.status_code} {r.text}"
+walletserver_url = os.getenv("WALLETSERVER_URL")
+if not helpers.check_url(walletserver_url):
+    print("Error: Invalid WALLETSERVER_URL.")
+    exit(1)
 
+walletclient = vac.WalletClient(walletserver_url)
 
-walletclient = vac.WalletClient(WALLETSERVER_URL)
+wallet_name = helpers.random_string()
+wallet_passphrase = helpers.random_string()
 
-CREATE_NEW_WALLET = False
-if CREATE_NEW_WALLET:
-    # If this is your first time: create a new wallet.
-    response = walletclient.create(WALLET_NAME, WALLET_PASSPHRASE)
-else:
-    # If this is *not* your first time: log in to an existing wallet.
-    response = walletclient.login(WALLET_NAME, WALLET_PASSPHRASE)
-check(response)
+print(f"Creating a new wallet on {walletserver_url}:")
+print(f"- name:       {wallet_name}")
+print(f"- passphrase: {wallet_passphrase}")
+response = walletclient.create(wallet_name, wallet_passphrase)
+
+# If you want to log in to an existing wallet, use:
+# response = walletclient.login(wallet_name, wallet_passphrase)
+
+helpers.check_response(response)
 
 # Generate a new keypair.
-response = walletclient.generatekey(WALLET_PASSPHRASE, [])
-check(response)
+response = walletclient.generatekey(wallet_passphrase, [])
+helpers.check_response(response)
 # Print key information. Note that the private key is *not* returned.
 myPubKey = response.json()["key"]
-print(f"Generated new keypair: {myPubKey}")
+print("Generated new keypair:")
+print(json.dumps(myPubKey, indent=2, sort_keys=True))
 
 # Get all keypairs
 response = walletclient.listkeys()
-check(response)
+helpers.check_response(response)
 keys = response.json()["keys"]
 for key in keys:
-    print(f"(listkeys) Key: {key}")
+    print("List keypairs:")
+    print(json.dumps(key, indent=2, sort_keys=True))
 
 # Get one keypair
 response = walletclient.getkey(keys[0]["pub"])
-check(response)
+helpers.check_response(response)
 key = response.json()["key"]
-print(f"(getkey) Key: {key}")
+print("Get one keypair:")
+print(json.dumps(key, indent=2, sort_keys=True))
 
 # Sign a transaction
 blob = b"data returned from a Vega node 'Prepare' call"
 tx = base64.b64encode(blob).decode("ascii")
 response = walletclient.signtx(tx, myPubKey["pub"])
-check(response)
+helpers.check_response(response)
 signedTx = response.json()["signedTx"]
-print(f"Signed tx: {signedTx}")
+print("Signed transaction:")
+print(json.dumps(signedTx, indent=2, sort_keys=True))
 
 # When finished with the wallet, log out.
 response = walletclient.logout()
-check(response)
+helpers.check_response(response)

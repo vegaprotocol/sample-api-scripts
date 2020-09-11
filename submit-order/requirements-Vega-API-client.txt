@@ -1,1 +1,0 @@
-Vega-API-client==0.24.0

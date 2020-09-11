@@ -5,22 +5,13 @@
 # necessary to include when creating your own custom code.
 # Examples of smart-tags:  __vega_wallet:  and  :vega_wallet__
 
-source credentials.sh || exit 1
+source helpers.sh
 
-if echo "$NODE_URL_REST" | grep -q example.com ; then
-	echo "Please set NODE_URL_REST in credentials.sh"
-	exit 1
-fi
+check_url "NODE_URL_REST" || exit 1
+check_url "WALLETSERVER_URL" || exit 1
 
-if echo "$WALLETSERVER_URL" | grep -q example.com ; then
-	echo "Please set WALLETSERVER_URL in credentials.sh"
-	exit 1
-fi
-
-if test -z "$WALLET_NAME" -o -z "$WALLET_PASSPHRASE" ; then
-	echo "Please set WALLET_NAME and WALLET_PASSPHRASE in credentials.sh"
-	exit 1
-fi
+check_var "WALLET_NAME" || exit 1
+check_var "WALLET_PASSPHRASE" || exit 1
 
 # __create_wallet:
 CREATE_NEW_WALLET=no
@@ -46,7 +37,7 @@ hdr="Authorization: Bearer $token"
 GENERATE_NEW_KEYPAIR=no
 pubKey=""
 if test "$GENERATE_NEW_KEYPAIR" == yes ; then
-	### EITHER: Generate a new keypair
+	### EITHER: Generate a new keypair ###
 	req='{"passphrase":"'"$WALLET_PASSPHRASE"'","meta":[{"key":"alias","value":"my_key_alias"}]}'
 	url="$WALLETSERVER_URL/api/v1/keys"
 	response="$(curl -s -XPOST -H "$hdr" -d "$req" "$url")"
@@ -96,7 +87,7 @@ cat >req.json <<EOF
 EOF
 echo "Request for PrepareSubmitOrder: $(cat req.json)"
 url="$NODE_URL_REST/orders/prepare/submit"
-response="$(curl -s -XPOST -d "$(cat req.json)" "$url")"
+response="$(curl -s -XPOST -d @req.json "$url")"
 echo "Response from PrepareSubmitOrder: $response"
 # :prepare_order__
 
@@ -113,7 +104,7 @@ cat >req.json <<EOF
 EOF
 echo "Request for SignTx: $(cat req.json)"
 url="$WALLETSERVER_URL/api/v1/messages"
-response="$(curl -s -XPOST -H "$hdr" -d "$(cat req.json)" "$url")"
+response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 signedTx="$(echo "$response" | jq .signedTx)"
 echo "Response from SignTx: $signedTx"
 # :sign_tx__
@@ -128,7 +119,7 @@ cat >req.json <<EOF
 EOF
 echo "Request for SubmitTransaction: $(cat req.json)"
 url="$NODE_URL_REST/transaction"
-response="$(curl -s -XPOST -d "$(cat req.json)" "$url")"
+response="$(curl -s -XPOST -d @req.json "$url")"
 # :submit_tx__
 
 if ! echo "$response" | jq -r .success | grep -q '^true$' ; then

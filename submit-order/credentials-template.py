@@ -1,5 +1,0 @@
-NODE_URL_GRPC = "veganode.example.com:1234"
-NODE_URL_REST = "https://veganode.example.com"
-WALLETSERVER_URL = "https://walletserver.example.com"
-WALLET_NAME = ""
-WALLET_PASSPHRASE = ""

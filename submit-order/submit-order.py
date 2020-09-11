@@ -5,43 +5,49 @@
 # necessary to include when creating your own custom code.
 # Examples of smart-tags:  __vega_wallet:  and  :vega_wallet__
 
-import base64
-import binascii
 import json
+import os
 import requests
 
-from credentials import (
-    NODE_URL_REST,
-    WALLETSERVER_URL,
-    WALLET_NAME,
-    WALLET_PASSPHRASE,
-)
+import helpers
 
-assert NODE_URL_REST.startswith("https://")
-assert WALLETSERVER_URL.startswith("https://")
+node_url_rest = os.getenv("NODE_URL_REST")
+if not helpers.check_url(node_url_rest):
+    print("Error: Invalid NODE_URL_REST.")
+    exit(1)
 
+walletserver_url = os.getenv("WALLETSERVER_URL")
+if not helpers.check_url(walletserver_url):
+    print("Error: Invalid WALLETSERVER_URL.")
+    exit(1)
 
-def check(r: requests.Response):
-    assert r.status_code == 200, "HTTP {} {}".format(r.status_code, r.text)
+wallet_name = os.getenv("WALLET_NAME")
+if not helpers.check_var(wallet_name):
+    print("Error: Invalid WALLET_NAME.")
+    exit(1)
 
+wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
+if not helpers.check_var(wallet_passphrase):
+    print("Error: Invalid WALLET_PASSPHRASE.")
+    exit(1)
 
 # __create_wallet:
 CREATE_NEW_WALLET = False
 if CREATE_NEW_WALLET:
     # EITHER: Create new wallet
-    url = "{base}/api/v1/wallets".format(base=WALLETSERVER_URL)
+    url = f"{walletserver_url}/api/v1/wallets"
 else:
     # OR: Log in to existing wallet
-    url = "{base}/api/v1/auth/token".format(base=WALLETSERVER_URL)
+    url = f"{walletserver_url}/api/v1/auth/token"
 
 # Make request to create new wallet or log in to existing wallet
-req = {"wallet": WALLET_NAME, "passphrase": WALLET_PASSPHRASE}
+req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
 response = requests.post(url, json=req)
-check(response)
+helpers.check_response(response)
 
 # Pull out the token and make a headers dict
 token = response.json()["token"]
-headers = {"Authorization": "Bearer " + token}
+headers = {"Authorization": f"Bearer {token}"}
 # :create_wallet__
 
 # __generate_keypair:
@@ -50,18 +56,18 @@ pubKey = ""
 if GENERATE_NEW_KEYPAIR:
     # EITHER: Generate a new keypair
     req = {
-        "passphrase": WALLET_PASSPHRASE,
+        "passphrase": wallet_passphrase,
         "meta": [{"key": "alias", "value": "my_key_alias"}],
     }
-    url = "{base}/api/v1/keys".format(base=WALLETSERVER_URL)
+    url = f"{walletserver_url}/api/v1/keys"
     response = requests.post(url, headers=headers, json=req)
-    check(response)
+    helpers.check_response(response)
     pubKey = response.json()["key"]["pub"]
 else:
     # OR: List existing keypairs
-    url = "{base}/api/v1/keys".format(base=WALLETSERVER_URL)
+    url = f"{walletserver_url}/api/v1/keys"
     response = requests.get(url, headers=headers)
-    check(response)
+    helpers.check_response(response)
     keys = response.json()["keys"]
     assert len(keys) > 0
     pubKey = keys[0]["pub"]
@@ -71,16 +77,16 @@ assert pubKey != ""
 
 # __get_market:
 # Next, get a Market ID
-url = "{base}/markets".format(base=NODE_URL_REST)
+url = f"{node_url_rest}/markets"
 response = requests.get(url)
-check(response)
+helpers.check_response(response)
 marketID = response.json()["markets"][0]["id"]
 # :get_market__
 
 # __prepare_order:
 # Next, prepare a SubmitOrder
-response = requests.get("{base}/time".format(base=NODE_URL_REST))
-check(response)
+response = requests.get(f"{node_url_rest}/time")
+helpers.check_response(response)
 blockchaintime = int(response.json()["timestamp"])
 expiresAt = str(int(blockchaintime + 120 * 1e9))  # expire in 2 minutes
 
@@ -96,51 +102,38 @@ req = {
         "type": "TYPE_LIMIT",
     }
 }
-print(
-    "Request for PrepareSubmitOrder: {}".format(
-        json.dumps(req, indent=2, sort_keys=True)
-    )
-)
-url = "{base}/orders/prepare/submit".format(base=NODE_URL_REST)
+print("Request for PrepareSubmitOrder:")
+print(json.dumps(req, indent=2, sort_keys=True))
+url = f"{node_url_rest}/orders/prepare/submit"
 response = requests.post(url, json=req)
-check(response)
+helpers.check_response(response)
 preparedOrder = response.json()
 # :prepare_order__
-print(
-    "Response from PrepareSubmitOrder: {}".format(
-        json.dumps(preparedOrder, indent=2, sort_keys=True)
-    )
-)
+print("Response from PrepareSubmitOrder:")
+print(json.dumps(preparedOrder, indent=2, sort_keys=True))
 
 # __sign_tx:
 # Wallet server: Sign the prepared transaction
 blob = preparedOrder["blob"]
 req = {"tx": blob, "pubKey": pubKey, "propagate": False}
-print(
-    "Request for SignTx: {}".format(json.dumps(req, indent=2, sort_keys=True))
-)
-url = "{base}/api/v1/messages".format(base=WALLETSERVER_URL)
+print("Request for SignTx:")
+print(json.dumps(req, indent=2, sort_keys=True))
+url = f"{walletserver_url}/api/v1/messages"
 response = requests.post(url, headers=headers, json=req)
-check(response)
+helpers.check_response(response)
 signedTx = response.json()["signedTx"]
 # :sign_tx__
-print(
-    "Response from SignTx: {}".format(
-        json.dumps(signedTx, indent=2, sort_keys=True)
-    )
-)
+print("Response from SignTx:")
+print(json.dumps(signedTx, indent=2, sort_keys=True))
 
 # __submit_tx:
 # Vega node: Submit the signed transaction
 req = {"tx": signedTx}
-print(
-    "Request for SubmitTransaction: {}".format(
-        json.dumps(req, indent=2, sort_keys=True)
-    )
-)
-url = "{base}/transaction".format(base=NODE_URL_REST)
+print("Request for SubmitTransaction:")
+print(json.dumps(req, indent=2, sort_keys=True))
+url = f"{node_url_rest}/transaction"
 response = requests.post(url, json=req)
-check(response)
+helpers.check_response(response)
 # :submit_tx__
 
 assert response.json()["success"]
