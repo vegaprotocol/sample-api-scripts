@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/vegaprotocol/sample-api-scripts)
+
 # Sample API scripts
 
 This repo contains sample scripts in various languages. These scripts use the
@@ -15,6 +17,5 @@ accidentally committed.
 
 # Gitpod
 
-Get started with the sample API scripts with zero configuration:
-
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/vegaprotocol/sample-api-scripts) https://gitpod.io/#https://github.com/vegaprotocol/sample-api-scripts
+Get started with the sample API scripts with zero configuration. Click on the
+"Gitpod ready-to-code" button above.

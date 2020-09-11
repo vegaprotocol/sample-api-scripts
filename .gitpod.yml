@@ -1,9 +1,9 @@
 ---
 
-image: vegaprotocol/gitpod:latest
+image: gitpod/workspace-full
 
 tasks:
-  - init: pip install -r requirements.txt
-    command: yarn build
+  - init: pipenv install -r requirements.txt --python 3.8
+    command: pipenv shell
 
 ports: []
