@@ -3,7 +3,7 @@
 image: gitpod/workspace-full
 
 tasks:
-  - init: pipenv install --python 3.8 ; [[ -r credentials ]] || cp -a credentials-template credentials
+  - init: pipenv install -r requirements.txt --python 3.8 ; [[ -r credentials ]] || cp -a credentials-template credentials
     command: pipenv shell
 
 ports: []
