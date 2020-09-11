@@ -12,3 +12,9 @@ and populate them with real data.
 
 Non-template credentials files are listed in `.gitignore` so they don't get
 accidentally committed.
+
+# Gitpod
+
+Get started with the sample API scripts with zero configuration:
+
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/vegaprotocol/sample-api-scripts) https://gitpod.io/#https://github.com/vegaprotocol/sample-api-scripts
