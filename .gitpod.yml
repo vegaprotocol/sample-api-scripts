@@ -1,0 +1,9 @@
+---
+
+image: vegaprotocol/gitpod:latest
+
+tasks:
+  - init: pip install -r requirements.txt
+    command: yarn build
+
+ports: []
