@@ -116,7 +116,8 @@ print(f"Request for SignTx: blob={blob_base64}, pubKey={pubKey}")
 response = walletclient.signtx(blob_base64, pubKey)
 helpers.check_response(response)
 responsejson = response.json()
-print(f"Response from SignTx: {responsejson}")
+print("Response from SignTx:")
+print(json.dumps(response, indent=2, sort_keys=True))
 signedTx = responsejson["signedTx"]
 # :sign_tx__
 
