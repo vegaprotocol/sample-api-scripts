@@ -22,7 +22,7 @@ And you're good to go. Now choose a sample program to run from the following:
 | Script             | Language | Talks to                        | App/Library |
 | :----------------- | :------- | :------------------------------ | :---------- |
 | stream market data | python3  | Vega node (REST, GraphQL)       | REST: [requests](https://pypi.org/project/requests/); GraphQL: [websocket-client](https://pypi.org/project/websocket_client/) |
-| wallet             | bash     | wallet (REST), Vega node (REST) | REST: curl  |
+| wallet             | bash     | wallet (REST), Vega node (REST) | REST: [Vega-API-client](https://pypi.org/project/Vega-API-client/)  |
 | submit order       | bash     | wallet (REST), Vega node (REST) | REST: curl  |
 | submit order       | python3  | wallet (REST), Vega node (REST) | REST: [requests](https://pypi.org/project/requests/) |
 | submit order       | python3  | wallet (REST), Vega node (gRPC) | REST: [Vega-API-client](https://pypi.org/project/Vega-API-client/); gRPC: [Vega-API-client](https://pypi.org/project/Vega-API-client/) |
