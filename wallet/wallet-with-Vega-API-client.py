@@ -7,7 +7,7 @@ Talks to:
 - Vega wallet (REST)
 
 Apps/Libraries:
-- REST: requests (https://pypi.org/project/requests/)
+- REST: Vega-API-client (https://pypi.org/project/Vega-API-client/)
 """
 
 # Note: this file uses smart-tags in comments to section parts of the code to
@@ -21,8 +21,11 @@ Apps/Libraries:
 
 import base64
 import json
-import requests
 import os
+
+# __import_client:
+import vegaapiclient as vac
+# :import_client__
 
 import helpers
 
@@ -30,21 +33,16 @@ wallet_name = helpers.random_string()
 wallet_passphrase = helpers.random_string()
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
-if not helpers.check_url(wallet_server_url):
-    print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
-    exit(1)
 
 print(f"Creating a new wallet on {wallet_server_url}:")
 print(f"- name:       {wallet_name}")
 print(f"- passphrase: {wallet_passphrase}")
 
-
 # __create_wallet:
-# Create a new wallet:
-req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
-response = requests.post(f"{wallet_server_url}/api/v1/wallets", json=req)
+# Create a new wallet
+wallet_client = vac.WalletClient(wallet_server_url)
+response = wallet_client.create(wallet_name, wallet_passphrase)
 helpers.check_response(response)
-token = response.json()["token"]
 # :create_wallet__
 
 
@@ -56,34 +54,25 @@ token = response.json()["token"]
 
 # __login_wallet:
 # Log in to an existing wallet
-req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
-response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
+response = wallet_client.login(wallet_name, wallet_passphrase)
 helpers.check_response(response)
-token = response.json()["token"]
 # :login_wallet__
 
 
 # __generate_keypair:
-# Generate a new key pair
-headers = {"Authorization": f"Bearer {token}"}
-req = {
-    "passphrase": wallet_passphrase,
-    "meta": [{"key": "alias", "value": "my_key_alias"}],
-}
-response = requests.post(f"{wallet_server_url}/api/v1/keys", headers=headers, json=req)
+# Generate a new keypair
+response = wallet_client.generatekey(wallet_passphrase, [])
 helpers.check_response(response)
-pubkey = response.json()["key"]["pub"]
 # Print key information. Note that the private key is *not* returned.
 keypair = response.json()["key"]
-print("Generated new keypair:")
+print("Generated new key pair:")
 print(json.dumps(keypair, indent=2, sort_keys=True))
 # :generate_keypair__
 
 
 # __get_keys:
 # Request all key pairs
-headers = {"Authorization": f"Bearer {token}"}
-response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
+response = wallet_client.listkeys()
 helpers.check_response(response)
 keys = response.json()["keys"]
 for key in keys:
@@ -91,26 +80,22 @@ for key in keys:
     print(json.dumps(key, indent=2, sort_keys=True))
 # :get_keys__
 
-pubkey = keys[0]["pub"]
 
 # __get_key:
 # Request a single key pair
-headers = {"Authorization": f"Bearer {token}"}
-response = requests.get(f"{wallet_server_url}/api/v1/keys/{pubkey}", headers=headers)
+response = wallet_client.getkey(keys[0]["pub"])
 helpers.check_response(response)
 key = response.json()["key"]
-print("Get a single keypair:")
+print("Get a single key pair:")
 print(json.dumps(key, indent=2, sort_keys=True))
 # :get_key__
 
 
 # __sign_tx:
-# Sign a transaction - Note: setting "propagate" to True will also submit the tx to Vega node
-headers = {"Authorization": f"Bearer {token}"}
+# Sign a transaction
 blob = b"data returned from a Vega node 'Prepare<operation>' call"
 tx = base64.b64encode(blob).decode("ascii")
-req = {"tx": tx, "pubKey": pubkey, "propagate": False}
-response = requests.post(f"{wallet_server_url}/api/v1/messages", headers=headers, json=req)
+response = wallet_client.signtx(tx, keypair["pub"])
 helpers.check_response(response)
 signedTx = response.json()["signedTx"]
 print("Signed transaction:")
@@ -120,7 +105,7 @@ print(json.dumps(signedTx, indent=2, sort_keys=True))
 
 # __logout_wallet:
 # Log out of a wallet
-headers = {"Authorization": f"Bearer {token}"}
-response = requests.delete(f"{wallet_server_url}/api/v1/auth/token", headers=headers)
+response = wallet_client.logout()
 helpers.check_response(response)
 # :logout_wallet__
+

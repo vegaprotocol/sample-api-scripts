@@ -1,0 +1,6 @@
+### __example_get_time_response:
+# Response for the latest timestamp in nanoseconds since epoch from the Vega network
+{
+  "timestamp": "1600164966574376524"
+}
+### :example_get_time_response__

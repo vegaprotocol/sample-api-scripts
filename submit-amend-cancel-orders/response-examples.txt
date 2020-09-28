@@ -1,0 +1,54 @@
+### __example_prepare_submit_order_response:
+# Response for preparing a submit order message
+{
+  "blob": "YWQ5M2NmYzktYTU5OC00MmNmLTk4ZmMtOTA1NWY0MWUzMTBmQBI ... mItZjA4NDllOTY1YzIy",
+  "submitID": "50f790bc-c1c6-47fd-a52b-f0849e965c22"
+}
+# Note: some fields have been shortened to improve readability
+### :example_prepare_cancel_order_response__
+
+
+### __example_sign_tx_response:
+# Response for signing the prepared transaction
+{
+  "base64Bundle": "CvQBCsMBNzYwMWUxMjUtYzZiMC00ZGRjLWIzZTQt6SDC ... 2ZWdhL2VkMjU1MTkYAQ==",
+  "hexBundle": "0af4010ac30137363031653132352d63366230 ... db907120c766567612f656432353531391801",
+  "signedTx": {
+    "sig": {
+      "algo": "vega/ed25519",
+      "sig": "6nFF/38QjNdHpaNIk6OvMnrDWnEzrRzl+88gnkME+TBVb2mIbNiHEwPz26z1WUK6E5nDFRMa6FqG71PuOM25Bw==",
+      "version": 1
+    },
+    "tx": "CsMBNzYwMWUxMjUtYzZiMC00ZGRjLWIzZTQtMGU2YmE ... QELfsftyQ=="
+  }
+}
+# Note: some fields have been shortened to improve readability
+### :example_sign_tx_cancel_response__
+
+
+### __example_prepare_cancel_order_response:
+# Response for preparing a cancel order message
+{
+  "blob": "YWQ5M2NmYzktYTU5OC00MmNmLTk4ZmMtOTA1NWY0MWUzMTBmQB ... mItZjA4NDllOTY1YzIy",
+  "submitID": "50f790bc-c1c6-47fd-a52b-f0849e965c22"
+}
+# Note: some fields have been shortened to improve readability
+### :example_prepare_cancel_order_response__
+
+
+### __example_sign_tx_cancel_response:
+# Response for signing the prepared transaction
+{
+  "base64Bundle": "CtEBCqEBNGRjMzA3OWEtZjhhZi00O3NGMtODU4ZmN ... mWJBhIMdmVnYS9lZDI1NTE5GAE=",
+  "hexBundle": "0ad1010aa10134646333303739612d663861662d34 ... 658906120c7665676123432353531391801",
+  "signedTx": {
+    "sig": {
+      "algo": "vega/ed25519",
+      "sig": "qYYL3pTCZLY6sNzowTUwUx8d8iPGn9Vw4jz9nUrfChGAydFcF2aDG5gGZq+FYyExkPo9TcKJ9Uz2X/g0/mWJBg==",
+      "version": 1
+    },
+    "tx": "CqEBNGRjMzA3OWEtZjhhZi00OGQzLTg3NGMtODGNZwPb+dYK ... 3ZC37H7ck="
+  }
+}
+# Note: some fields have been shortened to improve readability
+### :example_sign_tx_cancel_response__

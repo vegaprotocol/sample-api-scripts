@@ -1,0 +1,84 @@
+### __example_get_markets_response:
+# Response for a list of markets available on a Vega network
+{
+  "markets": [
+    {
+      "continuous": {
+        "tickSize": "0.00001"
+      },
+      "decimalPlaces": "5",
+      "fees": {
+        "factors": {
+          "infrastructureFee": "0.0005",
+          "liquidityFee": "0.001",
+          "makerFee": "0.00025"
+        }
+      },
+      "id": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
+      "openingAuction": null,
+      "tradableInstrument": {
+        "instrument": {
+          "baseName": "GBP",
+          "code": "CRYPTO:GBPUSD/OCT20",
+          "future": {
+            "asset": "ece2dcd0869fc765589f9e162fa0d1761b598def1628c4ff0f399a743693675d",
+            "ethereumEvent": {
+              "contractID": "0x0B484706fdAF3A4F24b2266446B1cb6d648E3cC1",
+              "event": "price_changed",
+              "value": "126000"
+            },
+            "maturity": "2020-10-30T22:59:59Z"
+          },
+          "id": "Crypto/GBPUSD/Futures/Oct20",
+          "initialMarkPrice": "130000",
+          "metadata": {
+            "tags": [
+              "asset_class:fx/crypto",
+              "product:futures"
+            ]
+          },
+          "name": "GBPUSD/OCT20",
+          "quoteName": "USD"
+        },
+        "logNormalRiskModel": {
+          "params": {
+            "mu": 0,
+            "r": 0.016,
+            "sigma": 0.09
+          },
+          "riskAversionParameter": 0.01,
+          "tau": 1.90128526884173e-06
+        },
+        "marginCalculator": {
+          "scalingFactors": {
+            "collateralRelease": 1.4,
+            "initialMargin": 1.2,
+            "searchLevel": 1.1
+          }
+        }
+      }
+    },
+    ...
+  ]
+}
+# Note: some fields/records have been omitted to improve readability
+### :example_get_markets_response__
+
+### __example_get_market_data_response:
+# Response for the market data for a market on a Vega network
+{
+  "marketData": {
+    "auctionEnd": "0",
+    "auctionStart": "0",
+    "bestBidPrice": "127275",
+    "bestBidVolume": "24147",
+    "bestOfferPrice": "127278",
+    "bestOfferVolume": "5147",
+    "markPrice": "127275",
+    "market": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
+    "midPrice": "127276",
+    "openInterest": "57551124",
+    "timestamp": "1600960160641907229"
+  }
+}
+### :example_get_market_data_response__
