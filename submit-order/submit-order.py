@@ -8,7 +8,8 @@ Talks to:
 - Vega node (REST)
 
 Apps/Libraries:
-- REST: requests (https://pypi.org/project/requests/)
+- REST (wallet): requests (https://pypi.org/project/requests/)
+- REST (node): requests (https://pypi.org/project/requests/)
 """
 
 # Note: this file uses smart-tags in comments to section parts of the code to
@@ -28,22 +29,22 @@ import helpers
 
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
-    print("Error: Invalid NODE_URL_REST.")
+    print("Error: Invalid or missing NODE_URL_REST environment variable.")
     exit(1)
 
 walletserver_url = os.getenv("WALLETSERVER_URL")
 if not helpers.check_url(walletserver_url):
-    print("Error: Invalid WALLETSERVER_URL.")
+    print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
     exit(1)
 
 wallet_name = os.getenv("WALLET_NAME")
 if not helpers.check_var(wallet_name):
-    print("Error: Invalid WALLET_NAME.")
+    print("Error: Invalid or missing WALLET_NAME environment variable.")
     exit(1)
 
 wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
 if not helpers.check_var(wallet_passphrase):
-    print("Error: Invalid WALLET_PASSPHRASE.")
+    print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
 # __create_wallet:

@@ -1,4 +1,7 @@
 __pycache__
 .venv
+venv
+credentials.*
 /credentials
 *.tmp
+.idea

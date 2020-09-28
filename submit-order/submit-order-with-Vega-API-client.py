@@ -8,8 +8,8 @@ Talks to:
 - Vega node (gRPC)
 
 Apps/Libraries:
-- REST: Vega-API-client (https://pypi.org/project/Vega-API-client/)
-- gRPC: Vega-API-client (https://pypi.org/project/Vega-API-client/)
+- REST (wallet): Vega-API-client (https://pypi.org/project/Vega-API-client/)
+- gRPC (node): Vega-API-client (https://pypi.org/project/Vega-API-client/)
 """
 
 # Note: this file uses smart-tags in comments to section parts of the code to
@@ -27,33 +27,30 @@ import json
 import os
 
 from google.protobuf.empty_pb2 import Empty
-
 # __import_client:
 import vegaapiclient as vac
-
 # :import_client__
 
 import helpers
 
-
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 if not helpers.check_var(node_url_grpc):
-    print("Error: Invalid NODE_URL_GRPC.")
+    print("Error: Invalid or missing NODE_URL_GRPC environment variable.")
     exit(1)
 
 walletserver_url = os.getenv("WALLETSERVER_URL")
 if not helpers.check_url(walletserver_url):
-    print("Error: Invalid WALLETSERVER_URL.")
+    print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
     exit(1)
 
 wallet_name = os.getenv("WALLET_NAME")
 if not helpers.check_var(wallet_name):
-    print("Error: Invalid WALLET_NAME.")
+    print("Error: Invalid or missing WALLET_NAME environment variable.")
     exit(1)
 
 wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
 if not helpers.check_var(wallet_passphrase):
-    print("Error: Invalid WALLET_PASSPHRASE.")
+    print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
 # __create_wallet:

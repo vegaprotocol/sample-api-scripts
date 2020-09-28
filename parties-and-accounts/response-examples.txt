@@ -1,0 +1,27 @@
+### __example_parties_response:
+# Response for a list of parties trading on a Vega network
+{
+  "parties": [
+    {
+      "id": "d2a645968df520712395caca1e82e022bba0b4816e66b827823ffc0163007fad"
+    },
+    {
+      "id": "530067c6777a5fafa484eda5eda7fc46f6d6f218c7686d517554d1d2d83fcfda"
+    },
+    ...
+    {
+      "id": "beb34ecb89187d18afba6f2cb40f2a35fd4c163fd21b27425af305bb5e0ef8da"
+    },
+  ]
+}
+# Note: some fields/records have been omitted to improve readability
+### :example_parties_response__
+
+### __example_party_by_id_response:
+# Response for a party by their identifier (this is their public key)
+{
+  "party": {
+    "id": "d2a645968df520712395caca1e82e022bba0b4816e66b827823ffc0163007fad"
+  }
+}
+### :example_party_by_id_response__
