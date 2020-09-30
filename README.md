@@ -34,6 +34,8 @@ And you're good to go. Now choose a sample program to run from the following (se
 | Submit, amend and cancel orders | bash, python3 | Vega wallet [REST], Vega node [REST, gRPC] | / [submit-amend-cancel-orders](submit-amend-cancel-orders) |
 | Submit order (tutorial, inc send tx) | bash, python3 | Vega wallet [REST], Vega node [REST, gRPC] | / [submit-order](submit-order) |
 | Vega/blockchain time  | bash, python3 | Vega node [REST, gRPC] | / [vega-time](vega-time) |
+| Streaming events | bash, python3 | Vega node [GraphQL, gRPC] | / [stream-events](stream-events) |
+| Fees estimation | bash, python3 | Vega node [REST, gRPC] | / [fees-estimation](fees-estimation) |
 
 # Contributing or raising issues
 

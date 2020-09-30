@@ -10,7 +10,7 @@ Please see the documentation on Vega for further information.
 Calculate estimated fees using shell scripts and `curl` only [REST API]:
 
 ```bash
-bash fees/get-fees-estimate.sh
+bash fees-estimation/get-fees-estimate.sh
 ```
 
 ## Python + requests
@@ -18,7 +18,7 @@ bash fees/get-fees-estimate.sh
 Calculate estimated fees using python3 and the [requests](https://pypi.org/project/requests/) library [REST API]:
 
 ```bash
-python3 fees/get-fees-estimate.py
+python3 fees-estimation/get-fees-estimate.py
 ```
 
 ## Python + Vega-API-client
@@ -26,7 +26,7 @@ python3 fees/get-fees-estimate.py
 Calculate estimated fees python3 and the [Vega-API-client](https://pypi.org/project/Vega-API-client/) library [gRPC API]:
 
 ```bash
-python3 fees/get-fees-estimate-with-Vega-API-client.py
+python3 fees-estimation/get-fees-estimate-with-Vega-API-client.py
 ```
 
 ---
