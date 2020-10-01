@@ -57,6 +57,7 @@ helpers.check_response(response)
 token = response.json()["token"]
 # :login_wallet__
 
+assert token != ""
 print("Logged in to wallet successfully")
 
 # __get_pubkey:
