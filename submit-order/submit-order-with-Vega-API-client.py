@@ -62,8 +62,9 @@ tradingcli = vac.VegaTradingClient(node_url_grpc)
 
 # Wallet server: Create a walletclient (see above for details)
 walletclient = vac.WalletClient(walletserver_url)
-walletclient.login(wallet_name, wallet_passphrase)
+response = walletclient.login(wallet_name, wallet_passphrase)
 # :create_wallet__
+helpers.check_response(response)
 
 # __get_market:
 # Get a list of markets
@@ -111,7 +112,7 @@ print(f"Response from PrepareSubmitOrder: {response}")
 # Wallet server: Sign the prepared transaction
 blob_base64 = base64.b64encode(response.blob).decode("ascii")
 print(f"Request for SignTx: blob={blob_base64}, pubKey={pubKey}")
-response = walletclient.signtx(blob_base64, pubKey)
+response = walletclient.signtx(blob_base64, pubKey, False)
 helpers.check_response(response)
 responsejson = response.json()
 print("Response from SignTx:")
