@@ -27,6 +27,10 @@ check_url "WALLETSERVER_URL" || exit 1
 check_var "WALLET_NAME" || exit 1
 check_var "WALLET_PASSPHRASE" || exit 1
 
+#####################################################################################
+#                           W A L L E T   S E R V I C E                             #
+#####################################################################################
+
 echo "Logging into wallet: $WALLET_NAME"
 
 # __login_wallet:
@@ -52,6 +56,10 @@ test -n "$pubKey" || exit 1
 test "$pubKey" == null && exit 1
 echo "Selected pubkey for signing"
 
+#####################################################################################
+#                               F I N D   M A R K E T                               #
+#####################################################################################
+
 # __get_market:
 # Request the identifier for the market to place on
 url="$NODE_URL_REST/markets"
@@ -60,6 +68,10 @@ marketID="$(echo "$response" | jq -r '.markets[0].id')"
 # :get_market__
 
 echo "Market found: $marketID"
+
+#####################################################################################
+#                          B L O C K C H A I N   T I M E                            #
+#####################################################################################
 
 # __get_expiry_time:
 # Request the current blockchain time, calculate an expiry time
@@ -70,6 +82,10 @@ expiresAt="$((blockchaintime+120*10**9))" # expire in 2 minutes
 # :get_expiry_time__
 
 echo "Blockchain time: $expiresAt"
+
+#####################################################################################
+#                              S U B M I T   O R D E R                              #
+#####################################################################################
 
 # __prepare_submit_order:
 # Prepare a submit order message
@@ -127,12 +143,23 @@ orderStatus="$(echo "$response" | jq -r '.order.status')"
 
 echo "Order processed, ID: $orderID, Status: $orderStatus"
 
-# -----------------------------
-# TODO: Order amendment >= 0.25
-# -----------------------------
+#####################################################################################
+#                               A M E N D   O R D E R                               #
+#####################################################################################
 
-# __prepare_cancel_order:
-# Prepare a cancel order message
+# -----------------------------------
+# TODO: Order amendment [coming soon]
+# -----------------------------------
+
+#####################################################################################
+#                             C A N C E L   O R D E R S                             #
+#####################################################################################
+
+# Select the mode to cancel orders from the following (comment out others), default = 3
+
+# __prepare_cancel_order_req1:
+# 1 - Cancel single order for party (pubkey)
+#     *** Include party, market and order identifier fields to cancel single order.
 cat >req.json <<EOF
 {
     "cancellation": {
@@ -142,6 +169,35 @@ cat >req.json <<EOF
     }
 }
 EOF
+# :prepare_cancel_order_req1__
+
+# __prepare_cancel_order_req2:
+# 2 - Cancel all orders on market for party (pubkey)
+#     *** Only include party & market identifier fields.
+cat >req.json <<EOF
+{
+    "cancellation": {
+        "partyID": "$pubKey",
+        "marketID": "$marketID"
+    }
+}
+EOF
+# :prepare_cancel_order_req2__
+
+# __prepare_cancel_order_req3:
+# 3 - Cancel all orders on all markets for party (pubkey)
+#     *** Only include party identifier field.
+cat >req.json <<EOF
+{
+    "cancellation": {
+        "partyID": "$pubKey"
+    }
+}
+EOF
+# :prepare_cancel_order_req3__
+
+# __prepare_cancel_order:
+# Prepare the cancel order message
 url="$NODE_URL_REST/orders/prepare/cancel"
 response="$(curl -s -XPOST -d @req.json "$url")"
 # :prepare_cancel_order__
@@ -171,7 +227,7 @@ echo "Signed cancellation and sent to Vega"
 
 # Wait for order submission to be included in a block
 echo "Waiting for blockchain..."
-sleep 2.5s
+sleep 5s
 url="$NODE_URL_REST/orders/$orderRef"
 response="$(curl -s "$url")"
 orderID="$(echo "$response" | jq -r '.order.id')"

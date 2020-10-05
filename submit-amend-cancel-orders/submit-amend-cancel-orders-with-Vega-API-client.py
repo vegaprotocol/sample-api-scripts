@@ -22,17 +22,12 @@ Apps/Libraries:
 #
 
 import base64
-import json
+import helpers
 import requests
 import time
 import os
 
 from google.protobuf.empty_pb2 import Empty
-# __import_client:
-import vegaapiclient as vac
-# :import_client__
-
-import helpers
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 if not helpers.check_var(node_url_grpc):
@@ -54,11 +49,17 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
-# Vega node: Create client for accessing public data
-data_client = vac.VegaTradingDataClient(node_url_grpc)
+# __import_client:
+import vegaapiclient as vac
 
-# Vega node: Create client for trading (e.g. submitting orders)
+# Vega gRPC clients for reading/writing data
+data_client = vac.VegaTradingDataClient(node_url_grpc)
 trading_client = vac.VegaTradingClient(node_url_grpc)
+# :import_client__
+
+#####################################################################################
+#                           W A L L E T   S E R V I C E                             #
+#####################################################################################
 
 print(f"Logging into wallet: {wallet_name}")
 
@@ -84,6 +85,10 @@ pubkey = keys[0]["pub"]
 assert pubkey != ""
 print("Selected pubkey for signing")
 
+#####################################################################################
+#                               F I N D   M A R K E T                               #
+#####################################################################################
+
 # __get_market:
 # Request the identifier for the market to place on
 markets = data_client.Markets(Empty()).markets
@@ -93,6 +98,10 @@ marketID = markets[0].id
 assert marketID != ""
 print(f"Market found: {marketID}")
 
+#####################################################################################
+#                          B L O C K C H A I N   T I M E                            #
+#####################################################################################
+
 # __get_expiry_time:
 # Request the current blockchain time, calculate an expiry time
 blockchain_time = data_client.GetVegaTime(Empty()).timestamp
@@ -101,6 +110,10 @@ expiresAt = int(blockchain_time + 120 * 1e9)  # expire in 2 minutes
 
 assert blockchain_time > 0
 print(f"Blockchain time: {blockchain_time}")
+
+#####################################################################################
+#                              S U B M I T   O R D E R                              #
+#####################################################################################
 
 # __prepare_submit_order:
 # Prepare a submit order message
@@ -147,19 +160,50 @@ orderID = response.order.id
 print("Order processed:")
 print(response)
 
-# -----------------------------
-# TODO: Order amendment >= 0.25
-# -----------------------------
+#####################################################################################
+#                               A M E N D   O R D E R                               #
+#####################################################################################
+
+# -----------------------------------
+# TODO: Order amendment [coming soon]
+# -----------------------------------
+
+#####################################################################################
+#                             C A N C E L   O R D E R S                             #
+#####################################################################################
+
+# Select the mode to cancel orders from the following (comment out others), default = 3
+
+# __prepare_cancel_order_req1:
+# 1 - Cancel single order for party (pubkey)
+cancel = vac.vega.OrderCancellation(
+    # Include party, market and order identifier fields to cancel single order.
+    marketID=marketID,
+    partyID=pubkey,
+    orderID=orderID,
+)
+# :prepare_cancel_order_req1__
+
+# __prepare_cancel_order_req2:
+# 2 - Cancel all orders on market for party (pubkey)
+cancel = vac.vega.OrderCancellation(
+    # Only include party & market identifier fields.
+    marketID=marketID,
+    partyID=pubkey,
+)
+# :prepare_cancel_order_req2__
+
+# __prepare_cancel_order_req3:
+# 3 - Cancel all orders on all markets for party (pubkey)
+cancel = vac.vega.OrderCancellation(
+    # Only include party identifier field.
+    partyID=pubkey,
+)
+# :prepare_cancel_order_req3__
 
 # __prepare_cancel_order:
-# Prepare a cancel order message
-order = vac.api.trading.CancelOrderRequest(
-    cancellation=vac.vega.OrderCancellation(
-        marketID=marketID,
-        partyID=pubkey,
-        orderID=orderID,
-    )
-)
+# Prepare the cancel order message
+order = vac.api.trading.CancelOrderRequest(cancellation=cancel)
 prepared_order = trading_client.PrepareCancelOrder(order)
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 # :prepare_cancel_order__
@@ -179,7 +223,7 @@ print("Signed cancellation and sent to Vega")
 
 # Wait for cancellation to be included in a block
 print("Waiting for blockchain...")
-time.sleep(2.5)
+time.sleep(3)
 order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 

@@ -47,6 +47,10 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
+#####################################################################################
+#                           W A L L E T   S E R V I C E                             #
+#####################################################################################
+
 print(f"Logging into wallet: {wallet_name}")
 
 # __login_wallet:
@@ -72,6 +76,10 @@ pubkey = keys[0]["pub"]
 assert pubkey != ""
 print("Selected pubkey for signing")
 
+#####################################################################################
+#                               F I N D   M A R K E T                               #
+#####################################################################################
+
 # __get_market:
 # Request the identifier for the market to place on
 url = f"{node_url_rest}/markets"
@@ -83,6 +91,10 @@ marketID = response.json()["markets"][0]["id"]
 assert marketID != ""
 print(f"Market found: {marketID}")
 
+#####################################################################################
+#                          B L O C K C H A I N   T I M E                            #
+#####################################################################################
+
 # __get_expiry_time:
 # Request the current blockchain time, calculate an expiry time
 response = requests.get(f"{node_url_rest}/time")
@@ -93,6 +105,10 @@ expiresAt = str(int(blockchain_time + 120 * 1e9))  # expire in 2 minutes
 
 assert blockchain_time > 0
 print(f"Blockchain time: {blockchain_time}")
+
+#####################################################################################
+#                              S U B M I T   O R D E R                              #
+#####################################################################################
 
 # __prepare_submit_order:
 # Prepare a submit order message
@@ -116,6 +132,7 @@ prepared_order = response.json()
 
 order_ref = prepared_order["submitID"]
 print(f"Prepared order, ref: {order_ref}")
+print(prepared_order)
 
 # __sign_tx_order:
 # Sign the prepared transaction
@@ -141,20 +158,57 @@ response_json = response.json()
 orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
 print(f"\nOrder processed, ID: {orderID}, Status: {orderStatus}")
+print(response_json)
 
-# -----------------------------
-# TODO: Order amendment >= 0.25
-# -----------------------------
+#####################################################################################
+#                               A M E N D   O R D E R                               #
+#####################################################################################
 
-# __prepare_cancel_order:
-# Prepare a cancel order message
+# -----------------------------------
+# TODO: Order amendment [coming soon]
+# -----------------------------------
+
+#####################################################################################
+#                             C A N C E L   O R D E R S                             #
+#####################################################################################
+
+# Select the mode to cancel orders from the following (comment out others), default = 3
+
+# __prepare_cancel_order_req1:
+# 1 - Cancel single order for party (pubkey)
 req = {
     "cancellation": {
+        # Include party, market and order identifier fields to cancel single order.
         "partyID": pubkey,
         "marketID": marketID,
         "orderID": orderID,
     }
 }
+# :prepare_cancel_order_req1__
+
+# __prepare_cancel_order_req2:
+# 2 - Cancel all orders on market for party (pubkey)
+req = {
+    "cancellation": {
+        # Only include party & market identifier fields.
+        "partyID": pubkey,
+        "marketID": marketID,
+    }
+}
+# :prepare_cancel_order_req2__
+
+# __prepare_cancel_order_req3:
+# 3 - Cancel all orders on all markets for party (pubkey)
+req = {
+    "cancellation": {
+        # Only include party identifier field.
+        "partyID": pubkey,
+    }
+}
+# :prepare_cancel_order_req3__
+
+# __prepare_cancel_order:
+# Prepare the cancel order message
 url = f"{node_url_rest}/orders/prepare/cancel"
 response = requests.post(url, json=req)
 helpers.check_response(response)
@@ -177,7 +231,7 @@ print("Signed cancellation and sent to Vega")
 
 # Wait for cancellation to be included in a block
 print("Waiting for blockchain...")
-time.sleep(2.5)
+time.sleep(3)
 url = f"{node_url_rest}/orders/{order_ref}"
 response = requests.get(url)
 response_json = response.json()
