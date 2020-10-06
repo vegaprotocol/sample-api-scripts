@@ -49,6 +49,9 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
+# Help guide users against including api version suffix on url
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
+
 # __import_client:
 import vegaapiclient as vac
 
@@ -211,7 +214,7 @@ blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 print(f"Cancellation prepared for order ID: {orderID}")
 
 # __sign_tx_cancel:
-# Sign the prepared transaction for cancellation
+# Sign the prepared order transaction for cancellation
 # Note: Setting propagate to true will submit to a Vega node
 req = {"tx": blob_base64, "pubKey": pubkey, "propagate": True}
 url = f"{wallet_server_url}/api/v1/messages"

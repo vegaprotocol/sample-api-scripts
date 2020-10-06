@@ -205,7 +205,7 @@ response="$(curl -s -XPOST -d @req.json "$url")"
 echo "Cancellation prepared for order ID: $orderID"
 
 # __sign_tx_cancel:
-# Sign the prepared transaction for cancellation
+# Sign the prepared order transaction for cancellation
 # Note: Setting propagate to true will also submit to a Vega node
 blob="$(echo "$response" | jq -r .blob)"
 test "$blob" == null && exit 1

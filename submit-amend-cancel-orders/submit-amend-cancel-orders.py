@@ -47,6 +47,9 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
+# Help guide users against including api version suffix on url
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
+
 #####################################################################################
 #                           W A L L E T   S E R V I C E                             #
 #####################################################################################
@@ -132,10 +135,9 @@ prepared_order = response.json()
 
 order_ref = prepared_order["submitID"]
 print(f"Prepared order, ref: {order_ref}")
-print(prepared_order)
 
 # __sign_tx_order:
-# Sign the prepared transaction
+# Sign the prepared order transaction
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_order["blob"]
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
@@ -158,15 +160,61 @@ response_json = response.json()
 orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
 print(f"\nOrder processed, ID: {orderID}, Status: {orderStatus}")
-print(response_json)
 
 #####################################################################################
 #                               A M E N D   O R D E R                               #
 #####################################################################################
 
-# -----------------------------------
-# TODO: Order amendment [coming soon]
-# -----------------------------------
+# __prepare_amend_order:
+# Prepare the amend order message
+req = {
+    "amendment": {
+        "orderID": orderID,
+        "marketID": marketID,
+        "partyID": pubkey,
+        "price": {
+            "value": "2"
+        },
+        "sizeDelta": "-25",
+        "timeInForce": "TIF_GTC",
+    }
+}
+url = f"{node_url_rest}/orders/prepare/amend"
+response = requests.post(url, json=req)
+helpers.check_response(response)
+prepared_cancel = response.json()
+blob = prepared_cancel["blob"]
+# :prepare_cancel_amend__
+
+print(f"Amendment prepared for order ID: {orderID}")
+
+# __sign_tx_amend:
+# Sign the prepared order transaction for amendment
+# Note: Setting propagate to true will also submit to a Vega node
+req = {"tx": blob, "pubKey": pubkey, "propagate": True}
+url = f"{wallet_server_url}/api/v1/messages"
+response = requests.post(url, headers=headers, json=req)
+helpers.check_response(response)
+# :sign_tx_amend__
+
+print("Signed amendment and sent to Vega")
+
+# Wait for amendment to be included in a block
+print("Waiting for blockchain...")
+time.sleep(3)
+url = f"{node_url_rest}/orders/{order_ref}"
+response = requests.get(url)
+response_json = response.json()
+orderID = response_json["order"]["id"]
+orderStatus = response_json["order"]["status"]
+orderSize = response_json["order"]["size"]
+orderTif = response_json["order"]["timeInForce"]
+
+# Completed.
+print("Amended Order:")
+print(f"ID: {orderID}, Price(Old): 1, Price(New): {orderStatus}, "
+      f"Size(Old): 100, Size(New): {orderSize}, "
+      f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
@@ -219,7 +267,7 @@ blob = prepared_cancel["blob"]
 print(f"Cancellation prepared for order ID: {orderID}")
 
 # __sign_tx_cancel:
-# Sign the prepared transaction for cancellation
+# Sign the prepared order transaction for cancellation
 # Note: Setting propagate to true will also submit to a Vega node
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
 url = f"{wallet_server_url}/api/v1/messages"

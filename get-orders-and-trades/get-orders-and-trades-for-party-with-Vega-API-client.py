@@ -31,7 +31,7 @@ import vegaapiclient as vac
 data_client = vac.VegaTradingDataClient(node_url_grpc)
 # :import_client__
 
-walletserver_url = os.getenv("WALLETSERVER_URL")
+wallet_server_url = os.getenv("WALLETSERVER_URL")
 if not helpers.check_url(walletserver_url):
     print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
     exit(1)
@@ -46,13 +46,16 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
+# Help guide users against including api version suffix on url
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
+
 markets = data_client.Markets(Empty()).markets
 market_id = markets[0].id
 assert market_id != ""
 
 # __existing_wallet:
 # Make request to log in to existing wallet
-wallet_client = vac.WalletClient(walletserver_url)
+wallet_client = vac.WalletClient(wallet_server_url)
 wallet_client.login(wallet_name, wallet_passphrase)
 # :existing_wallet__
 
