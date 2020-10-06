@@ -155,21 +155,60 @@ print("Signed order and sent to Vega")
 
 # Wait for order submission to be included in a block
 print("Waiting for blockchain...")
-time.sleep(2.5)
+time.sleep(4)
 order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
-
-print("Order processed:")
-print(response)
+orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+print(f"Order processed, ID: {orderID}, Status: {orderStatus}")
 
 #####################################################################################
 #                               A M E N D   O R D E R                               #
 #####################################################################################
 
-# -----------------------------------
-# TODO: Order amendment [coming soon]
-# -----------------------------------
+# __prepare_amend_order:
+# Prepare the amend order message
+amend = vac.vega.OrderAmendment(
+    marketID=marketID,
+    partyID=pubkey,
+    orderID=orderID,
+    price=vac.vega.Price(value=2),
+    timeInForce=vac.vega.Order.TimeInForce.TIF_GTC,
+)
+order = vac.api.trading.AmendOrderRequest(amendment=amend)
+prepared_order = trading_client.PrepareAmendOrder(order)
+blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
+# :prepare_cancel_amend__
+
+print(f"Amendment prepared for order ID: {orderID}")
+
+# __sign_tx_amend:
+# Sign the prepared order transaction for amendment
+# Note: Setting propagate to true will also submit to a Vega node
+req = {"tx": blob_base64, "pubKey": pubkey, "propagate": True}
+url = f"{wallet_server_url}/api/v1/messages"
+response = requests.post(url, headers=headers, json=req)
+helpers.check_response(response)
+# :sign_tx_amend__
+
+print("Signed amendment and sent to Vega")
+
+# Wait for amendment to be included in a block
+print("Waiting for blockchain...")
+time.sleep(4)
+order_id_request = vac.api.trading.OrderByIDRequest(orderID=orderID)
+response = data_client.OrderByID(order_id_request)
+orderID = response.id
+orderPrice = response.status
+orderSize = response.size
+orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.timeInForce)
+orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
+
+# Completed.
+print("Amended Order:")
+print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
+      f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
+      f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
@@ -226,10 +265,11 @@ print("Signed cancellation and sent to Vega")
 
 # Wait for cancellation to be included in a block
 print("Waiting for blockchain...")
-time.sleep(3)
+time.sleep(4)
 order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
+orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
 
 # Completed.
 print("Cancelled Order:")
-print(response)
+print(f"ID: {orderID}, Status: {orderStatus}")

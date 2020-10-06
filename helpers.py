@@ -1,7 +1,7 @@
 import random
 import requests
 import string
-import urllib3
+from typing import Any
 
 
 def check_response(r: requests.Response) -> None:
@@ -33,3 +33,7 @@ def check_wallet_url(url: str) -> str:
                 "Removing it.")
             url = url[:-len(suffix)]
     return url
+
+
+def enum_to_str(e: Any, val: int) -> str:
+    return e.keys()[e.values().index(val)]

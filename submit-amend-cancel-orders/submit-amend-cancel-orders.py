@@ -206,14 +206,15 @@ url = f"{node_url_rest}/orders/{order_ref}"
 response = requests.get(url)
 response_json = response.json()
 orderID = response_json["order"]["id"]
-orderStatus = response_json["order"]["status"]
+orderPrice = response_json["order"]["price"]
 orderSize = response_json["order"]["size"]
 orderTif = response_json["order"]["timeInForce"]
+orderStatus = response_json["order"]["status"]
 
 # Completed.
 print("Amended Order:")
-print(f"ID: {orderID}, Price(Old): 1, Price(New): {orderStatus}, "
-      f"Size(Old): 100, Size(New): {orderSize}, "
+print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
+      f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
 
 #####################################################################################
