@@ -34,6 +34,9 @@ if not helpers.check_url(wallet_server_url):
     print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
     exit(1)
 
+# Help guide users against including api version suffix on url
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
+
 print(f"Creating a new wallet on {wallet_server_url}:")
 print(f"- name:       {wallet_name}")
 print(f"- passphrase: {wallet_passphrase}")

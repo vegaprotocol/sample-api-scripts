@@ -33,6 +33,12 @@ wallet_name = helpers.random_string()
 wallet_passphrase = helpers.random_string()
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
+if not helpers.check_url(wallet_server_url):
+    print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
+    exit(1)
+
+# Help guide users against including api version suffix on url
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
 print(f"Creating a new wallet on {wallet_server_url}:")
 print(f"- name:       {wallet_name}")
@@ -95,7 +101,7 @@ print(json.dumps(key, indent=2, sort_keys=True))
 # Sign a transaction
 blob = b"data returned from a Vega node 'Prepare<operation>' call"
 tx = base64.b64encode(blob).decode("ascii")
-response = wallet_client.signtx(tx, keypair["pub"])
+response = wallet_client.signtx(tx, keypair["pub"], propagate=False)
 helpers.check_response(response)
 signedTx = response.json()["signedTx"]
 print("Signed transaction:")

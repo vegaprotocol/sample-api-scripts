@@ -47,6 +47,9 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
+# Help guide users against including api version suffix on url
+walletserver_url = helpers.check_wallet_url(walletserver_url)
+
 # __create_wallet:
 CREATE_NEW_WALLET = False
 if CREATE_NEW_WALLET:

@@ -22,17 +22,11 @@ Apps/Libraries:
 #
 
 import base64
-import json
-import requests
+import helpers
 import time
 import os
 
 from google.protobuf.empty_pb2 import Empty
-# __import_client:
-import vegaapiclient as vac
-# :import_client__
-
-import helpers
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 if not helpers.check_var(node_url_grpc):
@@ -54,28 +48,36 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
-# Vega node: Create client for accessing public data
-data_client = vac.VegaTradingDataClient(node_url_grpc)
+# Help guide users against including api version suffix on url
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
-# Vega node: Create client for trading (e.g. submitting orders)
+# __import_client:
+import vegaapiclient as vac
+
+# Vega gRPC clients for reading/writing data
+data_client = vac.VegaTradingDataClient(node_url_grpc)
 trading_client = vac.VegaTradingClient(node_url_grpc)
+wallet_client = vac.WalletClient(wallet_server_url)
+# :import_client__
+
+#####################################################################################
+#                           W A L L E T   S E R V I C E                             #
+#####################################################################################
 
 print(f"Logging into wallet: {wallet_name}")
 
 # __login_wallet:
 # Log in to an existing wallet
-req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
-response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
+response = wallet_client.login(wallet_name, wallet_passphrase)
 helpers.check_response(response)
-token = response.json()["token"]
+# Note: secret wallet token is stored internally for duration of session
 # :login_wallet__
 
 print("Logged in to wallet successfully")
 
 # __get_pubkey:
 # List key pairs and select public key to use
-headers = {"Authorization": f"Bearer {token}"}
-response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
+response = wallet_client.listkeys()
 helpers.check_response(response)
 keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
@@ -83,6 +85,10 @@ pubkey = keys[0]["pub"]
 
 assert pubkey != ""
 print("Selected pubkey for signing")
+
+#####################################################################################
+#                               F I N D   M A R K E T                               #
+#####################################################################################
 
 # __get_market:
 # Request the identifier for the market to place on
@@ -93,6 +99,10 @@ marketID = markets[0].id
 assert marketID != ""
 print(f"Market found: {marketID}")
 
+#####################################################################################
+#                          B L O C K C H A I N   T I M E                            #
+#####################################################################################
+
 # __get_expiry_time:
 # Request the current blockchain time, calculate an expiry time
 blockchain_time = data_client.GetVegaTime(Empty()).timestamp
@@ -101,6 +111,10 @@ expiresAt = int(blockchain_time + 120 * 1e9)  # expire in 2 minutes
 
 assert blockchain_time > 0
 print(f"Blockchain time: {blockchain_time}")
+
+#####################################################################################
+#                              S U B M I T   O R D E R                              #
+#####################################################################################
 
 # __prepare_submit_order:
 # Prepare a submit order message
@@ -128,9 +142,7 @@ print(f"Prepared order, ref: {order_ref}")
 # Sign the prepared transaction
 # Note: Setting propagate to true will submit to a Vega node
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
-req = {"tx": blob_base64, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+response = wallet_client.signtx(blob_base64, pubkey, True)
 helpers.check_response(response)
 signedTx = response.json()["signedTx"]
 # :sign_tx_order__
@@ -139,27 +151,94 @@ print("Signed order and sent to Vega")
 
 # Wait for order submission to be included in a block
 print("Waiting for blockchain...")
-time.sleep(2.5)
+time.sleep(4)
 order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
+orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+print(f"Order processed, ID: {orderID}, Status: {orderStatus}")
 
-print("Order processed:")
-print(response)
+#####################################################################################
+#                               A M E N D   O R D E R                               #
+#####################################################################################
 
-# -----------------------------
-# TODO: Order amendment >= 0.25
-# -----------------------------
+# __prepare_amend_order:
+# Prepare the amend order message
+amend = vac.vega.OrderAmendment(
+    marketID=marketID,
+    partyID=pubkey,
+    orderID=orderID,
+    price=vac.vega.Price(value=2),
+    timeInForce=vac.vega.Order.TimeInForce.TIF_GTC,
+)
+order = vac.api.trading.AmendOrderRequest(amendment=amend)
+prepared_order = trading_client.PrepareAmendOrder(order)
+blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
+# :prepare_cancel_amend__
+
+print(f"Amendment prepared for order ID: {orderID}")
+
+# __sign_tx_amend:
+# Sign the prepared order transaction for amendment
+# Note: Setting propagate to true will also submit to a Vega node
+response = wallet_client.signtx(blob_base64, pubkey, True)
+helpers.check_response(response)
+# :sign_tx_amend__
+
+print("Signed amendment and sent to Vega")
+
+# Wait for amendment to be included in a block
+print("Waiting for blockchain...")
+time.sleep(4)
+order_id_request = vac.api.trading.OrderByIDRequest(orderID=orderID)
+response = data_client.OrderByID(order_id_request)
+orderID = response.id
+orderPrice = response.status
+orderSize = response.size
+orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.timeInForce)
+orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
+
+print("Amended Order:")
+print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
+      f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
+      f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
+
+#####################################################################################
+#                             C A N C E L   O R D E R S                             #
+#####################################################################################
+
+# Select the mode to cancel orders from the following (comment out others), default = 3
+
+# __prepare_cancel_order_req1:
+# 1 - Cancel single order for party (pubkey)
+cancel = vac.vega.OrderCancellation(
+    # Include party, market and order identifier fields to cancel single order.
+    marketID=marketID,
+    partyID=pubkey,
+    orderID=orderID,
+)
+# :prepare_cancel_order_req1__
+
+# __prepare_cancel_order_req2:
+# 2 - Cancel all orders on market for party (pubkey)
+cancel = vac.vega.OrderCancellation(
+    # Only include party & market identifier fields.
+    marketID=marketID,
+    partyID=pubkey,
+)
+# :prepare_cancel_order_req2__
+
+# __prepare_cancel_order_req3:
+# 3 - Cancel all orders on all markets for party (pubkey)
+cancel = vac.vega.OrderCancellation(
+    # Only include party identifier field.
+    partyID=pubkey,
+)
+# :prepare_cancel_order_req3__
 
 # __prepare_cancel_order:
-# Prepare a cancel order message
-order = vac.api.trading.CancelOrderRequest(
-    cancellation=vac.vega.OrderCancellation(
-        marketID=marketID,
-        partyID=pubkey,
-        orderID=orderID,
-    )
-)
+# Prepare the cancel order message
+order = vac.api.trading.CancelOrderRequest(cancellation=cancel)
 prepared_order = trading_client.PrepareCancelOrder(order)
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 # :prepare_cancel_order__
@@ -167,11 +246,9 @@ blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 print(f"Cancellation prepared for order ID: {orderID}")
 
 # __sign_tx_cancel:
-# Sign the prepared transaction for cancellation
+# Sign the prepared order transaction for cancellation
 # Note: Setting propagate to true will submit to a Vega node
-req = {"tx": blob_base64, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+response = wallet_client.signtx(blob_base64, pubkey, True)
 helpers.check_response(response)
 # :sign_tx_cancel__
 
@@ -179,10 +256,12 @@ print("Signed cancellation and sent to Vega")
 
 # Wait for cancellation to be included in a block
 print("Waiting for blockchain...")
-time.sleep(2.5)
+time.sleep(4)
 order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
+orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+
+print("Cancelled Order:")
+print(f"ID: {orderID}, Status: {orderStatus}")
 
 # Completed.
-print("Cancelled Order:")
-print(response)
