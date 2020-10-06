@@ -8,9 +8,9 @@ These scripts talk to a Vega node as well as a Vega wallet and:
 - Select key-pair
 - Prepare and submit a new order
 - Wait for order to be accepted and processed
-- Amend the order [coming soon]
+- Amend the order
 - Cancel the order
-- Cancel all orders [coming soon] 
+- Cancel all orders
 
 Please see the documentation on Vega for further information.
 
