@@ -135,7 +135,7 @@ echo "Signed order and sent to Vega"
 
 # Wait for order submission to be included in a block
 echo "Waiting for blockchain..."
-sleep 2.5s
+sleep 4s
 url="$NODE_URL_REST/orders/$orderRef"
 response="$(curl -s "$url")"
 orderID="$(echo "$response" | jq -r '.order.id')"
@@ -147,9 +147,61 @@ echo "Order processed, ID: $orderID, Status: $orderStatus"
 #                               A M E N D   O R D E R                               #
 #####################################################################################
 
-# -----------------------------------
-# TODO: Order amendment [coming soon]
-# -----------------------------------
+# __prepare_amend_order:
+# Prepare the amend order message
+cat >req.json <<EOF
+{
+    "amendment": {
+        "partyID": "$pubKey",
+        "marketID": "$marketID",
+        "orderID": "$orderID",
+        "price": {
+            "value": "2"
+        },
+        "sizeDelta": "-25",
+        "timeInForce": "TIF_GTC"
+    }
+}
+EOF
+url="$NODE_URL_REST/orders/prepare/amend"
+response="$(curl -s -XPOST -d @req.json "$url")"
+# :prepare_cancel_amend__
+
+echo "Amendment prepared for order ID: $orderID"
+
+# __sign_tx_amend:
+# Sign the prepared order transaction for amendment
+# Note: Setting propagate to true will also submit to a Vega node
+blob="$(echo "$response" | jq -r .blob)"
+test "$blob" == null && exit 1
+cat >req.json <<EOF
+{
+    "tx": "$blob",
+    "pubKey": "$pubKey",
+    "propagate": true
+}
+EOF
+url="$WALLETSERVER_URL/api/v1/messages"
+response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
+# :sign_tx_amend__
+
+echo "Signed amendment and sent to Vega"
+
+# Wait for order submission to be included in a block
+echo "Waiting for blockchain..."
+sleep 4s
+url="$NODE_URL_REST/orders/$orderRef"
+response="$(curl -s "$url")"
+orderID="$(echo "$response" | jq -r '.order.id')"
+orderPrice="$(echo "$response" | jq -r '.order.price')"
+orderSize="$(echo "$response" | jq -r '.order.size')"
+orderTif="$(echo "$response" | jq -r '.order.timeInForce')"
+orderStatus="$(echo "$response" | jq -r '.order.status')"
+
+echo "Amended Order:"
+echo "ID: $orderID, Status: $orderStatus, Price(Old): 1,"
+echo " Price(New): $orderPrice, Size(Old): 100, Size(New): $orderSize,"
+echo " TimeInForce(Old): TIF_GTT, TimeInForce(New): $orderTif"
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
@@ -227,7 +279,7 @@ echo "Signed cancellation and sent to Vega"
 
 # Wait for order submission to be included in a block
 echo "Waiting for blockchain..."
-sleep 5s
+sleep 4s
 url="$NODE_URL_REST/orders/$orderRef"
 response="$(curl -s "$url")"
 orderID="$(echo "$response" | jq -r '.order.id')"

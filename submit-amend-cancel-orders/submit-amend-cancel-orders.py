@@ -211,7 +211,6 @@ orderSize = response_json["order"]["size"]
 orderTif = response_json["order"]["timeInForce"]
 orderStatus = response_json["order"]["status"]
 
-# Completed.
 print("Amended Order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
@@ -287,6 +286,7 @@ response_json = response.json()
 orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
 
-# Completed.
 print("Cancelled Order:")
 print(f"ID: {orderID}, Status: {orderStatus}")
+
+# Completed.

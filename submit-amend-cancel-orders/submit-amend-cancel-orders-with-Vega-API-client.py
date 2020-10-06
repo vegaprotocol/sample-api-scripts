@@ -204,7 +204,6 @@ orderSize = response.size
 orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.timeInForce)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
 
-# Completed.
 print("Amended Order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
@@ -270,6 +269,7 @@ order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
 
-# Completed.
 print("Cancelled Order:")
 print(f"ID: {orderID}, Status: {orderStatus}")
+
+# Completed.
