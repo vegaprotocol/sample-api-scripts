@@ -23,7 +23,6 @@ Apps/Libraries:
 
 import base64
 import helpers
-import requests
 import time
 import os
 
@@ -58,6 +57,7 @@ import vegaapiclient as vac
 # Vega gRPC clients for reading/writing data
 data_client = vac.VegaTradingDataClient(node_url_grpc)
 trading_client = vac.VegaTradingClient(node_url_grpc)
+wallet_client = vac.WalletClient(wallet_server_url)
 # :import_client__
 
 #####################################################################################
@@ -68,18 +68,16 @@ print(f"Logging into wallet: {wallet_name}")
 
 # __login_wallet:
 # Log in to an existing wallet
-req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
-response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
+response = wallet_client.login(wallet_name, wallet_passphrase)
 helpers.check_response(response)
-token = response.json()["token"]
+# Note: secret wallet token is stored internally for duration of session
 # :login_wallet__
 
 print("Logged in to wallet successfully")
 
 # __get_pubkey:
 # List key pairs and select public key to use
-headers = {"Authorization": f"Bearer {token}"}
-response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
+response = wallet_client.listkeys()
 helpers.check_response(response)
 keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
@@ -144,9 +142,7 @@ print(f"Prepared order, ref: {order_ref}")
 # Sign the prepared transaction
 # Note: Setting propagate to true will submit to a Vega node
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
-req = {"tx": blob_base64, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+response = wallet_client.signtx(blob_base64, pubkey, True)
 helpers.check_response(response)
 signedTx = response.json()["signedTx"]
 # :sign_tx_order__
@@ -185,9 +181,7 @@ print(f"Amendment prepared for order ID: {orderID}")
 # __sign_tx_amend:
 # Sign the prepared order transaction for amendment
 # Note: Setting propagate to true will also submit to a Vega node
-req = {"tx": blob_base64, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+response = wallet_client.signtx(blob_base64, pubkey, True)
 helpers.check_response(response)
 # :sign_tx_amend__
 
@@ -254,9 +248,7 @@ print(f"Cancellation prepared for order ID: {orderID}")
 # __sign_tx_cancel:
 # Sign the prepared order transaction for cancellation
 # Note: Setting propagate to true will submit to a Vega node
-req = {"tx": blob_base64, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+response = wallet_client.signtx(blob_base64, pubkey, True)
 helpers.check_response(response)
 # :sign_tx_cancel__
 
