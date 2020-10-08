@@ -165,7 +165,7 @@ cat >req.json <<EOF
 EOF
 url="$NODE_URL_REST/orders/prepare/amend"
 response="$(curl -s -XPOST -d @req.json "$url")"
-# :prepare_cancel_amend__
+# :prepare_amend_order__
 
 echo "Amendment prepared for order ID: $orderID"
 
