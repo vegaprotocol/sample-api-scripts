@@ -184,7 +184,7 @@ response = requests.post(url, json=req)
 helpers.check_response(response)
 prepared_cancel = response.json()
 blob = prepared_cancel["blob"]
-# :prepare_cancel_amend__
+# :prepare_amend_order__
 
 print(f"Amendment prepared for order ID: {orderID}")
 
