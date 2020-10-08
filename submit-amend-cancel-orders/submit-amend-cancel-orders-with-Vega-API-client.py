@@ -174,7 +174,7 @@ amend = vac.vega.OrderAmendment(
 order = vac.api.trading.AmendOrderRequest(amendment=amend)
 prepared_order = trading_client.PrepareAmendOrder(order)
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
-# :prepare_cancel_amend__
+# :prepare_amend_order__
 
 print(f"Amendment prepared for order ID: {orderID}")
 
