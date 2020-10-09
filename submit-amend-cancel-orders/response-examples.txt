@@ -26,11 +26,37 @@
 ### :example_sign_tx_cancel_response__
 
 
+### __example_prepare_amend_order_response:
+# Response for preparing an amend order message
+{
+  "blob": "MWY5MjViYzMtNjFhMi00YzNiLTg5ZmEtMGJlNDZkYmRhZTQwQgoW ... KOf//////////wE4AQ==",
+}
+# Note: some fields have been shortened to improve readability
+### :example_prepare_amend_order_response__
+
+
+### __example_sign_tx_amend_response:
+# Response for signing the prepared transaction
+{
+  "base64Bundle": "CuIBCrIBMWY5MjViYzMtNjFhMi00YzNiLTg5ZmEtMGJlNDZkY ... QAIEgx2ZWdhL2VkMjU1MTkYAQ==",
+  "hexBundle": "0ae2010ab20131663932356263332d363161322d3463336 ... 823766567612f656432353531391801",
+  "signedTx": {
+    "sig": {
+      "algo": "vega/ed25519",
+      "sig": "0jsqbLcBc4nT4Y4u3OikFGxrmKWUKTLaOPo/zbbMiROJsAzVEXNgLTPhlmKdDA4BQViZSVdgqXvvVCZQC8kACA==",
+      "version": 1
+    },
+    "tx": "CrIBMWY5MjViYzMtNjFhMi00YzNiLTg5ZmEtMGJlNDZkYmRhZTQ ... QELfsftyQ=="
+  }
+}
+# Note: some fields have been shortened to improve readability
+### :example_sign_tx_amend_response__
+
+
 ### __example_prepare_cancel_order_response:
 # Response for preparing a cancel order message
 {
-  "blob": "YWQ5M2NmYzktYTU5OC00MmNmLTk4ZmMtOTA1NWY0MWUzMTBmQB ... mItZjA4NDllOTY1YzIy",
-  "submitID": "50f790bc-c1c6-47fd-a52b-f0849e965c22"
+  "blob": "XY2ddEdd2dpYzktYTU5OC00MmNmLTk4ZmMtOTA1NWY0MWUzMTBmQB ... mItZjA4NDllOTY1YzIy",
 }
 # Note: some fields have been shortened to improve readability
 ### :example_prepare_cancel_order_response__

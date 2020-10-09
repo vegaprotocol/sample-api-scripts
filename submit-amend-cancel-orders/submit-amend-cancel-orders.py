@@ -182,8 +182,8 @@ req = {
 url = f"{node_url_rest}/orders/prepare/amend"
 response = requests.post(url, json=req)
 helpers.check_response(response)
-prepared_cancel = response.json()
-blob = prepared_cancel["blob"]
+prepared_amend = response.json()
+blob = prepared_amend["blob"]
 # :prepare_amend_order__
 
 print(f"Amendment prepared for order ID: {orderID}")
