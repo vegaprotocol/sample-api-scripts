@@ -153,6 +153,7 @@ print("Waiting for blockchain...", end="", flush=True)
 url = f"{node_url_rest}/orders/{order_ref}"
 response = requests.get(url)
 while response.status_code != 200:
+  time.sleep(0.5)
   print(".", end="", flush=True)
   response = requests.get(url)
 
