@@ -87,9 +87,10 @@ print("Selected pubkey for signing")
 url = "{base}/assets".format(base=node_url_rest)
 response = requests.get(url)
 helpers.check_response(response)
-print("Assets:\n{}".format(
-    json.dumps(response.json(), indent=2, sort_keys=True)))
 # :get_assets__
+
+# print("Assets:\n{}".format(
+#    json.dumps(response.json(), indent=2, sort_keys=True)))
 
 # Find asset with name DAI
 found_asset_id = "UNKNOWN"
@@ -170,7 +171,7 @@ market = {
             }
         },
     },
-    "reference": "liquidity2020-1"    # Custom reference   TODO: Tamlyn to check this with Jeremy
+    "reference": "ref_" + helpers.random_string()    # Custom reference   TODO: Tamlyn to check this with Jeremy
 }
 
 url = f"{node_url_rest}/governance/prepare/proposal"
@@ -233,7 +234,7 @@ vote = {
 }
 
 url = f"{node_url_rest}/governance/prepare/vote"
-response = requests.post(url, json=market)
+response = requests.post(url, json=vote)
 helpers.check_response(response)
 prepared_vote = response.json()
 # :prepare_vote__
@@ -257,7 +258,6 @@ print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
 done = False
 while not done:
     time.sleep(0.5)
-    print(".", end="", flush=True)
     my_proposals = requests.get(node_url_rest + "/parties/" + pubkey + "/proposals")
     if my_proposals.status_code != 200:
         continue
@@ -265,13 +265,12 @@ while not done:
     for n in my_proposals.json()["data"]:
         if n["proposal"]["reference"] == proposal_ref:
             if n["proposal"]["state"] != "STATE_OPEN":
-                print()
                 print(n["proposal"]["state"])
                 if n["proposal"]["state"] == "STATE_ENACTED":
                     done = True
                     break
                 elif n["proposal"]["state"] == "STATE_PASSED":
-                    print("proposal vote has succeeded")
+                    print("proposal vote has succeeded, waiting for enactment")
                 else:
                     print(n)
                     exit(1)
