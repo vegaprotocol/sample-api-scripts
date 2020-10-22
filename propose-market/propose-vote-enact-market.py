@@ -89,6 +89,7 @@ response = requests.get(url)
 helpers.check_response(response)
 # :get_assets__
 
+# Debugging
 # print("Assets:\n{}".format(
 #    json.dumps(response.json(), indent=2, sort_keys=True)))
 
@@ -146,16 +147,16 @@ market = {
                     "future": {
                         "asset": found_asset_id,               # The asset ID for DAI (found above)
                         "maturity": "2020-12-31T22:59:59Z",
-                      # "settlementPriceSource: {              # TODO: Tamlyn to check this with Barney
-                      #     "sourceType": "signedMessage",
-                      #     "sourcePubkeys": ["YOUR_PUBKEY_HERE"],
-                      #     "field": "price",
-                      #     "dataType": "decimal",
-                      #     "filters": [
-                      #         { "field": "feed_id", "equals": "BTCUSD/EOD" },
-                      #         { "field": "mark_time", "equals": "31/12/20" }
-                      #     ]
-                      # }
+                        # "settlementPriceSource: {
+                        #     "sourceType": "signedMessage",
+                        #     "sourcePubkeys": ["YOUR_PUBKEY_HERE"],
+                        #     "field": "price",
+                        #     "dataType": "decimal",
+                        #     "filters": [
+                        #         { "field": "feed_id", "equals": "BTCUSD/EOD" },
+                        #         { "field": "mark_time", "equals": "31/12/20" }
+                        #     ]
+                        # }
                     },
                     "name": "BTC/DAI",
                     "quoteName": "DAI",
@@ -170,8 +171,7 @@ market = {
                 "simple": {"factorLong": 0, "factorShort": 0},
             }
         },
-    },
-    "reference": "ref_" + helpers.random_string()    # Custom reference   TODO: Tamlyn to check this with Jeremy
+    }
 }
 
 url = f"{node_url_rest}/governance/prepare/proposal"
@@ -195,10 +195,13 @@ helpers.check_response(response)
 # :sign_tx_proposal__
 
 print("Signed market proposal and sent to Vega")
+
+# Debugging
 # print("Signed transaction:\n", response.json(), "\n")
 
 # Wait for proposal to be included in a block and to be accepted by Vega network
 print("Waiting for blockchain...", end="", flush=True)
+proposal_id = ""
 done = False
 while not done:
     time.sleep(0.5)
@@ -215,6 +218,9 @@ while not done:
             print(n)
             done = True
             break
+
+
+assert proposal_id != ""
 
 #####################################################################################
 #                             V O T E   O N   M A R K E T                           #
@@ -239,6 +245,7 @@ helpers.check_response(response)
 prepared_vote = response.json()
 # :prepare_vote__
 
+# Debugging
 # print("Prepared vote:\n", prepared_vote, "\n")
 
 # __sign_tx_vote:
@@ -252,6 +259,8 @@ helpers.check_response(response)
 # :sign_tx_vote__
 
 print("Signed vote on proposal and sent to Vega")
+
+# Debugging
 # print("Signed transaction:\n", response.json(), "\n")
 
 print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
