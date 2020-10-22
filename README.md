@@ -38,6 +38,10 @@ And you're good to go. Now choose a sample program to run from the following (se
 | Fees estimation | bash, python3 | Vega node [REST, gRPC] | / [fees-estimation](fees-estimation) |
 | Propose, vote and enact new markets | bash, python3 | Vega node [REST] | / [propose-markets](propose-markets) |
 
+# Troubleshooting
+
+Python/terminal: If you get `No module named 'helpers'...`, you should `source credentials` and check with `echo "$PYTHONPATH"` than it shows `"."`.
+
 # Contributing or raising issues
 
 Please reach out to us on the [community forums](https://community.vega.xyz/c/testnet/) or [Discord chat](https://discord.gg/bkAF3Tu) to enquire further about how to get involved with Vega.
