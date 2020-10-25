@@ -93,6 +93,7 @@ helpers.check_response(response)
 # print("Assets:\n{}".format(
 #    json.dumps(response.json(), indent=2, sort_keys=True)))
 
+# __find_asset:
 # Find asset with name DAI
 found_asset_id = "UNKNOWN"
 assets = response.json()["assets"]
@@ -102,6 +103,7 @@ for asset in assets:
         print(asset)
         found_asset_id = asset["ID"]
         break
+# __find_asset:
 
 if found_asset_id == "UNKNOWN":
     print("DAI asset not found on specified Vega network, please propose and create this asset first")
