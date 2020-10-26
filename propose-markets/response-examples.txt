@@ -1,0 +1,40 @@
+### __example_get_assets_response:
+# Response for a list of orders by market on a Vega network
+{
+  "assets": [
+    {
+      "ID": "2fdd696ac7787d98afcbc136d4cf17bc595f7c0d8f3bf57c0ceeb5184347b725",
+      "decimals": "5",
+      "name": "Bitcoin",
+      "source": {
+        "builtinAsset": {
+          "decimals": "5",
+          "maxFaucetAmountMint": "1000000",
+          "name": "Bitcoin",
+          "symbol": "BTC",
+          "totalSupply": "21000000"
+        }
+      },
+      "symbol": "BTC",
+      "totalSupply": "21000000"
+    },
+    ...
+    {
+      "ID": "16657915cb47f8c9c50c753e95a9a8107933a904fabcfaebe10284bbd37649b9",
+      "decimals": "5",
+      "name": "Ether",
+      "source": {
+        "builtinAsset": {
+          "decimals": "5",
+          "maxFaucetAmountMint": "10000000",
+          "name": "Ether",
+          "symbol": "ETH",
+          "totalSupply": "110436690"
+        }
+      },
+      "symbol": "ETH",
+      "totalSupply": "110436690"
+    }
+  ]
+}
+### :example_get_assets_response__

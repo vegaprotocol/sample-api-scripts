@@ -144,8 +144,8 @@ market = {
                 "continuous": {"tickSize": "0.01"},
                 "decimalPlaces": "5",
                 "instrument": {
-                    "baseName": "BTC",
-                    "code": "CRYPTO:BTCDAI/DEC20",
+                    "baseName": "COM",
+                    "code": "CRYPTO:COMDAI/DEC20",
                     "future": {
                         "asset": found_asset_id,               # The asset ID for DAI (found above)
                         "maturity": "2020-12-31T22:59:59Z",
@@ -160,7 +160,7 @@ market = {
                         #     ]
                         # }
                     },
-                    "name": "BTC/DAI",
+                    "name": "COM/DAI",
                     "quoteName": "DAI",
                 },
                 "logNormal": {
@@ -169,7 +169,7 @@ market = {
                     "tau": 1.90128526884173e-06,
                 },
                 "metadata": [],
-                "openingAuctionDuration": "1",
+                "openingAuctionDuration": "1800",  # Duration in seconds
                 "simple": {"factorLong": 0, "factorShort": 0},
             }
         },
