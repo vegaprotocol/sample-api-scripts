@@ -17,8 +17,8 @@ check_url() {
 	var_name="$1"
 	check_var "$var_name" || return 1
 	var_value="${!var_name}"
-	if ! echo "$var_value" | grep -q '^https://' ; then
-		echo "Invalid $var_name - does not start with \"https://\""
+	if ! echo "$var_value" | grep -qE '^http[s]?://' ; then
+		echo "Invalid $var_name - does not start with \"http://\" or \"https://\""
 		return 1
 	fi
 }
