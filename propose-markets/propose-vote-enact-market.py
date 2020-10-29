@@ -103,7 +103,7 @@ for asset in assets:
         print(asset)
         found_asset_id = asset["ID"]
         break
-# __find_asset:
+# :find_asset__
 
 if found_asset_id == "UNKNOWN":
     print("DAI asset not found on specified Vega network, please propose and create this asset first")
