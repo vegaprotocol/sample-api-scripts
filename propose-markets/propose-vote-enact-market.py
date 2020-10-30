@@ -103,7 +103,7 @@ for asset in assets:
         print(asset)
         found_asset_id = asset["ID"]
         break
-# __find_asset:
+# :find_asset__
 
 if found_asset_id == "UNKNOWN":
     print("DAI asset not found on specified Vega network, please propose and create this asset first")
@@ -135,10 +135,14 @@ print(f"Blockchain time: {blockchain_time} ({blockchain_time_seconds} seconds pa
 # Prepare a market proposal for a new market
 market = {
     "partyID": pubkey,
-    "proposal": {                                               # Set timestamps (note: must be in seconds precision)
-        "validationTimestamp": blockchain_time_seconds + 1,     # Current time on Vega + 1 second
-        "closingTimestamp": blockchain_time_seconds + 15,       # Current time on Vega + 15 second
-        "enactmentTimestamp": blockchain_time_seconds + 20,     # Current time on Vega + 20 second
+    "proposal": {
+        # Set validation timestamp to current time on Vega + 1 second
+        "validationTimestamp": blockchain_time_seconds + 1,
+        # Set closing timestamp to current time on Vega + 15 second
+        "closingTimestamp": blockchain_time_seconds + 15,
+        # Set enactment timestamp to current time on Vega + 20 second
+        "enactmentTimestamp": blockchain_time_seconds + 20,
+        # Note: timestamps must be in seconds precision
         "newMarket": {
             "changes": {
                 "continuous": {"tickSize": "0.01"},
@@ -147,7 +151,8 @@ market = {
                     "baseName": "BTC",
                     "code": "CRYPTO:BTCDAI/DEC20",
                     "future": {
-                        "asset": found_asset_id,               # The asset ID for DAI (found above)
+                        # Settlement asset identifier (found above)
+                        "asset": found_asset_id,
                         "maturity": "2020-12-31T22:59:59Z",
                         # "settlementPriceSource: {
                         #     "sourceType": "signedMessage",
@@ -169,7 +174,8 @@ market = {
                     "tau": 1.90128526884173e-06,
                 },
                 "metadata": [],
-                "openingAuctionDuration": "1",
+                # Set opening auction duration (in seconds)
+                "openingAuctionDuration": "120",
                 "simple": {"factorLong": 0, "factorShort": 0},
             }
         },
@@ -292,6 +298,7 @@ while not done:
 
 # STEP 3 - Wait for market to be enacted
 
+# __wait_for_market:
 print("Waiting for proposal to be enacted or failed...", end="", flush=True)
 done = False
 while not done:
@@ -307,5 +314,6 @@ while not done:
             print(n)
             done = True
             break
+# :wait_for_market__
 
 # Completed.
