@@ -298,6 +298,7 @@ while not done:
 
 # STEP 3 - Wait for market to be enacted
 
+# __wait_for_market:
 print("Waiting for proposal to be enacted or failed...", end="", flush=True)
 done = False
 while not done:
@@ -313,5 +314,6 @@ while not done:
             print(n)
             done = True
             break
+# :wait_for_market__
 
 # Completed.

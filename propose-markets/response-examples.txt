@@ -73,3 +73,68 @@
 # Note: some fields have been shortened to improve readability
 ### :example_sign_tx_vote_response__
 
+
+### __example_wait_for_market_response:
+# Response from a newly enacted market
+{
+   "id": "P0000006542-0000000001",
+   "tradableInstrument": {
+      "instrument": {
+         "id": "",
+         "code": "CRYPTO:BTCDAI/DEC20",
+         "name": "BTC/DAI",
+         "baseName": "BTC",
+         "quoteName": "DAI",
+         "metadata": {
+            "tags": []
+         },
+         "initialMarkPrice": "1",
+         "future": {
+            "maturity": "2020-12-31T22:59:59Z",
+            "asset": "94beaabf8a99450 ... c68357d800dcf52e2f08b50ad89ca37fb3c451fb1",
+            "ethereumEvent": {
+               "contractID": "0x0B484706 ... 4b2266446B1cb6d648E3cC1",
+               "event": "price_changed",
+               "value": "1500000"
+            }
+         }
+      },
+      "marginCalculator": {
+         "scalingFactors": {
+            "searchLevel": 1.1,
+            "initialMargin": 1.2,
+            "collateralRelease": 1.4
+         }
+      },
+      "logNormalRiskModel": {
+         "riskAversionParameter": 0.01,
+         "tau": 1.9012853E-6,
+         "params": {
+            "mu": 0,
+            "r": 0.016,
+            "sigma": 0.05
+         }
+      }
+   },
+   "decimalPlaces": "5",
+   "fees": {
+      "factors": {
+         "makerFee": "0.004",
+         "infrastructureFee": "0.001",
+         "liquidityFee": "0.025"
+      }
+   },
+   "openingAuction": {
+      "duration": "120",
+      "volume": "0"
+   },
+   "continuous": {
+      "tickSize": "0.00001"
+   },
+   "priceMonitoringSettings": {
+      "priceMonitoringParameters": [],
+      "updateFrequency": "0"
+   }
+}
+# Note: some fields have been shortened to improve readability
+### :example_wait_for_market_response__
