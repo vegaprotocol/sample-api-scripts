@@ -130,10 +130,6 @@
    },
    "continuous": {
       "tickSize": "0.00001"
-   },
-   "priceMonitoringSettings": {
-      "priceMonitoringParameters": [],
-      "updateFrequency": "0"
    }
 }
 # Note: some fields have been shortened to improve readability
