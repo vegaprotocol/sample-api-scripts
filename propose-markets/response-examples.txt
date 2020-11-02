@@ -1,5 +1,5 @@
 ### __example_get_assets_response:
-# Response for a list of orders by market on a Vega network
+# Response for a list of available assets on a Vega network
 {
   "assets": [
     {
@@ -19,24 +19,9 @@
       "totalSupply": "21000000"
     },
     ...
-    {
-      "ID": "16657915cb47f8c9c50c753e95a9a8107933a904fabcfaebe10284bbd37649b9",
-      "decimals": "5",
-      "name": "Ether",
-      "source": {
-        "builtinAsset": {
-          "decimals": "5",
-          "maxFaucetAmountMint": "10000000",
-          "name": "Ether",
-          "symbol": "ETH",
-          "totalSupply": "110436690"
-        }
-      },
-      "symbol": "ETH",
-      "totalSupply": "110436690"
-    }
   ]
 }
+# Note: some fields/records have been omitted to improve readability
 ### :example_get_assets_response__
 
 ### __example_sign_tx_proposal_response:
