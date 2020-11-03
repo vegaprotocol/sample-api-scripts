@@ -4,10 +4,10 @@
 Script language: Python3
 
 Talks to:
-- Vega node (REST)
+- Vega node (gRPC)
 
 Apps/Libraries:
-- REST: requests (https://pypi.org/project/requests/)
+- gRPC: Vega-API-client (https://pypi.org/project/Vega-API-client/)
 """
 
 # Note: this file uses smart-tags in comments to section parts of the code to
@@ -19,14 +19,14 @@ Apps/Libraries:
 # some code here
 # :something__
 
-import json
-import requests
-import os
 import helpers
+import os
 
-node_url_rest = os.getenv("NODE_URL_REST")
-if not helpers.check_url(node_url_rest):
-    print("Error: Invalid or missing NODE_URL_REST environment variable.")
+from google.protobuf.empty_pb2 import Empty
+
+node_url_grpc = os.getenv("NODE_URL_GRPC")
+if not helpers.check_var(node_url_grpc):
+    print("Error: Invalid or missing NODE_URL_GRPC environment variable.")
     exit(1)
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
@@ -47,27 +47,36 @@ if not helpers.check_var(wallet_passphrase):
 # Help guide users against including api version suffix on url
 wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
+# __import_client:
+import vegaapiclient as vac
+
+# Vega gRPC clients for reading/writing data
+data_client = vac.VegaTradingDataClient(node_url_grpc)
+wallet_client = vac.WalletClient(wallet_server_url)
+# :import_client__
+
 #####################################################################################
 #                           W A L L E T   S E R V I C E                             #
 #####################################################################################
 
 print(f"Logging into wallet: {wallet_name}")
 
+# __login_wallet:
 # Log in to an existing wallet
-req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
-response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
+response = wallet_client.login(wallet_name, wallet_passphrase)
 helpers.check_response(response)
-token = response.json()["token"]
+# Note: secret wallet token is stored internally for duration of session
+# :login_wallet__
 
-assert token != ""
 print("Logged in to wallet successfully")
 
+# __get_pubkey:
 # List key pairs and select public key to use
-headers = {"Authorization": f"Bearer {token}"}
-response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
+response = wallet_client.listkeys()
 helpers.check_response(response)
 keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
+# :get_pubkey__
 
 assert pubkey != ""
 print("Selected pubkey for signing")
@@ -78,10 +87,8 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-url = f"{node_url_rest}/markets"
-response = requests.get(url)
-helpers.check_response(response)
-marketID = response.json()["markets"][0]["id"]
+markets = data_client.Markets(Empty()).markets
+marketID = markets[0].id
 # :get_market__
 
 assert marketID != ""
@@ -93,22 +100,17 @@ print(f"Market found: {marketID}")
 
 # __get_estimate:
 # Request to estimate trading fees on a Vega network
-req = {
-    "order": {
-        "marketID": marketID,
-        "partyID": pubkey,
-        "price": "100000",
-        "size": "100",
-        "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTC",
-        "type": "TYPE_LIMIT",
-    }
-}
-print(json.dumps(req, indent=2, sort_keys=True))
-url = f"{node_url_rest}/orders/fee/estimate"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-estimatedFees = response.json()
-print("FeeEstimates:\n{}".format(
-    json.dumps(estimatedFees, indent=2, sort_keys=True)))
+estimate = vac.api.trading.EstimateFeeRequest(
+    order=vac.vega.Order(
+        marketID=marketID,
+        partyID=pubkey,
+        price=100000,
+        size=100,
+        side=vac.vega.Side.SIDE_BUY,
+        timeInForce=vac.vega.Order.TimeInForce.TIF_GTC,
+        type=vac.vega.Order.Type.TYPE_LIMIT,
+    )
+)
+estimated_fees = data_client.EstimateFee(estimate)
+print("FeeEstimates:\n{}".format(estimated_fees))
 # :get_estimate__
