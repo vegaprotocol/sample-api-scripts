@@ -52,7 +52,6 @@ import vegaapiclient as vac
 
 # Vega gRPC clients for reading/writing data
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-trading_client = vac.VegaTradingClient(node_url_grpc)
 wallet_client = vac.WalletClient(wallet_server_url)
 # :import_client__
 
