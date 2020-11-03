@@ -112,4 +112,3 @@ estimatedFees = response.json()
 print("FeeEstimates:\n{}".format(
     json.dumps(estimatedFees, indent=2, sort_keys=True)))
 # :get_estimate__
-
