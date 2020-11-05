@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b9807c33836e1e83fe8c465b24b7b6b32aa24f73ec67fb4806a3535568444421"
+            "sha256": "bff1f35804a29c4e87304aaf703508cf122e213fa60a5b9a46b96c33b3f1f6f1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -268,10 +268,11 @@
         },
         "toml": {
             "hashes": [
-                "sha256:926b612be1e5ce0634a2ca03470f95169cf16f939018233a670519cb4ac58b0f",
-                "sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88"
+                "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b",
+                "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
             ],
-            "version": "==0.10.1"
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "version": "==0.10.2"
         },
         "urllib3": {
             "hashes": [
@@ -283,11 +284,11 @@
         },
         "vega-api-client": {
             "hashes": [
-                "sha256:a049ad74fdf3ed6e3b3fc3c957fd6023614bc56c211f886bc69a5ccc191b102b",
-                "sha256:b1a21f2620ba94bfc97c8e0ea59485460e2f7577cf298c5372a28bad4784984d"
+                "sha256:1630355db0398f32db4deb6299aa38e7aa070aa42fd09e6c2a6c6ecc91565f20",
+                "sha256:beeb4b5a70d9cf3315a24d986120eea80bac1467c556ffab45477b3ea1cefc89"
             ],
             "index": "pypi",
-            "version": "==0.26.1"
+            "version": "==0.27.0"
         },
         "webencodings": {
             "hashes": [
