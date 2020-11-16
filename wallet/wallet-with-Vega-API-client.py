@@ -25,6 +25,7 @@ import os
 
 # __import_client:
 import vegaapiclient as vac
+
 # :import_client__
 
 import helpers
@@ -114,4 +115,3 @@ print(json.dumps(signedTx, indent=2, sort_keys=True))
 response = wallet_client.logout()
 helpers.check_response(response)
 # :logout_wallet__
-

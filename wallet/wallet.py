@@ -73,7 +73,9 @@ req = {
     "passphrase": wallet_passphrase,
     "meta": [{"key": "alias", "value": "my_key_alias"}],
 }
-response = requests.post(f"{wallet_server_url}/api/v1/keys", headers=headers, json=req)
+response = requests.post(
+    f"{wallet_server_url}/api/v1/keys", headers=headers, json=req
+)
 helpers.check_response(response)
 pubkey = response.json()["key"]["pub"]
 # Print key information. Note that the private key is *not* returned.
@@ -99,7 +101,9 @@ pubkey = keys[0]["pub"]
 # __get_key:
 # Request a single key pair
 headers = {"Authorization": f"Bearer {token}"}
-response = requests.get(f"{wallet_server_url}/api/v1/keys/{pubkey}", headers=headers)
+response = requests.get(
+    f"{wallet_server_url}/api/v1/keys/{pubkey}", headers=headers
+)
 helpers.check_response(response)
 key = response.json()["key"]
 print("Get a single keypair:")
@@ -108,12 +112,15 @@ print(json.dumps(key, indent=2, sort_keys=True))
 
 
 # __sign_tx:
-# Sign a transaction - Note: setting "propagate" to True will also submit the tx to Vega node
+# Sign a transaction - Note: setting "propagate" to True will also submit the
+# tx to Vega node
 headers = {"Authorization": f"Bearer {token}"}
 blob = b"data returned from a Vega node 'Prepare<operation>' call"
 tx = base64.b64encode(blob).decode("ascii")
 req = {"tx": tx, "pubKey": pubkey, "propagate": False}
-response = requests.post(f"{wallet_server_url}/api/v1/messages", headers=headers, json=req)
+response = requests.post(
+    f"{wallet_server_url}/api/v1/messages", headers=headers, json=req
+)
 helpers.check_response(response)
 signedTx = response.json()["signedTx"]
 print("Signed transaction:")
@@ -124,6 +131,8 @@ print(json.dumps(signedTx, indent=2, sort_keys=True))
 # __logout_wallet:
 # Log out of a wallet
 headers = {"Authorization": f"Bearer {token}"}
-response = requests.delete(f"{wallet_server_url}/api/v1/auth/token", headers=headers)
+response = requests.delete(
+    f"{wallet_server_url}/api/v1/auth/token", headers=headers
+)
 helpers.check_response(response)
 # :logout_wallet__

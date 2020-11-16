@@ -23,33 +23,36 @@ Apps/Libraries:
 
 
 import base64
+import grpc
 import json
 import os
 
 from google.protobuf.empty_pb2 import Empty
+
 # __import_client:
 import vegaapiclient as vac
+
 # :import_client__
 
 import helpers
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
-if not helpers.check_var(node_url_grpc):
+if node_url_grpc is None or not helpers.check_var(node_url_grpc):
     print("Error: Invalid or missing NODE_URL_GRPC environment variable.")
     exit(1)
 
 walletserver_url = os.getenv("WALLETSERVER_URL")
-if not helpers.check_url(walletserver_url):
+if walletserver_url is None or not helpers.check_url(walletserver_url):
     print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
     exit(1)
 
 wallet_name = os.getenv("WALLET_NAME")
-if not helpers.check_var(wallet_name):
+if wallet_name is None or not helpers.check_var(wallet_name):
     print("Error: Invalid or missing WALLET_NAME environment variable.")
     exit(1)
 
 wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
-if not helpers.check_var(wallet_passphrase):
+if wallet_passphrase is None or not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
@@ -65,9 +68,9 @@ tradingcli = vac.VegaTradingClient(node_url_grpc)
 
 # Wallet server: Create a walletclient (see above for details)
 walletclient = vac.WalletClient(walletserver_url)
-response = walletclient.login(wallet_name, wallet_passphrase)
+login_response = walletclient.login(wallet_name, wallet_passphrase)
 # :create_wallet__
-helpers.check_response(response)
+helpers.check_response(login_response)
 
 # __get_market:
 # Get a list of markets
@@ -107,13 +110,17 @@ order = vac.api.trading.SubmitOrderRequest(
     )
 )
 print(f"Request for PrepareSubmitOrder: {order}")
-response = tradingcli.PrepareSubmitOrder(order)
-print(f"Response from PrepareSubmitOrder: {response}")
+try:
+    prepare_response = tradingcli.PrepareSubmitOrder(order)
+except grpc.RpcError as exc:
+    print(json.dumps(vac.grpc_error_detail(exc), indent=2, sort_keys=True))
+    exit(1)
+print(f"Response from PrepareSubmitOrder: {prepare_response}")
 # :prepare_order__
 
 # __sign_tx:
 # Wallet server: Sign the prepared transaction
-blob_base64 = base64.b64encode(response.blob).decode("ascii")
+blob_base64 = base64.b64encode(prepare_response.blob).decode("ascii")
 print(f"Request for SignTx: blob={blob_base64}, pubKey={pubKey}")
 response = walletclient.signtx(blob_base64, pubKey, False)
 helpers.check_response(response)
@@ -136,7 +143,7 @@ request = vac.api.trading.SubmitTransactionRequest(
     ),
 )
 print(f"Request for SubmitTransaction: {request}")
-response = tradingcli.SubmitTransaction(request)
+submittx_response = tradingcli.SubmitTransaction(request)
 # :submit_tx__
-assert response.success
+assert submittx_response.success
 print("All is well.")
