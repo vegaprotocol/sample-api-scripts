@@ -1,0 +1,22 @@
+### __example_get_network_params_response:
+# Response for a list of parameters on a Vega network
+{
+  "networkParameters": [
+    ...
+    {
+      "Key": "market.liquidity.maximumLiquidityFeeFactorLevel",
+      "Value": "1"
+    },
+    {
+      "Key": "market.margin.scalingFactor.searchLevel",
+      "Value": "1.1"
+    },
+    {
+      "Key": "market.initialMarkPrice",
+      "Value": "1"
+    },
+    ...
+  ]
+}
+# Note: some fields/records have been omitted to improve readability
+### :example_get_network_params_response__

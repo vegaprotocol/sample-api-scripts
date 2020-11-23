@@ -7,7 +7,6 @@ Talks to:
 - Vega node (gRPC)
 
 Apps/Libraries:
-- REST: requests (https://pypi.org/project/requests/)
 - Vega-API-client (https://pypi.org/project/Vega-API-client/)
 
 Responses:

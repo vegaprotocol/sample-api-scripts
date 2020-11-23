@@ -16,10 +16,14 @@
       },
       "id": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
       "openingAuction": null,
+      "priceMonitoringSettings": {
+        "priceMonitoringParameters": [],
+        "updateFrequency": "0"
+      },
       "tradableInstrument": {
         "instrument": {
           "baseName": "GBP",
-          "code": "CRYPTO:GBPUSD/OCT20",
+          "code": "CRYPTO:GBPUSD/DEC20",
           "future": {
             "asset": "ece2dcd0869fc765589f9e162fa0d1761b598def1628c4ff0f399a743693675d",
             "ethereumEvent": {
@@ -27,17 +31,19 @@
               "event": "price_changed",
               "value": "126000"
             },
-            "maturity": "2020-10-30T22:59:59Z"
+            "maturity": "2020-12-31T23:59:59Z"
           },
-          "id": "Crypto/GBPUSD/Futures/Oct20",
+          "id": "Crypto/GBPUSD/Futures/Dec20",
           "initialMarkPrice": "130000",
           "metadata": {
             "tags": [
+              "fx/base:GBP",
+              "fx/quote:USD",
               "asset_class:fx/crypto",
               "product:futures"
             ]
           },
-          "name": "GBPUSD/OCT20",
+          "name": "GBPUSD/DEC20",
           "quoteName": "USD"
         },
         "logNormalRiskModel": {
@@ -70,15 +76,21 @@
   "marketData": {
     "auctionEnd": "0",
     "auctionStart": "0",
-    "bestBidPrice": "127275",
-    "bestBidVolume": "24147",
-    "bestOfferPrice": "127278",
-    "bestOfferVolume": "5147",
-    "markPrice": "127275",
-    "market": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
-    "midPrice": "127276",
-    "openInterest": "57551124",
-    "timestamp": "1600960160641907229"
+    "bestBidPrice": "2000000000",
+    "bestBidVolume": "1",
+    "bestOfferPrice": "0",
+    "bestOfferVolume": "0",
+    "indicativePrice": "0",
+    "indicativeVolume": "0",
+    "markPrice": "1",
+    "market": "0bb19d92f25cdfa66d6731abc629a9a8375c284969660d9e9c917f97a9a4ffad",
+    "marketState": "MARKET_STATE_CONTINUOUS",
+    "midPrice": "1000000000",
+    "openInterest": "0",
+    "suppliedStake": "",
+    "targetStake": "",
+    "timestamp": "1605523542525048687",
+    "trigger": "AUCTION_TRIGGER_UNSPECIFIED"
   }
 }
 ### :example_get_market_data_response__
