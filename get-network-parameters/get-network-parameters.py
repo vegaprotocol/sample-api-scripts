@@ -40,4 +40,4 @@ response = requests.get(url)
 helpers.check_response(response)
 print("Network Parameters:\n{}".format(
     json.dumps(response.json(), indent=2, sort_keys=True)))
-# :get_network_params_
+# :get_network_params__
