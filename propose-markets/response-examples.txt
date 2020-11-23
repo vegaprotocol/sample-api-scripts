@@ -1,29 +1,3 @@
-### __example_get_assets_response:
-# Response for a list of available assets on a Vega network
-{
-  "assets": [
-    {
-      "ID": "2fdd696ac7787d98afcbc136d4cf17bc595f7c0d8f3bf57c0ceeb5184347b725",
-      "decimals": "5",
-      "name": "Bitcoin",
-      "source": {
-        "builtinAsset": {
-          "decimals": "5",
-          "maxFaucetAmountMint": "1000000",
-          "name": "Bitcoin",
-          "symbol": "BTC",
-          "totalSupply": "21000000"
-        }
-      },
-      "symbol": "BTC",
-      "totalSupply": "21000000"
-    },
-    ...
-  ]
-}
-# Note: some fields/records have been omitted to improve readability
-### :example_get_assets_response__
-
 ### __example_sign_tx_proposal_response:
 # Response for signing the prepared proposal
 {

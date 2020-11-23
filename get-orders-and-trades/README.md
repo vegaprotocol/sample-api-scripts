@@ -2,7 +2,7 @@
 
 # Sample API scripts - List orders and trades
 
-These scripts talk to a Vega wallet and:
+These scripts perform the following actions:
 
 - Get a list of orders and trades for a market on Vega
 - Get a list of orders and trades for a party on Vega
