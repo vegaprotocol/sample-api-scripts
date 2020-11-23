@@ -31,4 +31,4 @@ url="$NODE_URL_REST/network/parameters"
 response="$(curl -s "$url")"
 echo "Network Parameters:
 $response"
-# :get_network_params_
+# :get_network_params__
