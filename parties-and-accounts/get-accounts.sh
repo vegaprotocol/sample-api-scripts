@@ -89,3 +89,16 @@ accounts="$(echo "$response" | jq -r .accounts)"
 echo "Party accounts:
 $accounts"
 # :get_accounts_by_party__
+
+#####################################################################################
+#                           P A R T Y   P O S I T I O N S                           #
+#####################################################################################
+
+# __get_positions_by_party:
+# Request a list of positions for a party (pubkey) on a Vega network
+url="$NODE_URL_REST/parties/$pubkey/positions"
+response="$(curl -s "$url")"
+positions="$(echo "$response" | jq -r .positions)"
+echo "Party positions:
+$positions"
+# :get_positions_by_party__
