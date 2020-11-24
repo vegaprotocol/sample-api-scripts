@@ -109,3 +109,16 @@ helpers.check_response(response)
 response_json = response.json()
 print("Party accounts:\n{}".format(json.dumps(response_json, indent=2, sort_keys=True)))
 # :get_accounts_by_party__
+
+#####################################################################################
+#                           P A R T Y   P O S I T I O N S                           #
+#####################################################################################
+
+# __get_positions_by_party:
+# Request a list of positions for a party (pubkey) on a Vega network
+url = f"{node_url_rest}/parties/{pubkey}/positions"
+response = requests.get(url)
+helpers.check_response(response)
+response_json = response.json()
+print("Party positions:\n{}".format(json.dumps(response_json, indent=2, sort_keys=True)))
+# :get_positions_by_party__

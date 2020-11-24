@@ -111,6 +111,17 @@ print("Market accounts:\n{}".format(market_accounts))
 # __get_accounts_by_party:
 # Request a list of accounts for a party (pubkey) on a Vega network
 request = vac.api.trading.PartyAccountsRequest(partyID=pubkey)
-market_accounts = data_client.PartyAccounts(request)
-print("Party accounts:\n{}".format(market_accounts))
+party_accounts = data_client.PartyAccounts(request)
+print("Party accounts:\n{}".format(party_accounts))
 # :get_accounts_by_party__
+
+#####################################################################################
+#                           P A R T Y   P O S I T I O N S                           #
+#####################################################################################
+
+# __get_positions_by_party:
+# Request a list of positions for a party (pubkey) on a Vega network
+request = vac.api.trading.PositionsByPartyRequest(partyID=pubkey)
+party_positions = data_client.PositionsByParty(request)
+print("Party positions:\n{}".format(party_positions))
+# :get_positions_by_party__
