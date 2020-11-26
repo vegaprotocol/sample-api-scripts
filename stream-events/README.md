@@ -15,7 +15,7 @@ bash stream-events/stream-events.sh
 
 ## Python + Vega-API-client
 
-Calculate estimated fees python3 and the [Vega-API-client](https://pypi.org/project/Vega-API-client/) library [gRPC API]:
+Stream events using python3 and the [Vega-API-client](https://pypi.org/project/Vega-API-client/) library [gRPC API]:
 
 ```bash
 python3 stream-events/stream-events-with-Vega-API-client.py
