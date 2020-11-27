@@ -73,7 +73,7 @@ gq $NODE_URL_GRAPHQL --queryFile=query
 #####################################################################################
 
 # __get_proposals_by_party:
-# Request results of a specific proposal on a Vega network
+# Request a list of proposals for a party (pubkey) on a Vega network
 cat >query <<EOF
 query {
   party(id:"bf9bfdf020c8dfdbdf2ae61e3ed1892b83ab47942cd67a04bfd4e70bc8f7ef42") {
