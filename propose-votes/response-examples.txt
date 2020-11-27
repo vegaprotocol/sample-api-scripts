@@ -1,0 +1,62 @@
+### __example_proposals_response:
+# Response for proposals on a Vega network
+{
+    ID: "fefb8e7a6b86d77f5846f6ca8ac6bdd415d7c0c5bdf65cf0bbc4a48d868d47fc"
+    reference: "6c1255f3-164f-4c4f-b9a2-f0bcd61845e1"
+    partyID: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
+    state: STATE_ENACTED
+    timestamp: 1605876045102272496
+    terms {
+      closingTimestamp: 1605876058
+      enactmentTimestamp: 1605876063
+      validationTimestamp: 1605876044
+      newMarket {
+        changes {
+          instrument {
+            name: "AaveDAI/NOV20"
+            code: "CRYPTO:AaveDAI/NOV20"
+            baseName: "Aave"
+            quoteName: "DAI"
+            future {
+              maturity: "2020-11-22T22:59:59Z"
+              asset: "94beaabf8a99450f148e337c68357d800dcf52e2f08b50ad89ca37fb3c451fb1"
+            }
+          }
+          decimalPlaces: 5
+          openingAuctionDuration: 300
+          priceMonitoringSettings {
+          }
+          logNormal {
+            riskAversionParameter: 0.01
+            tau: 1.90128526884173e-06
+            params {
+              r: 0.016
+              sigma: 0.05
+            }
+          }
+          continuous {
+            tickSize: "0.00001"
+          }
+        }
+      }
+    }
+  }
+  yes {
+    partyID: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
+    value: VALUE_YES
+    proposalID: "fefb8e7a6b86d77f5846f6ca8ac6bdd415d7c0c5bdf65cf0bbc4a48d868d47fc"
+    timestamp: 1605876046695085212
+  }
+  yesParty {
+    key: "fe6c26706cb64f33e323d6755d2bcda8ba09ab65b7c7fba89102b2c8b36c41aa"
+    value {
+      partyID: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
+      value: VALUE_YES
+      proposalID: "fefb8e7a6b86d77f5846f6ca8ac6bdd415d7c0c5bdf65cf0bbc4a48d868d47fc"
+      timestamp: 1605876046695085212
+    }
+  }
+  ...
+}
+# Note: some fields/records have been omitted to improve readability
+### :example_proposals_response__

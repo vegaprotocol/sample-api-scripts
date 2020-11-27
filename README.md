@@ -27,7 +27,7 @@ And you're good to go. Now choose a sample program to run from the following (se
 | List market details and market data | bash, python3  | Vega node [REST, gRPC]  | / [get-markets-and-market-data](get-markets-and-market-data) |
 | List orders and trades | bash, python3 | Vega node [REST, gRPC]  | / [get-orders-and-trades](get-orders-and-trades) |
 | Vega statistics | bash, python3 | Vega node [REST, gRPC]  | / [get-statistics](get-statistics) |
-| List parties | bash, python3 | Vega node [REST, gRPC]  | / [parties-and-accounts](parties-and-accounts) |
+| List parties and accounts | bash, python3 | Vega node [REST, gRPC]  | / [parties-and-accounts](parties-and-accounts) |
 | Stream market data | python3 | Vega node [GraphQL] | / [stream-marketdata](stream-marketdata) |
 | Stream orders and trades | python3  | Vega node [GraphQL] | / [stream-orders-and-trades](stream-orders-and-trades) |
 | Interact with Vega wallet API | bash, python3 | Vega wallet [REST] | / [wallet](wallet) |
@@ -37,6 +37,8 @@ And you're good to go. Now choose a sample program to run from the following (se
 | Streaming events | bash, python3 | Vega node [GraphQL, gRPC] | / [stream-events](stream-events) |
 | Fees estimation | bash, python3 | Vega node [REST, gRPC] | / [fees-estimation](fees-estimation) |
 | Propose, vote and enact new markets | bash, python3 | Vega node [REST] | / [propose-markets](propose-markets) |
+| List proposals | bash, python3 | Vega node [GraphQL, gRPC] | / [propose-votes](propose-votes) |
+
 
 # Troubleshooting
 

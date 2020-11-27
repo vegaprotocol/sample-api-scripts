@@ -234,10 +234,10 @@ assert proposal_id != ""
 #                             V O T E   O N   M A R K E T                           #
 #####################################################################################
 
-# STEP 2 - Let's vote on the proposal
+# STEP 2 - Let's vote on the market proposal
 
 # __prepare_vote:
-# Prepare a vote for the market proposal
+# Prepare a vote for the proposal
 vote = {
     "vote": {
         "partyID": pubkey,
