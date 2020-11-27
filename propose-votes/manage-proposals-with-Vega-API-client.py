@@ -117,7 +117,7 @@ print("Proposal:\n{}".format(proposal))
 #####################################################################################
 
 # __get_proposals_by_party:
-# Request results of a specific proposal on a Vega network
+# Request a list of proposals for a party (pubkey) on a Vega network
 request = vac.api.trading.GetProposalsByPartyRequest(partyID=pubkey)
 party_proposals = data_client.GetProposalsByParty(request)
 print("Party proposals:\n{}".format(party_proposals))
