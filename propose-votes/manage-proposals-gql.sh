@@ -66,7 +66,7 @@ query {
 }
 EOF
 gq $NODE_URL_GRAPHQL --queryFile=query
-# :get_proposal_detail
+# :get_proposal_detail__
 
 #####################################################################################
 #                          P A R T Y   P R O P O S A L S                            #
@@ -90,4 +90,4 @@ query {
 }
 EOF
 gq $NODE_URL_GRAPHQL --queryFile=query
-# :get_proposals_by_party
+# :get_proposals_by_party__
