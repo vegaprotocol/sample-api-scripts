@@ -110,7 +110,7 @@ print(f"Proposal found: {proposalID}")
 request = vac.api.trading.GetProposalByIDRequest(proposalID=proposalID)
 proposal = data_client.GetProposalByID(request)
 print("Proposal:\n{}".format(proposal))
-# :get_proposal_detail
+# :get_proposal_detail__
 
 #####################################################################################
 #                          P A R T Y   P R O P O S A L S                            #
@@ -121,4 +121,4 @@ print("Proposal:\n{}".format(proposal))
 request = vac.api.trading.GetProposalsByPartyRequest(partyID=pubkey)
 party_proposals = data_client.GetProposalsByParty(request)
 print("Party proposals:\n{}".format(party_proposals))
-# :get_proposals_by_party
+# :get_proposals_by_party__
