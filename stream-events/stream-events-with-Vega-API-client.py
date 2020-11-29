@@ -21,6 +21,7 @@ Apps/Libraries:
 
 import os
 import signal
+import queue
 import sys
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
@@ -50,13 +51,17 @@ print("Connecting to stream...")
 
 # __stream_events:
 # Subscribe to the events bus stream for the marketID specified
-# Required: type field - default ALL
+# Required: type field - A collection of one or more event types e.g. BUS_EVENT_TYPE_ORDER.
+# Required: batchSize field - Default: 0 - Total number of events to batch on server before sending to client.
 # Optional: Market identifier - filter by market
 #           Party identifier - filter by party
 # By default, all events on all markets for all parties will be returned on the stream.
-all_types = vac.events.BUS_EVENT_TYPE_ALL
-subscribe_events_request = vac.api.trading.ObserveEventsRequest(type=[all_types], marketID=market_id)
-for stream_resp in data_client.ObserveEventBus(subscribe_events_request):
+event_types = vac.events.BUS_EVENT_TYPE_TRADE
+subscribe_events_request = vac.api.trading.ObserveEventsRequest(batchSize=0, type=[event_types], marketID=market_id)
+send_queue = queue.SimpleQueue()
+stream = data_client.ObserveEventBus(iter(send_queue.get, None))
+send_queue.put_nowait(subscribe_events_request)
+for stream_resp in stream:
     for events in stream_resp.events:
         # All events (as per request filter) arriving over the channel/stream will be printed
         print(events)
