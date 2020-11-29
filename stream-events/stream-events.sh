@@ -31,9 +31,10 @@ marketID="$(echo "$response" | jq -r '.markets[0].id')"
 
 # __stream_events:
 # Subscribe to the events bus stream for the marketID specified
-# Required: type field - default ALL
+# Required: type field - NOTE: All event is not supported by GraphQL API.
+# Required: batchSize field - Default: 0 - Total number of events to batch on server before sending to client.
 # Optional: Market identifier - filter by market
 #           Party identifier - filter by party
 # By default, all events on all markets for all parties will be returned on the stream.
-gq $NODE_URL_GRAPHQL -q 'subscription { busEvents(types: [All], marketID: "'$marketID'" ) { type }}'
+gq $NODE_URL_GRAPHQL -q 'subscription { busEvents(batchSize: 1, types: [TimeUpdate], marketID: "'$marketID'" ) { type }}'
 # :stream_events__
