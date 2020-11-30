@@ -94,12 +94,12 @@ helpers.check_response(response)
 #    json.dumps(response.json(), indent=2, sort_keys=True)))
 
 # __find_asset:
-# Find asset with name DAI
+# Find asset with name tDAI
 found_asset_id = "UNKNOWN"
 assets = response.json()["assets"]
 for asset in assets:
-    if asset["name"] == "DAI":
-        print("Found an asset with name DAI")
+    if asset["name"] == "tDAI":
+        print("Found an asset with name tDAI")
         print(asset)
         found_asset_id = asset["ID"]
         break
@@ -148,7 +148,6 @@ market = {
                 "continuous": {"tickSize": "0.01"},
                 "decimalPlaces": "5",
                 "instrument": {
-                    "baseName": "BTC",
                     "code": "CRYPTO:BTCDAI/DEC20",
                     "future": {
                         # Settlement asset identifier (found above)
@@ -176,7 +175,14 @@ market = {
                 "metadata": [],
                 # Set opening auction duration (in seconds)
                 "openingAuctionDuration": "120",
-                "simple": {"factorLong": 0, "factorShort": 0},
+                "priceMonitoringSettings": {
+                   "priceMonitoringParameters": [{
+                     "auctionExtension": "120",
+                     "horizon": "120",
+                     "probability": 0.999
+                   }],
+                   "updateFrequency": "120"
+                },
             }
         },
     }
