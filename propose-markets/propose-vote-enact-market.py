@@ -173,13 +173,12 @@ market = {
                     "tau": 1.90128526884173e-06,
                 },
                 "metadata": [],
-                # Set opening auction duration (in seconds)
                 "openingAuctionDuration": "120",
                 "priceMonitoringSettings": {
                    "priceMonitoringParameters": [{
                      "auctionExtension": "120",
                      "horizon": "120",
-                     "probability": 0.999
+                     "probability": 0.999999
                    }],
                    "updateFrequency": "120"
                 },
