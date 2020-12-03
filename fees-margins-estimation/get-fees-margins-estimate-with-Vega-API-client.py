@@ -98,7 +98,7 @@ print(f"Market found: {marketID}")
 #                           F E E   E S T I M A T I O N                             #
 #####################################################################################
 
-# __get_estimate:
+# __get_fees_estimate:
 # Request to estimate trading fees on a Vega network
 estimate = vac.api.trading.EstimateFeeRequest(
     order=vac.vega.Order(
@@ -113,7 +113,7 @@ estimate = vac.api.trading.EstimateFeeRequest(
 )
 estimated_fees = data_client.EstimateFee(estimate)
 print("FeeEstimates:\n{}".format(estimated_fees))
-# :get_estimate__
+# :get_fees_estimate__
 
 #####################################################################################
 #                         M A R G I N   E S T I M A T I O N                         #
