@@ -71,7 +71,7 @@ echo "Market found: $marketID"
 #                           F E E   E S T I M A T I O N                             #
 #####################################################################################
 
-# __get_estimate:
+# __get_fees_estimate:
 # Request to estimate trading fees on a Vega network
 cat >req.json <<EOF
 {
@@ -86,9 +86,36 @@ cat >req.json <<EOF
     }
 }
 EOF
-echo "Request for FeeEstimation: $(cat req.json)"
+echo "Request for Fee Estimation: $(cat req.json)"
 url="$NODE_URL_REST/orders/fee/estimate"
 response="$(curl -s -XPOST -d @req.json "$url")"
 echo "FeeEstimates:
 $response"
-# :get_estimate__
+# :get_fees_estimate__
+
+
+#####################################################################################
+#                         M A R G I N   E S T I M A T I O N                         #
+#####################################################################################
+
+# __get_margins_estimate:
+# Request to estimate trading margin on a Vega network
+cat >req.json <<EOF
+{
+    "order": {
+        "marketID": "$marketID",
+        "partyID": "$pubKey",
+        "price": "600000",
+        "size": "10",
+        "side": "SIDE_BUY",
+        "timeInForce": "TIF_GTC",
+        "type": "TYPE_LIMIT"
+    }
+}
+EOF
+echo "Request for Margin Estimation: $(cat req.json)"
+url="$NODE_URL_REST/orders/margins/estimate"
+response="$(curl -s -XPOST -d @req.json "$url")"
+echo "MarginsEstimates:
+$response"
+# :get_margins_estimate__
