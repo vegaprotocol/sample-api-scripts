@@ -79,12 +79,12 @@ assert pubkey != ""
 print("Selected pubkey for signing")
 
 #####################################################################################
-#                               F I N D   A S S E T                                 #
+#                              F I N D   A S S E T S                                #
 #####################################################################################
 
 # __get_assets:
 # Request a list of assets available on a Vega network
-url = "{base}/assets".format(base=node_url_rest)
+url = f"{node_url_rest}/assets"
 response = requests.get(url)
 helpers.check_response(response)
 # :get_assets__
@@ -94,19 +94,56 @@ helpers.check_response(response)
 #    json.dumps(response.json(), indent=2, sort_keys=True)))
 
 # __find_asset:
-# Find asset with name DAI
+# Find settlement asset with name tDAI
 found_asset_id = "UNKNOWN"
 assets = response.json()["assets"]
 for asset in assets:
-    if asset["name"] == "DAI":
-        print("Found an asset with name DAI")
+    if asset["symbol"] == "tDAI":
+        print("Found an asset with symbol tDAI")
         print(asset)
         found_asset_id = asset["ID"]
         break
 # :find_asset__
 
 if found_asset_id == "UNKNOWN":
-    print("DAI asset not found on specified Vega network, please propose and create this asset first")
+    print("tDAI asset not found on specified Vega network, please propose and create this asset first")
+    exit(1)
+
+#####################################################################################
+#                   G O V E R N A N C E   T O K E N   C H E C K                     #
+#####################################################################################
+
+# Get the identifier of the governance asset on the Vega network
+vote_asset_id = "UNKNOWN"
+for asset in assets:
+    if asset["symbol"] == "tVOTE":
+        vote_asset_id = asset["ID"]
+        break
+
+if vote_asset_id == "UNKNOWN":
+    print("tVOTE asset not found on specified Vega network, please symbol name check and try again")
+    exit(1)
+
+# Request accounts for party and check governance asset balance
+url = f"{node_url_rest}/parties/{pubkey}/accounts"
+response = requests.get(url)
+helpers.check_response(response)
+
+# Debugging
+# print("Accounts:\n{}".format(
+#    json.dumps(response.json(), indent=2, sort_keys=True)))
+
+voting_balance = 0
+accounts = response.json()["accounts"]
+for account in accounts:
+    if account["asset"] == vote_asset_id:
+        print("Found governance asset account")
+        print(account)
+        voting_balance = account["balance"]
+        break
+
+if voting_balance == 0:
+    print(f"Please deposit tVOTE asset to public key {pubkey} and try again")
     exit(1)
 
 #####################################################################################
@@ -131,6 +168,8 @@ print(f"Blockchain time: {blockchain_time} ({blockchain_time_seconds} seconds pa
 
 # STEP 1 - Propose a BTC/DAI futures market
 
+# Further documentation on creating markets: https://docs.testnet.vega.xyz/docs/api-howtos/create-market/
+
 # __prepare_propose_market:
 # Prepare a market proposal for a new market
 market = {
@@ -148,19 +187,18 @@ market = {
                 "continuous": {"tickSize": "0.01"},
                 "decimalPlaces": "5",
                 "instrument": {
-                    "baseName": "BTC",
-                    "code": "CRYPTO:BTCDAI/DEC20",
+                    "code": "CRYPTO:BTCDAI/MAR21",
                     "future": {
                         # Settlement asset identifier (found above)
                         "asset": found_asset_id,
-                        "maturity": "2020-12-31T22:59:59Z",
+                        "maturity": "2021-03-31T23:59:59Z",
                         # "settlementPriceSource: {
                         #     "sourceType": "signedMessage",
                         #     "sourcePubkeys": ["YOUR_PUBKEY_HERE"],
                         #     "field": "price",
                         #     "dataType": "decimal",
                         #     "filters": [
-                        #         { "field": "feed_id", "equals": "BTCUSD/EOD" },
+                        #         { "field": "feed_id", "equals": "BTCDAI/EOD" },
                         #         { "field": "mark_time", "equals": "31/12/20" }
                         #     ]
                         # }
@@ -174,9 +212,15 @@ market = {
                     "tau": 1.90128526884173e-06,
                 },
                 "metadata": [],
-                # Set opening auction duration (in seconds)
                 "openingAuctionDuration": "120",
-                "simple": {"factorLong": 0, "factorShort": 0},
+                "priceMonitoringParameters": {
+                   "triggers": [{
+                     "auctionExtension": "300",
+                     "horizon": "43200",
+                     "probability": 0.9999999
+                   }],
+                   "updateFrequency": "120"
+                },
             }
         },
     }
@@ -231,10 +275,19 @@ while not done:
 assert proposal_id != ""
 
 #####################################################################################
-#                             V O T E   O N   M A R K E T                           #
+#                            V O T E   O N   M A R K E T                            #
 #####################################################################################
 
 # STEP 2 - Let's vote on the market proposal
+
+# IMPORTANT: When voting for a proposal on the Vega Testnet, typically a single
+# YES vote from the proposer will not be enough to vote the market into existence.
+# This is because of the network minimum threshold for voting on proposals, this
+# threshold for market proposals this is currently a 66% majority vote either YES or NO.
+# A proposer should enlist the help/YES votes from other community members, ideally on the
+# Community forums (https://community.vega.xyz/c/testnet) or Discord (https://vega.xyz/discord)
+
+# Further documentation on proposal voting and review here: https://docs.testnet.vega.xyz/docs/api-howtos/proposals/
 
 # __prepare_vote:
 # Prepare a vote for the proposal
@@ -297,6 +350,11 @@ while not done:
 #####################################################################################
 
 # STEP 3 - Wait for market to be enacted
+
+# IMPORTANT: When voting for a proposal on the Vega Testnet, typically a single
+# YES vote from the proposer will not be enough to vote the market into existence.
+# As described above in STEP 2, a market will need community voting support to be
+# passed and then enacted.
 
 # __wait_for_market:
 print("Waiting for proposal to be enacted or failed...", end="", flush=True)
