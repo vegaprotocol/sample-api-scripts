@@ -175,13 +175,13 @@ print(f"Blockchain time: {blockchain_time} ({blockchain_time_seconds} seconds pa
 market = {
     "partyID": pubkey,
     "proposal": {
-        # Set validation timestamp to current time on Vega + 1 second
+        # Set validation timestamp to a valid time offset from the current Vega blockchain time
         "validationTimestamp": blockchain_time_seconds + 1,
-        # Set closing timestamp to current time on Vega + 15 second
-        "closingTimestamp": blockchain_time_seconds + 15,
-        # Set enactment timestamp to current time on Vega + 20 second
-        "enactmentTimestamp": blockchain_time_seconds + 20,
-        # Note: timestamps must be in seconds precision
+        # Set closing timestamp to a valid time offset from the current Vega blockchain time
+        "closingTimestamp": blockchain_time_seconds + 3610,
+        # Set enactment timestamp to a valid time offset from the current Vega blockchain time
+        "enactmentTimestamp": blockchain_time_seconds + 3620,
+        # Note: the timestamps above are specified in seconds, and must meet minimums required by network
         "newMarket": {
             "changes": {
                 "continuous": {"tickSize": "0.01"},
