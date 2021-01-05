@@ -121,4 +121,4 @@ response = requests.get(node_url_rest + "/parties/" + pubkey + "/proposals")
 helpers.check_response(response)
 response_json = response.json()
 print("Party proposals:\n{}".format(json.dumps(response_json, indent=2, sort_keys=True)))
-# :get_proposals_by_party
+# :get_proposals_by_party__
