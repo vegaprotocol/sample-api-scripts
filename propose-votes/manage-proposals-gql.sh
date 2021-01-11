@@ -33,12 +33,29 @@ query {
   proposals {
     id
     datetime
-    party { id }
+    party {
+        id
+    }
     reference
     state
-    terms { closingDatetime, enactmentDatetime}
-    yesVotes { value, party { id }, datetime}
-    noVotes { value, party { id }, datetime}
+    terms {
+        closingDatetime
+        enactmentDatetime
+    }
+    yesVotes {
+        value
+        party {
+            id
+        }
+        datetime
+    }
+    noVotes {
+        value
+        party {
+            id
+        }
+        datetime
+    }
   }
 }
 EOF
@@ -56,12 +73,29 @@ query {
   proposal(id:"9c45820e31fcd4bbea6a7b15c50006b30c03c850d7acd3a52760a1dfa31b040a") {
     id
     datetime
-    party { id }
+    party {
+        id
+    }
     reference
     state
-    terms { closingDatetime, enactmentDatetime}
-    yesVotes { value, party { id }, datetime}
-    noVotes { value, party { id }, datetime}
+    terms {
+        closingDatetime
+        enactmentDatetime
+    }
+    yesVotes {
+        value
+        party {
+            id
+        }
+        datetime
+    }
+    noVotes {
+        value
+        party {
+            id
+        }
+        datetime
+    }
   }
 }
 EOF
@@ -80,11 +114,29 @@ query {
     proposals {
       id
       datetime
+      party {
+          id
+      }
       reference
       state
-      terms { closingDatetime, enactmentDatetime}
-      yesVotes { value, party { id }, datetime}
-      noVotes { value, party { id }, datetime}
+      terms {
+          closingDatetime
+          enactmentDatetime
+      }
+      yesVotes {
+        value
+        party {
+            id
+        }
+        datetime
+      }
+      noVotes {
+        value
+        party {
+            id
+        }
+        datetime
+      }
     }
   }
 }
