@@ -5,7 +5,7 @@
   "submitID": "50f790bc-c1c6-47fd-a52b-f0849e965c22"
 }
 # Note: some fields have been shortened to improve readability
-### :example_prepare_cancel_order_response__
+### :example_prepare_submit_order_response__
 
 
 ### __example_sign_tx_response:
@@ -23,7 +23,7 @@
   }
 }
 # Note: some fields have been shortened to improve readability
-### :example_sign_tx_cancel_response__
+### :example_sign_tx_response__
 
 
 ### __example_prepare_amend_order_response:
