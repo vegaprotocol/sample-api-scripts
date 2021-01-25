@@ -113,11 +113,11 @@ assert blockchain_time > 0
 print(f"Blockchain time: {blockchain_time}")
 
 #####################################################################################
-#                              S U B M I T   O R D E R                              #
+#                      S U B M I T   P E G G E D   O R D E R                        #
 #####################################################################################
 
-# __prepare_submit_order:
-# Prepare a submit order message
+# __prepare_submit_pegged_order:
+# Prepare a submit order message with a pegged BUY order
 order = vac.api.trading.SubmitOrderRequest(
     submission=vac.vega.OrderSubmission(
         marketID=marketID,
@@ -133,21 +133,21 @@ order = vac.api.trading.SubmitOrderRequest(
     )
 )
 prepared_order = trading_client.PrepareSubmitOrder(order)
-# :prepare_submit_order__
+# :prepare_submit_pegged_order__
 
 order_ref = prepared_order.submitID
-print(f"Prepared order, ref: {order_ref}")
+print(f"Prepared pegged order, ref: {order_ref}")
 
-# __sign_tx_order:
+# __sign_tx_pegged_order:
 # Sign the prepared transaction
 # Note: Setting propagate to true will submit to a Vega node
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 response = wallet_client.signtx(blob_base64, pubkey, True)
 helpers.check_response(response)
 signedTx = response.json()["signedTx"]
-# :sign_tx_order__
+# :sign_tx_pegged_order__
 
-print("Signed order and sent to Vega")
+print("Signed pegged order and sent to Vega")
 
 # Wait for order submission to be included in a block
 print("Waiting for blockchain...")
@@ -156,13 +156,15 @@ order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
-print(f"Order processed, ID: {orderID}, Status: {orderStatus}")
+orderPegged = response.peggedOrder
+print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}")
+print(f"Pegged at: {orderPegged}")
 
 #####################################################################################
-#                               A M E N D   O R D E R                               #
+#                        A M E N D   P E G G E D   O R D E R                        #
 #####################################################################################
 
-# __prepare_amend_order:
+# __prepare_amend_pegged_order:
 # Prepare the amend order message
 amend = vac.vega.OrderAmendment(
     marketID=marketID,
@@ -174,18 +176,18 @@ amend = vac.vega.OrderAmendment(
 order = vac.api.trading.AmendOrderRequest(amendment=amend)
 prepared_order = trading_client.PrepareAmendOrder(order)
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
-# :prepare_amend_order__
+# :prepare_amend_pegged_order__
 
 print(f"Amendment prepared for order ID: {orderID}")
 
-# __sign_tx_amend:
+# __sign_tx_pegged_amend:
 # Sign the prepared order transaction for amendment
 # Note: Setting propagate to true will also submit to a Vega node
 response = wallet_client.signtx(blob_base64, pubkey, True)
 helpers.check_response(response)
-# :sign_tx_amend__
+# :sign_tx_pegged_amend__
 
-print("Signed amendment and sent to Vega")
+print("Signed pegged order amendment and sent to Vega")
 
 # Wait for amendment to be included in a block
 print("Waiting for blockchain...")
@@ -197,71 +199,12 @@ orderPrice = response.status
 orderSize = response.size
 orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.timeInForce)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
+orderPegged = response.peggedOrder
 
-print("Amended Order:")
+print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
-
-#####################################################################################
-#                             C A N C E L   O R D E R S                             #
-#####################################################################################
-
-# Select the mode to cancel orders from the following (comment out others), default = 3
-
-# __prepare_cancel_order_req1:
-# 1 - Cancel single order for party (pubkey)
-cancel = vac.vega.OrderCancellation(
-    # Include party, market and order identifier fields to cancel single order.
-    marketID=marketID,
-    partyID=pubkey,
-    orderID=orderID,
-)
-# :prepare_cancel_order_req1__
-
-# __prepare_cancel_order_req2:
-# 2 - Cancel all orders on market for party (pubkey)
-cancel = vac.vega.OrderCancellation(
-    # Only include party & market identifier fields.
-    marketID=marketID,
-    partyID=pubkey,
-)
-# :prepare_cancel_order_req2__
-
-# __prepare_cancel_order_req3:
-# 3 - Cancel all orders on all markets for party (pubkey)
-cancel = vac.vega.OrderCancellation(
-    # Only include party identifier field.
-    partyID=pubkey,
-)
-# :prepare_cancel_order_req3__
-
-# __prepare_cancel_order:
-# Prepare the cancel order message
-order = vac.api.trading.CancelOrderRequest(cancellation=cancel)
-prepared_order = trading_client.PrepareCancelOrder(order)
-blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
-# :prepare_cancel_order__
-
-print(f"Cancellation prepared for order ID: {orderID}")
-
-# __sign_tx_cancel:
-# Sign the prepared order transaction for cancellation
-# Note: Setting propagate to true will submit to a Vega node
-response = wallet_client.signtx(blob_base64, pubkey, True)
-helpers.check_response(response)
-# :sign_tx_cancel__
-
-print("Signed cancellation and sent to Vega")
-
-# Wait for cancellation to be included in a block
-print("Waiting for blockchain...")
-time.sleep(4)
-order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
-response = data_client.OrderByReference(order_ref_request)
-orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
-
-print("Cancelled Order:")
-print(f"ID: {orderID}, Status: {orderStatus}")
+print(f"Pegged at: {orderPegged}")
 
 # Completed.
