@@ -1,6 +1,6 @@
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/vegaprotocol/sample-api-scripts)
 
-# Sample API scripts - Submit, Amend and Cancel orders
+# Sample API scripts - Submit and Amend Pegged orders
 
 These scripts talk to a Vega node as well as a Vega wallet and:
 
