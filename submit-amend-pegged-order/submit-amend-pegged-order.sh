@@ -84,7 +84,7 @@ expiresAt="$((blockchaintime+120*10**9))" # expire in 2 minutes
 echo "Blockchain time: $expiresAt"
 
 #####################################################################################
-#                              S U B M I T   O R D E R                              #
+#                      S U B M I T   P E G G E D   O R D E R                        #
 #####################################################################################
 
 # __prepare_submit_order:
@@ -144,7 +144,7 @@ orderStatus="$(echo "$response" | jq -r '.order.status')"
 echo "Order processed, ID: $orderID, Status: $orderStatus"
 
 #####################################################################################
-#                               A M E N D   O R D E R                               #
+#                        A M E N D   P E G G E D   O R D E R                        #
 #####################################################################################
 
 # __prepare_amend_order:
@@ -203,90 +203,4 @@ echo "ID: $orderID, Status: $orderStatus, Price(Old): 1,"
 echo " Price(New): $orderPrice, Size(Old): 100, Size(New): $orderSize,"
 echo " TimeInForce(Old): TIF_GTT, TimeInForce(New): $orderTif"
 
-#####################################################################################
-#                             C A N C E L   O R D E R S                             #
-#####################################################################################
-
-# Select the mode to cancel orders from the following (comment out others), default = 3
-
-# __prepare_cancel_order_req1:
-# 1 - Cancel single order for party (pubkey)
-#     *** Include party, market and order identifier fields to cancel single order.
-cat >req.json <<EOF
-{
-    "cancellation": {
-        "partyID": "$pubKey",
-        "marketID": "$marketID",
-        "orderID": "$orderID"
-    }
-}
-EOF
-# :prepare_cancel_order_req1__
-
-# __prepare_cancel_order_req2:
-# 2 - Cancel all orders on market for party (pubkey)
-#     *** Only include party & market identifier fields.
-cat >req.json <<EOF
-{
-    "cancellation": {
-        "partyID": "$pubKey",
-        "marketID": "$marketID"
-    }
-}
-EOF
-# :prepare_cancel_order_req2__
-
-# __prepare_cancel_order_req3:
-# 3 - Cancel all orders on all markets for party (pubkey)
-#     *** Only include party identifier field.
-cat >req.json <<EOF
-{
-    "cancellation": {
-        "partyID": "$pubKey"
-    }
-}
-EOF
-# :prepare_cancel_order_req3__
-
-# __prepare_cancel_order:
-# Prepare the cancel order message
-url="$NODE_URL_REST/orders/prepare/cancel"
-response="$(curl -s -XPOST -d @req.json "$url")"
-# :prepare_cancel_order__
-
-echo "Cancellation prepared for order ID: $orderID"
-
-# __sign_tx_cancel:
-# Sign the prepared order transaction for cancellation
-# Note: Setting propagate to true will also submit to a Vega node
-blob="$(echo "$response" | jq -r .blob)"
-test "$blob" == null && exit 1
-cat >req.json <<EOF
-{
-    "tx": "$blob",
-    "pubKey": "$pubKey",
-    "propagate": true
-}
-EOF
-url="$WALLETSERVER_URL/api/v1/messages"
-response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
-# :sign_tx_cancel__
-
-signedTx="$(echo "$response" | jq .signedTx)"
-test "$signedTx" == null && exit 1
-
-echo "Signed cancellation and sent to Vega"
-
-# Wait for order submission to be included in a block
-echo "Waiting for blockchain..."
-sleep 4s
-url="$NODE_URL_REST/orders/$orderRef"
-response="$(curl -s "$url")"
-orderID="$(echo "$response" | jq -r '.order.id')"
-orderStatus="$(echo "$response" | jq -r '.order.status')"
-
-test "$orderStatus" != "STATUS_CANCELLED" && exit 1
-
 # Completed.
-echo "Cancelled order successfully:"
-echo "ID: $orderID, Status: $orderStatus"

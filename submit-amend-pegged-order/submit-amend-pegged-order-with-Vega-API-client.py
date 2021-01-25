@@ -122,14 +122,15 @@ order = vac.api.trading.SubmitOrderRequest(
     submission=vac.vega.OrderSubmission(
         marketID=marketID,
         partyID=pubkey,
-        # price is an integer. For example 123456 is a price of 1.23456,
-        # assuming 5 decimal places.
-        price=1,
         side=vac.vega.Side.SIDE_BUY,
-        size=10,
+        size=5,
         expiresAt=expiresAt,
         timeInForce=vac.vega.Order.TimeInForce.TIF_GTT,
         type=vac.vega.Order.Type.TYPE_LIMIT,
+        peggedOrder=vac.vega.PeggedOrder(
+            offset=-5,
+            reference=vac.vega.PEGGED_REFERENCE_MID
+        )
     )
 )
 prepared_order = trading_client.PrepareSubmitOrder(order)
@@ -139,7 +140,7 @@ order_ref = prepared_order.submitID
 print(f"Prepared pegged order, ref: {order_ref}")
 
 # __sign_tx_pegged_order:
-# Sign the prepared transaction
+# Sign the prepared pegged order transaction
 # Note: Setting propagate to true will submit to a Vega node
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 response = wallet_client.signtx(blob_base64, pubkey, True)
@@ -165,13 +166,15 @@ print(f"Pegged at: {orderPegged}")
 #####################################################################################
 
 # __prepare_amend_pegged_order:
-# Prepare the amend order message
+# Prepare the amend pegged order message
 amend = vac.vega.OrderAmendment(
     marketID=marketID,
     partyID=pubkey,
     orderID=orderID,
     price=vac.vega.Price(value=2),
     timeInForce=vac.vega.Order.TimeInForce.TIF_GTC,
+    peggedReference=vac.vega.PEGGED_REFERENCE_BEST_BID,
+    peggedOffset=-100
 )
 order = vac.api.trading.AmendOrderRequest(amendment=amend)
 prepared_order = trading_client.PrepareAmendOrder(order)
@@ -181,7 +184,7 @@ blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 print(f"Amendment prepared for order ID: {orderID}")
 
 # __sign_tx_pegged_amend:
-# Sign the prepared order transaction for amendment
+# Sign the prepared pegged order transaction for amendment
 # Note: Setting propagate to true will also submit to a Vega node
 response = wallet_client.signtx(blob_base64, pubkey, True)
 helpers.check_response(response)
