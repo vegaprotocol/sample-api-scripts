@@ -94,7 +94,7 @@ cat >req.json <<EOF
     "submission": {
         "marketID": "$marketID",
         "partyID": "$pubKey",
-        "size": "5",
+        "size": "50",
         "side": "SIDE_BUY",
         "timeInForce": "TIF_GTT",
         "expiresAt": "$expiresAt",
@@ -202,7 +202,7 @@ orderPegged="$(echo "$response" | jq -r '.order.peggedOrder')"
 
 echo "Amended pegged order:"
 echo "ID: $orderID, Status: $orderStatus,"
-echo " Size(Old): 100, Size(New): $orderSize,"
+echo " Size(Old): 50, Size(New): $orderSize,"
 echo " TimeInForce(Old): TIF_GTT, TimeInForce(New): $orderTif"
 echo "Pegged at: $orderPegged"
 
