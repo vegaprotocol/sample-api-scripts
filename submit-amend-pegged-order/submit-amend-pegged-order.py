@@ -206,7 +206,7 @@ print("Signed pegged order amendment and sent to Vega")
 
 # Wait for amendment to be included in a block
 print("Waiting for blockchain...")
-time.sleep(3)
+time.sleep(6)
 url = f"{node_url_rest}/orders/{order_ref}"
 response = requests.get(url)
 response_json = response.json()
@@ -218,8 +218,8 @@ orderStatus = response_json["order"]["status"]
 orderPegged = response_json["order"]["peggedOrder"]
 
 print("Amended pegged order:")
-print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 5, "
-      f"Price(New): {orderPrice}, Size(Old): 5, Size(New): {orderSize}, "
+print(f"ID: {orderID}, Status: {orderStatus}, "
+      f"Size(Old): 5, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
 print(f"Pegged at: {orderPegged}")
 
