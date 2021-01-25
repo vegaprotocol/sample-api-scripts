@@ -178,20 +178,21 @@ market = {
         # Set validation timestamp to a valid time offset from the current Vega blockchain time
         "validationTimestamp": blockchain_time_seconds + 1,
         # Set closing timestamp to a valid time offset from the current Vega blockchain time
-        "closingTimestamp": blockchain_time_seconds + 3610,
+        "closingTimestamp": blockchain_time_seconds + 3601,
         # Set enactment timestamp to a valid time offset from the current Vega blockchain time
-        "enactmentTimestamp": blockchain_time_seconds + 3620,
+        "enactmentTimestamp": blockchain_time_seconds + 3701,
         # Note: the timestamps above are specified in seconds, and must meet minimums required by network
         "newMarket": {
             "changes": {
                 "continuous": {"tickSize": "0.01"},
                 "decimalPlaces": "5",
                 "instrument": {
-                    "code": "CRYPTO:BTCDAI/MAR21",
+                    "code": "CRYPTO:BTCDAI/JUN21",
                     "future": {
                         # Settlement asset identifier (found above)
-                        "asset": found_asset_id,
-                        "maturity": "2021-03-31T23:59:59Z",
+                        "settlementAsset": found_asset_id,
+                        "quoteName": "DAI",
+                        "maturity": "2021-06-30T23:59:59Z",
                         # "settlementPriceSource: {
                         #     "sourceType": "signedMessage",
                         #     "sourcePubkeys": ["YOUR_PUBKEY_HERE"],
@@ -204,7 +205,6 @@ market = {
                         # }
                     },
                     "name": "BTC/DAI",
-                    "quoteName": "DAI",
                 },
                 "logNormal": {
                     "params": {"mu": 0, "r": 0.016, "sigma": 0.05},
@@ -212,7 +212,6 @@ market = {
                     "tau": 1.90128526884173e-06,
                 },
                 "metadata": [],
-                "openingAuctionDuration": "120",
                 "priceMonitoringParameters": {
                    "triggers": [{
                      "auctionExtension": "300",
