@@ -9,60 +9,74 @@
       "decimalPlaces": "5",
       "fees": {
         "factors": {
-          "infrastructureFee": "0.0005",
-          "liquidityFee": "0.001",
-          "makerFee": "0.00025"
+          "infrastructureFee": "0.00175",
+          "liquidityFee": "0.0025",
+          "makerFee": "0.00075"
         }
       },
-      "id": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
+      "id": "076BB86A5AA41E3E",
       "openingAuction": null,
       "priceMonitoringSettings": {
-        "priceMonitoringParameters": [],
-        "updateFrequency": "0"
+        "parameters": {
+          "triggers": [
+            {
+              "auctionExtension": "600",
+              "horizon": "43200",
+              "probability": 0.9999999
+            }
+          ]
+        },
+        "updateFrequency": "1"
+      },
+      "state": "STATE_ACTIVE",
+      "targetStakeParameters": {
+        "scalingFactor": 10,
+        "timeWindow": "3600"
       },
       "tradableInstrument": {
         "instrument": {
-          "baseName": "GBP",
-          "code": "CRYPTO:GBPUSD/DEC20",
+          "code": "BTCUSD.MH21",
           "future": {
-            "asset": "ece2dcd0869fc765589f9e162fa0d1761b598def1628c4ff0f399a743693675d",
             "ethereumEvent": {
-              "contractID": "0x0B484706fdAF3A4F24b2266446B1cb6d648E3cC1",
+              "contractID": "0x4F3b8eD46cbe42A29A4e5d875BbD9C2ff2286A06",
               "event": "price_changed",
-              "value": "126000"
+              "value": "2"
             },
-            "maturity": "2020-12-31T23:59:59Z"
+            "maturity": "2021-03-31T23:59:59Z",
+            "quoteName": "USD",
+            "settlementAsset": "6d9d35f657589e40ddfb448b7ad4a7463b66efb307527fedd2aa7df1bbd5ea61"
           },
-          "id": "Crypto/GBPUSD/Futures/Dec20",
-          "initialMarkPrice": "130000",
+          "id": "unused-id",
+          "initialMarkPrice": "1",
           "metadata": {
             "tags": [
-              "fx/base:GBP",
-              "fx/quote:USD",
-              "asset_class:fx/crypto",
-              "product:futures"
+              "base:BTC",
+              "quote:USD",
+              "class:fx/crypto",
+              "monthly",
+              "sector:crypto"
             ]
           },
-          "name": "GBPUSD/DEC20",
-          "quoteName": "USD"
+          "name": "BTCUSD Monthly (31 Mar 2021)"
         },
         "logNormalRiskModel": {
           "params": {
             "mu": 0,
             "r": 0.016,
-            "sigma": 0.09
+            "sigma": 0.85
           },
           "riskAversionParameter": 0.01,
-          "tau": 1.90128526884173e-06
+          "tau": 0.0000190129
         },
         "marginCalculator": {
           "scalingFactors": {
-            "collateralRelease": 1.4,
-            "initialMargin": 1.2,
-            "searchLevel": 1.1
+            "collateralRelease": 1.1,
+            "initialMargin": 1.05,
+            "searchLevel": 1.025
           }
         }
-      }
+      },
+      "tradingMode": "TRADING_MODE_CONTINUOUS"
     },
     ...
   ]
@@ -76,20 +90,37 @@
   "marketData": {
     "auctionEnd": "0",
     "auctionStart": "0",
-    "bestBidPrice": "2000000000",
-    "bestBidVolume": "1",
-    "bestOfferPrice": "0",
-    "bestOfferVolume": "0",
+    "bestBidPrice": "3141755888",
+    "bestBidVolume": "258",
+    "bestOfferPrice": "3141755893",
+    "bestOfferVolume": "92",
+    "bestStaticBidPrice": "3134709709",
+    "bestStaticBidVolume": "5",
+    "bestStaticOfferPrice": "3148802069",
+    "bestStaticOfferVolume": "29",
     "indicativePrice": "0",
     "indicativeVolume": "0",
-    "markPrice": "1",
-    "market": "0bb19d92f25cdfa66d6731abc629a9a8375c284969660d9e9c917f97a9a4ffad",
-    "marketState": "MARKET_STATE_CONTINUOUS",
-    "midPrice": "1000000000",
-    "openInterest": "0",
-    "suppliedStake": "",
-    "targetStake": "",
-    "timestamp": "1605523542525048687",
+    "markPrice": "3141755893",
+    "market": "076BB86A5AA41E3E",
+    "marketTradingMode": "TRADING_MODE_CONTINUOUS",
+    "midPrice": "3141755890",
+    "openInterest": "41421",
+    "priceMonitoringBounds": [
+      {
+        "maxValidPrice": "3814918051",
+        "minValidPrice": "2728842104",
+        "referencePrice": 3228097024,
+        "trigger": {
+          "auctionExtension": "600",
+          "horizon": "43200",
+          "probability": 0.9999999
+        }
+      }
+    ],
+    "staticMidPrice": "3141755889",
+    "suppliedStake": "0",
+    "targetStake": "18820042660641.75",
+    "timestamp": "1611675810987081362",
     "trigger": "AUCTION_TRIGGER_UNSPECIFIED"
   }
 }
