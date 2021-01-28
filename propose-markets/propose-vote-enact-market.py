@@ -270,7 +270,6 @@ while not done:
             done = True
             break
 
-
 assert proposal_id != ""
 
 #####################################################################################
@@ -295,7 +294,6 @@ vote = {
         "partyID": pubkey,
         "value": "VALUE_YES",           # Can be either VALUE_YES or VALUE_NO
         "proposalID": proposal_id,
-        "timestamp": blockchain_time_seconds,
     }
 }
 
