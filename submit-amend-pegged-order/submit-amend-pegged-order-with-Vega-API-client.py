@@ -124,7 +124,7 @@ order = vac.api.trading.SubmitOrderRequest(
         marketID=marketID,
         partyID=pubkey,
         side=vac.vega.Side.SIDE_BUY,
-        size=5,
+        size=50,
         expiresAt=expiresAt,
         timeInForce=vac.vega.Order.TimeInForce.TIF_GTT,
         type=vac.vega.Order.Type.TYPE_LIMIT,
@@ -205,7 +205,7 @@ orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
 
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
-      f"Size(Old): 5, Size(New): {orderSize}, "
+      f"Size(Old): 50, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
 print(f"Pegged at:\n{response.peggedOrder}")
 

@@ -119,7 +119,7 @@ req = {
     "submission": {
         "marketID": marketID,
         "partyID": pubkey,
-        "size": "5",
+        "size": "50",
         "side": "SIDE_BUY",
         "timeInForce": "TIF_GTT",
         "expiresAt": expiresAt,
@@ -219,7 +219,7 @@ orderPegged = response_json["order"]["peggedOrder"]
 
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
-      f"Size(Old): 5, Size(New): {orderSize}, "
+      f"Size(Old): 50, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
 print(f"Pegged at: {orderPegged}")
 
