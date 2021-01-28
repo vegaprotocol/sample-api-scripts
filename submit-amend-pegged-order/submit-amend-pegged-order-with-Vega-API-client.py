@@ -27,6 +27,7 @@ import time
 import os
 
 from google.protobuf.empty_pb2 import Empty
+from google.protobuf.wrappers_pb2 import Int64Value
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 if not helpers.check_var(node_url_grpc):
@@ -157,9 +158,8 @@ order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
-orderPegged = response.peggedOrder
 print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}")
-print(f"Pegged at: {orderPegged}")
+print(f"Pegged at:\n{response.order.peggedOrder}")
 
 #####################################################################################
 #                        A M E N D   P E G G E D   O R D E R                        #
@@ -171,10 +171,10 @@ amend = vac.vega.OrderAmendment(
     marketID=marketID,
     partyID=pubkey,
     orderID=orderID,
-    price=vac.vega.Price(value=2),
+    sizeDelta=-25,
     timeInForce=vac.vega.Order.TimeInForce.TIF_GTC,
     peggedReference=vac.vega.PEGGED_REFERENCE_BEST_BID,
-    peggedOffset=-100
+    peggedOffset=Int64Value(value=-100)
 )
 order = vac.api.trading.AmendOrderRequest(amendment=amend)
 prepared_order = trading_client.PrepareAmendOrder(order)
@@ -202,12 +202,12 @@ orderPrice = response.status
 orderSize = response.size
 orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.timeInForce)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
-orderPegged = response.peggedOrder
 
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
       f"Size(Old): 50, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
-print(f"Pegged at: {orderPegged}")
+print(f"Pegged at:\n{response.peggedOrder}")
+
 
 # Completed.
