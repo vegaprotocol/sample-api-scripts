@@ -101,7 +101,7 @@ for asset in assets:
     if asset["symbol"] == "tDAI":
         print("Found an asset with symbol tDAI")
         print(asset)
-        found_asset_id = asset["ID"]
+        found_asset_id = asset["id"]
         break
 # :find_asset__
 
@@ -117,7 +117,7 @@ if found_asset_id == "UNKNOWN":
 vote_asset_id = "UNKNOWN"
 for asset in assets:
     if asset["symbol"] == "tVOTE":
-        vote_asset_id = asset["ID"]
+        vote_asset_id = asset["id"]
         break
 
 if vote_asset_id == "UNKNOWN":

@@ -206,7 +206,7 @@ orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
       f"Size(Old): 50, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
 print(f"Pegged at:\n{response.peggedOrder}")
 
 

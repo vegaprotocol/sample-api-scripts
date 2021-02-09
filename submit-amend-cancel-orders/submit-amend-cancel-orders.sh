@@ -94,12 +94,12 @@ echo "Blockchain time: $expiresAt"
 cat >req.json <<EOF
 {
     "submission": {
-        "marketID": "$marketID",
-        "partyID": "$pubKey",
+        "marketId": "$marketID",
+        "partyId": "$pubKey",
         "price": "1",
         "size": "10",
         "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTT",
+        "timeInForce": "TIME_IN_FORCE_GTT",
         "expiresAt": "$expiresAt",
         "type": "TYPE_LIMIT"
     }
@@ -107,7 +107,7 @@ cat >req.json <<EOF
 EOF
 url="$NODE_URL_REST/orders/prepare/submit"
 response="$(curl -s -XPOST -d @req.json "$url")"
-orderRef="$(echo "$response" | jq -r '.submitID')"
+orderRef="$(echo "$response" | jq -r '.submitId')"
 # :prepare_submit_order__
 
 echo "Prepared order, ref: $orderRef"
@@ -152,14 +152,14 @@ echo "Order processed, ID: $orderID, Status: $orderStatus"
 cat >req.json <<EOF
 {
     "amendment": {
-        "partyID": "$pubKey",
-        "marketID": "$marketID",
-        "orderID": "$orderID",
+        "partyId": "$pubKey",
+        "marketId": "$marketID",
+        "orderId": "$orderID",
         "price": {
             "value": "2"
         },
         "sizeDelta": "-25",
-        "timeInForce": "TIF_GTC"
+        "timeInForce": "TIME_IN_FORCE_GTC"
     }
 }
 EOF
@@ -201,7 +201,7 @@ orderStatus="$(echo "$response" | jq -r '.order.status')"
 echo "Amended Order:"
 echo "ID: $orderID, Status: $orderStatus, Price(Old): 1,"
 echo " Price(New): $orderPrice, Size(Old): 100, Size(New): $orderSize,"
-echo " TimeInForce(Old): TIF_GTT, TimeInForce(New): $orderTif"
+echo " TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): $orderTif"
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
@@ -215,9 +215,9 @@ echo " TimeInForce(Old): TIF_GTT, TimeInForce(New): $orderTif"
 cat >req.json <<EOF
 {
     "cancellation": {
-        "partyID": "$pubKey",
-        "marketID": "$marketID",
-        "orderID": "$orderID"
+        "partyId": "$pubKey",
+        "marketId": "$marketID",
+        "orderId": "$orderID"
     }
 }
 EOF
@@ -229,8 +229,8 @@ EOF
 cat >req.json <<EOF
 {
     "cancellation": {
-        "partyID": "$pubKey",
-        "marketID": "$marketID"
+        "partyId": "$pubKey",
+        "marketId": "$marketID"
     }
 }
 EOF
@@ -242,7 +242,7 @@ EOF
 cat >req.json <<EOF
 {
     "cancellation": {
-        "partyID": "$pubKey"
+        "partyId": "$pubKey"
     }
 }
 EOF

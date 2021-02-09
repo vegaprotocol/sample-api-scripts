@@ -201,7 +201,7 @@ orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
 print("Amended Order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
