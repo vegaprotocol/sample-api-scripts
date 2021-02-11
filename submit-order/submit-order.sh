@@ -87,12 +87,12 @@ expiresAt="$((blockchaintime+120*10**9))" # expire in 2 minutes
 cat >req.json <<EOF
 {
     "submission": {
-        "marketID": "$marketID",
-        "partyID": "$pubKey",
+        "marketId": "$marketID",
+        "partyId": "$pubKey",
         "price": "100000",
         "size": "100",
         "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTT",
+        "timeInForce": "TIME_IN_FORCE_GTT",
         "expiresAt": "$expiresAt",
         "type": "TYPE_LIMIT"
     }

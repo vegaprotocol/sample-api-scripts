@@ -52,7 +52,7 @@ market_id = markets[0].id
 # Optional: Market identifier - filter by market
 #            Party identifier - filter by party
 # By default, all trades on all markets for all parties will be returned on the stream.
-subscribe_request = vac.api.trading.TradesSubscribeRequest(marketID=market_id)
+subscribe_request = vac.api.trading.TradesSubscribeRequest(market_id=market_id)
 for stream_resp in data_client.TradesSubscribe(subscribe_request):
     for trade in stream_resp.trades:
         # All trades arriving over the channel/stream will be printed

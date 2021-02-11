@@ -17,8 +17,8 @@
     "collateralReleaseLevel": "617",
     "initialMargin": "529",
     "maintenanceMargin": "440",
-    "marketID": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
-    "partyID": "0f8bd6211ca2e89895135b7cc3e2ec8752b52704215790ea7a2de89082d21dc3",
+    "marketId": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
+    "partyId": "0f8bd6211ca2e89895135b7cc3e2ec8752b52704215790ea7a2de89082d21dc3",
     "searchLevel": "484",
     "timestamp": "0"
   }

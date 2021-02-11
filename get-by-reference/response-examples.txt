@@ -7,7 +7,7 @@
     "remaining": "12",
     "side": "SIDE_BUY",
     ...
-    "timeInForce": "TIF_GTT",
+    "timeInForce": "TIME_IN_FORCE_GTT",
     "type": "TYPE_LIMIT",
     "createdAt": "1600779633110526927",
     "expiresAt": "1600780533020126337",

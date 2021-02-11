@@ -16,7 +16,7 @@
       "side": "SIDE_BUY",
       "size": "2503",
       "status": "STATUS_ACTIVE",
-      "timeInForce": "TIF_GTT",
+      "timeInForce": "TIME_IN_FORCE_GTT",
       "type": "TYPE_LIMIT",
       "updatedAt": "0",
       "version": "1"
@@ -45,7 +45,7 @@
       "side": "SIDE_BUY",
       "size": "2503",
       "status": "STATUS_ACTIVE",
-      "timeInForce": "TIF_GTT",
+      "timeInForce": "TIME_IN_FORCE_GTT",
       "type": "TYPE_LIMIT",
       "updatedAt": "0",
       "version": "1"

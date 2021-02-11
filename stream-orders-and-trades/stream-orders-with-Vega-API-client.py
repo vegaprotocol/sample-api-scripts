@@ -52,7 +52,7 @@ market_id = markets[0].id
 # Optional: Market identifier - filter by market
 #            Party identifier - filter by party
 # By default, all orders on all markets for all parties will be returned on the stream.
-subscribe_request = vac.api.trading.OrdersSubscribeRequest(marketID=market_id)
+subscribe_request = vac.api.trading.OrdersSubscribeRequest(market_id=market_id)
 for stream_resp in data_client.OrdersSubscribe(subscribe_request):
     for order in stream_resp.orders:
         # All orders arriving over the channel/stream will be printed

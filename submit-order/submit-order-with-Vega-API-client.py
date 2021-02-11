@@ -96,16 +96,16 @@ else:
 
 # __prepare_order:
 # Vega node: Prepare the SubmitOrder
-order = vac.api.trading.SubmitOrderRequest(
+order = vac.api.trading.PrepareSubmitOrderRequest(
     submission=vac.vega.OrderSubmission(
-        marketID=marketID,
-        partyID=pubKey,
+        market_id=marketID,
+        party_id=pubKey,
         # price is an integer. For example 123456 is a price of 1.23456,
         # assuming 5 decimal places.
         price=100000,
         side=vac.vega.Side.SIDE_BUY,
         size=1,
-        timeInForce=vac.vega.Order.TimeInForce.TIF_GTC,
+        time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
         type=vac.vega.Order.Type.TYPE_LIMIT,
     )
 )

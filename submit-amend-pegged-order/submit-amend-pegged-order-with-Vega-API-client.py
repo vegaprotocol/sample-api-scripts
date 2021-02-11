@@ -119,16 +119,16 @@ print(f"Blockchain time: {blockchain_time}")
 
 # __prepare_submit_pegged_order:
 # Prepare a submit order message with a pegged BUY order
-order = vac.api.trading.SubmitOrderRequest(
+order = vac.api.trading.PrepareSubmitOrderRequest(
     submission=vac.vega.OrderSubmission(
-        marketID=marketID,
-        partyID=pubkey,
+        market_id=marketID,
+        party_id=pubkey,
         side=vac.vega.Side.SIDE_BUY,
         size=50,
-        expiresAt=expiresAt,
-        timeInForce=vac.vega.Order.TimeInForce.TIF_GTT,
+        expires_at=expiresAt,
+        time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTT,
         type=vac.vega.Order.Type.TYPE_LIMIT,
-        peggedOrder=vac.vega.PeggedOrder(
+        pegged_order=vac.vega.PeggedOrder(
             offset=-5,
             reference=vac.vega.PEGGED_REFERENCE_MID
         )
@@ -137,7 +137,7 @@ order = vac.api.trading.SubmitOrderRequest(
 prepared_order = trading_client.PrepareSubmitOrder(order)
 # :prepare_submit_pegged_order__
 
-order_ref = prepared_order.submitID
+order_ref = prepared_order.submit_id
 print(f"Prepared pegged order, ref: {order_ref}")
 
 # __sign_tx_pegged_order:
@@ -159,7 +159,7 @@ response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
 print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}")
-print(f"Pegged at:\n{response.order.peggedOrder}")
+print(f"Pegged at:\n{response.order.pegged_order}")
 
 #####################################################################################
 #                        A M E N D   P E G G E D   O R D E R                        #
@@ -168,15 +168,15 @@ print(f"Pegged at:\n{response.order.peggedOrder}")
 # __prepare_amend_pegged_order:
 # Prepare the amend pegged order message
 amend = vac.vega.OrderAmendment(
-    marketID=marketID,
-    partyID=pubkey,
-    orderID=orderID,
-    sizeDelta=-25,
-    timeInForce=vac.vega.Order.TimeInForce.TIF_GTC,
-    peggedReference=vac.vega.PEGGED_REFERENCE_BEST_BID,
-    peggedOffset=Int64Value(value=-100)
+    market_id=marketID,
+    party_id=pubkey,
+    order_id=orderID,
+    size_delta=-25,
+    time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
+    pegged_reference=vac.vega.PEGGED_REFERENCE_BEST_BID,
+    pegged_offset=Int64Value(value=-100)
 )
-order = vac.api.trading.AmendOrderRequest(amendment=amend)
+order = vac.api.trading.PrepareAmendOrderRequest(amendment=amend)
 prepared_order = trading_client.PrepareAmendOrder(order)
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 # :prepare_amend_pegged_order__
@@ -195,19 +195,18 @@ print("Signed pegged order amendment and sent to Vega")
 # Wait for amendment to be included in a block
 print("Waiting for blockchain...")
 time.sleep(4)
-order_id_request = vac.api.trading.OrderByIDRequest(orderID=orderID)
+order_id_request = vac.api.trading.OrderByIDRequest(order_id=orderID)
 response = data_client.OrderByID(order_id_request)
-orderID = response.id
-orderPrice = response.status
-orderSize = response.size
-orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.timeInForce)
-orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
+orderID = response.order.id
+orderPrice = response.order.status
+orderSize = response.order.size
+orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.order.time_in_force)
+orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
 
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
       f"Size(Old): 50, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
-print(f"Pegged at:\n{response.peggedOrder}")
-
+print(f"Pegged at:\n{response.order.pegged_order}")
 
 # Completed.
