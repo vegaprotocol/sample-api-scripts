@@ -102,12 +102,12 @@ print(f"Market found: {marketID}")
 # Request to estimate trading fees on a Vega network
 estimate = vac.api.trading.EstimateFeeRequest(
     order=vac.vega.Order(
-        marketId=marketID,
-        partyId=pubkey,
+        market_id=marketID,
+        party_id=pubkey,
         price=100000,
         size=100,
         side=vac.vega.Side.SIDE_BUY,
-        timeInForce=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
+        time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
         type=vac.vega.Order.Type.TYPE_LIMIT,
     )
 )
@@ -123,12 +123,12 @@ print("FeeEstimates:\n{}".format(estimated_fees))
 # Request to estimate trading margin on a Vega network
 estimate = vac.api.trading.EstimateMarginRequest(
     order=vac.vega.Order(
-        marketId=marketID,
-        partyId=pubkey,
+        market_id=marketID,
+        party_id=pubkey,
         price=600000,
         size=10,
         side=vac.vega.Side.SIDE_BUY,
-        timeInForce=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
+        time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
         type=vac.vega.Order.Type.TYPE_LIMIT,
     )
 )

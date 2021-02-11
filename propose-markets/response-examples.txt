@@ -43,14 +43,14 @@
          "code": "CRYPTO:BTCDAI/DEC20",
          "name": "BTC/DAI",
          "baseName": "BTC",
-         "quoteName": "DAI",
          "metadata": {
             "tags": []
          },
          "initialMarkPrice": "1",
          "future": {
-            "maturity": "2020-12-31T22:59:59Z",
-            "asset": "94beaabf8a99450 ... c68357d800dcf52e2f08b50ad89ca37fb3c451fb1",
+            "maturity": "2021-06-30T23:59:59Z",
+            "settlementAsset": "94beaabf8a99450 ... c68357d800dcf52e2f08b50ad89ca37fb3c451fb1",
+            "quoteName": "DAI",
             "ethereumEvent": {
                "contractID": "0x0B484706 ... 4b2266446B1cb6d648E3cC1",
                "event": "price_changed",
@@ -82,10 +82,6 @@
          "infrastructureFee": "0.001",
          "liquidityFee": "0.025"
       }
-   },
-   "openingAuction": {
-      "duration": "120",
-      "volume": "0"
    },
    "continuous": {
       "tickSize": "0.00001"

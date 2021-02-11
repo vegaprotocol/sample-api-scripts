@@ -6,6 +6,17 @@
     "liquidityFee": "10000",
     "makerFee": "2500"
   }
+  {
+  "order": {
+    "marketId": "076BB86A5AA41E3E",
+    "partyId": "7c03c4965a46799765fa1e025c5c541ba678970133987220dcbb8e582d1b5ad2",
+    "price": "600000",
+    "side": "SIDE_BUY",
+    "size": "10",
+    "timeInForce": "TIME_IN_FORCE_GTC",
+    "type": "TYPE_LIMIT"
+  }
+
 }
 ### :example_get_fees_estimate_response__
 

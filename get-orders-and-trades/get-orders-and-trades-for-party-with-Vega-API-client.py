@@ -32,7 +32,7 @@ data_client = vac.VegaTradingDataClient(node_url_grpc)
 # :import_client__
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
-if not helpers.check_url(walletserver_url):
+if not helpers.check_url(wallet_server_url):
     print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
     exit(1)
 
@@ -73,8 +73,7 @@ assert pubKey != ""
 # __get_orders_for_party:
 # Request a list of orders by party (pubKey)
 orders_by_party_request = vac.api.trading.OrdersByPartyRequest(
-    # Note: partyID has capitalised ID in OrdersByPartyRequest
-    partyID=pubKey
+    party_id=pubKey
 )
 orders_response = data_client.OrdersByParty(orders_by_party_request)
 print("OrdersByParty:\n{}".format(orders_response))
@@ -83,8 +82,7 @@ print("OrdersByParty:\n{}".format(orders_response))
 # __get_trades_for_party:
 # Request a list of trades by party (pubKey)
 trades_by_party_request = vac.api.trading.TradesByPartyRequest(
-    # Note: partyID has capitalised ID in OrdersByPartyRequest
-    partyID=pubKey
+    party_id=pubKey
 )
 trades_response = data_client.TradesByParty(trades_by_party_request)
 print("TradesByParty:\n{}".format(trades_response))

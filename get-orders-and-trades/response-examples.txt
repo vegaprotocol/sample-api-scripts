@@ -3,12 +3,12 @@
 {
   "orders": [
     {
-      "batchID": "0",
+      "batchId": "0",
       "createdAt": "1600787450760093039",
       "expiresAt": "1600788350594784506",
       "id": "V0000847866-0042253452",
-      "marketID": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
-      "partyID": "c8e71b495736122977e56428341fa8fc8b1c39bdd76336869a3ab49274c9cf22",
+      "marketId": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
+      "partyId": "c8e71b495736122977e56428341fa8fc8b1c39bdd76336869a3ab49274c9cf22",
       "price": "128588",
       "reason": "ORDER_ERROR_NONE",
       "reference": "6ae0679b-b4b9-4a31-82ef-cbca7a38e436",
@@ -32,12 +32,12 @@
 {
   "orders": [
     {
-      "batchID": "0",
+      "batchId": "0",
       "createdAt": "1600787450760093039",
       "expiresAt": "1600788350594784506",
       "id": "V0000847866-0042253452",
-      "marketID": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
-      "partyID": "c8e71b495736122977e56428341fa8fc8b1c39bdd76336869a3ab49274c9cf22",
+      "marketId": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
+      "partyId": "c8e71b495736122977e56428341fa8fc8b1c39bdd76336869a3ab49274c9cf22",
       "price": "128588",
       "reason": "ORDER_ERROR_NONE",
       "reference": "6ae0679b-b4b9-4a31-82ef-cbca7a38e436",
@@ -72,7 +72,7 @@
         "makerFee": "0"
       },
       "id": "V0000929226-0046319448-0000000001",
-      "marketID": "RTJVFCMFZZQQLLYVSXTWEN62P6AH6OCN",
+      "marketId": "RTJVFCMFZZQQLLYVSXTWEN62P6AH6OCN",
       "price": "3230",
       "sellOrder": "V0000929226-0046319448",
       "seller": "c210a614a93c4859feb4c963f07f3e7556d5ffb333a397fc512917cb28d79925",
@@ -108,7 +108,7 @@
         "makerFee": "18982"
       },
       "id": "V0000847867-0042253516-0000000001",
-      "marketID": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
+      "marketId": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
       "price": "128687",
       "sellOrder": "V0000847867-0042253504",
       "seller": "1b7afb77e09e5134f2bfb35a5bb6c658ea709b90fb3404ae9c1abbbf1e20fccc",
