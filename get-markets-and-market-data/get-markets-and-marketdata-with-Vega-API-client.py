@@ -41,8 +41,7 @@ assert market_id != ""
 # __get_market_data:
 # Request the market data for a market on a Vega network
 market_data_request = vac.api.trading.MarketDataByIDRequest(
-    # Note: marketID has capitalised ID in MarketDataByIDRequest
-    marketID=market_id
+    marketId=market_id
 )
 market_data = data_client.MarketDataByID(market_data_request)
 print("MarketData:\n{}".format(market_data))

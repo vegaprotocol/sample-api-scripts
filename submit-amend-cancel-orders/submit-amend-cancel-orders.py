@@ -161,7 +161,6 @@ response_json = response.json()
 orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
 print(f"\nOrder processed, ID: {orderID}, Status: {orderStatus}")
-print(response_json)
 
 #####################################################################################
 #                               A M E N D   O R D E R                               #

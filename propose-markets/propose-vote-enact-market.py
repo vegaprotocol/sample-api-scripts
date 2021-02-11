@@ -173,7 +173,7 @@ print(f"Blockchain time: {blockchain_time} ({blockchain_time_seconds} seconds pa
 # __prepare_propose_market:
 # Prepare a market proposal for a new market
 market = {
-    "partyID": pubkey,
+    "partyId": pubkey,
     "proposal": {
         # Set validation timestamp to a valid time offset from the current Vega blockchain time
         "validationTimestamp": blockchain_time_seconds + 1,
@@ -263,7 +263,7 @@ while not done:
 
     for n in my_proposals.json()["data"]:
         if n["proposal"]["reference"] == proposal_ref:
-            proposal_id = n["proposal"]["ID"]
+            proposal_id = n["proposal"]["id"]
             print()
             print("Your proposal has been accepted by the network")
             print(n)
@@ -291,9 +291,9 @@ assert proposal_id != ""
 # Prepare a vote for the proposal
 vote = {
     "vote": {
-        "partyID": pubkey,
+        "partyId": pubkey,
         "value": "VALUE_YES",           # Can be either VALUE_YES or VALUE_NO
-        "proposalID": proposal_id,
+        "proposalId": proposal_id,
     }
 }
 

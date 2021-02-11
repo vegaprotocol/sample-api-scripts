@@ -76,12 +76,12 @@ echo "Market found: $marketID"
 cat >req.json <<EOF
 {
     "order": {
-        "marketID": "$marketID",
-        "partyID": "$pubKey",
+        "marketId": "$marketID",
+        "partyId": "$pubKey",
         "price": "100000",
         "size": "100",
         "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTC",
+        "timeInForce": "TIME_IN_FORCE_GTC",
         "type": "TYPE_LIMIT"
     }
 }
@@ -103,12 +103,12 @@ $response"
 cat >req.json <<EOF
 {
     "order": {
-        "marketID": "$marketID",
-        "partyID": "$pubKey",
+        "marketId": "$marketID",
+        "partyId": "$pubKey",
         "price": "600000",
         "size": "10",
         "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTC",
+        "timeInForce": "TIME_IN_FORCE_GTC",
         "type": "TYPE_LIMIT"
     }
 }

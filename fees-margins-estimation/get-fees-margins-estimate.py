@@ -95,12 +95,12 @@ print(f"Market found: {marketID}")
 # Request to estimate trading fees on a Vega network
 req = {
     "order": {
-        "marketID": marketID,
-        "partyID": pubkey,
+        "marketId": marketID,
+        "partyId": pubkey,
         "price": "100000",
         "size": "100",
         "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTC",
+        "timeInForce": "TIME_IN_FORCE_GTC",
         "type": "TYPE_LIMIT",
     }
 }
@@ -121,12 +121,12 @@ print("FeeEstimates:\n{}".format(
 # Request to estimate trading margin on a Vega network
 req = {
     "order": {
-        "marketID": marketID,
-        "partyID": pubkey,
+        "marketId": marketID,
+        "partyId": pubkey,
         "price": "600000",
         "size": "10",
         "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTC",
+        "timeInForce": "TIME_IN_FORCE_GTC",
         "type": "TYPE_LIMIT",
     }
 }
