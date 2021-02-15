@@ -97,7 +97,7 @@ proposals = data_client.GetProposals(request)
 print("Proposals:\n{}".format(proposals))
 # :get_proposals__
 
-proposalID = proposals[0].id
+proposalID = proposals.data[0].proposal.id
 assert proposalID != ""
 print(f"Proposal found: {proposalID}")
 
@@ -107,7 +107,7 @@ print(f"Proposal found: {proposalID}")
 
 # __get_proposal_detail:
 # Request results of a specific proposal on a Vega network
-request = vac.api.trading.GetProposalByIDRequest(proposalID=proposalID)
+request = vac.api.trading.GetProposalByIDRequest(proposal_id=proposalID)
 proposal = data_client.GetProposalByID(request)
 print("Proposal:\n{}".format(proposal))
 # :get_proposal_detail__
@@ -118,7 +118,7 @@ print("Proposal:\n{}".format(proposal))
 
 # __get_proposals_by_party:
 # Request a list of proposals for a party (pubkey) on a Vega network
-request = vac.api.trading.GetProposalsByPartyRequest(partyID=pubkey)
+request = vac.api.trading.GetProposalsByPartyRequest(party_id=pubkey)
 party_proposals = data_client.GetProposalsByParty(request)
 print("Party proposals:\n{}".format(party_proposals))
 # :get_proposals_by_party__

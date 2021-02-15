@@ -117,11 +117,11 @@ print(f"Blockchain time: {blockchain_time}")
 # Prepare a submit order message with a pegged BUY order
 req = {
     "submission": {
-        "marketID": marketID,
-        "partyID": pubkey,
+        "marketId": marketID,
+        "partyId": pubkey,
         "size": "50",
         "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTT",
+        "timeInForce": "TIME_IN_FORCE_GTT",
         "expiresAt": expiresAt,
         "type": "TYPE_LIMIT",
         "peggedOrder": {
@@ -136,7 +136,7 @@ helpers.check_response(response)
 prepared_order = response.json()
 # :prepare_submit_pegged_order__
 
-order_ref = prepared_order["submitID"]
+order_ref = prepared_order["submitId"]
 print(f"Prepared pegged order, ref: {order_ref}")
 
 # __sign_tx_pegged_order:
@@ -175,11 +175,11 @@ print(f"Pegged at: {orderPegged}")
 # Prepare the amend order message
 req = {
     "amendment": {
-        "orderID": orderID,
-        "marketID": marketID,
-        "partyID": pubkey,
+        "orderId": orderID,
+        "marketId": marketID,
+        "partyId": pubkey,
         "sizeDelta": "25",
-        "timeInForce": "TIF_GTC",
+        "timeInForce": "TIME_IN_FORCE_GTC",
         "peggedReference": "PEGGED_REFERENCE_BEST_BID",
         "peggedOffset": "-100",
     }
@@ -220,7 +220,7 @@ orderPegged = response_json["order"]["peggedOrder"]
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
       f"Size(Old): 50, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
 print(f"Pegged at: {orderPegged}")
 
 

@@ -34,7 +34,7 @@
       "asset": "94beaabf8a99450f148e337c68357d800dcf52e2f08b50ad89ca37fb3c451fb1",
       "balance": "0",
       "id": "",
-      "marketID": "2bc517590ebf1edc401c988a20a8e5451faXX33b5eae842ce1713c3e9c26a28d",
+      "marketId": "2bc517590ebf1edc401c988a20a8e5451faXX33b5eae842ce1713c3e9c26a28d",
       "owner": "",
       "type": "ACCOUNT_TYPE_INSURANCE"
     },
@@ -42,7 +42,7 @@
       "asset": "94beaabf8a99450f148e337c68357d800dcf52e2f08b50ad89ca37fb3c451fb1",
       "balance": "6900000000",
       "id": "",
-      "marketID": "2bc517590ebf1edc401c988a20a8e5451faXX33b5eae842ce1713c3e9c26a28d",
+      "marketId": "2bc517590ebf1edc401c988a20a8e5451faXX33b5eae842ce1713c3e9c26a28d",
       "owner": "",
       "type": "ACCOUNT_TYPE_FEES_LIQUIDITY"
     }
@@ -58,7 +58,7 @@
       "asset": "16657915cb47f8c9c50c753e95a9a8107933a904fcdefaebe10284bbd37649b9",
       "balance": "2500000",
       "id": "",
-      "marketID": "",
+      "marketId": "",
       "owner": "ac9d9fe2e5904308d9c0f6fe758f8a4f4dd9636a23423sdff0b7ec7edc9",
       "type": "ACCOUNT_TYPE_GENERAL"
     },
@@ -66,7 +66,7 @@
       "asset": "2fdd696ac7787d98afcbc136d4cf17bc595f7c0c6d3bf57c0ceeb5184347b725",
       "balance": "1000000",
       "id": "",
-      "marketID": "",
+      "marketId": "",
       "owner": "ac9d9fe2e5904308d9c0f6fe758f8a4f4dd9636a23423sdff0b7ec7edc9",
       "type": "ACCOUNT_TYPE_GENERAL"
     },
@@ -74,15 +74,15 @@
       "asset": "94beaabf8a99450f148e337c68357d800dcf52e2f08b50ad89ca37fb3c451fb1",
       "balance": "50000000000",
       "id": "",
-      "marketID": "",
+      "marketId": "",
       "owner": "ac9d9fe2e5904308d9c0f6fe758f8a4f4dd9636a23423sdff0b7ec7edc9",
       "type": "ACCOUNT_TYPE_GENERAL"
     },
     {
-      "asset": "VOTE",
+      "asset": "tVOTE",
       "balance": "1",
       "id": "",
-      "marketID": "",
+      "marketId": "",
       "owner": "ac9d9fe2e5904308d9c0f6fe758f8a4f4dd9636a23423sdff0b7ec7edc9",
       "type": "ACCOUNT_TYPE_GENERAL"
     },
@@ -96,9 +96,9 @@
   "positions": [
     {
       "averageEntryPrice": "0",
-      "marketID": "RTJVFCMFZZQQLLYVSXTWEN62P6AH6OCN",
+      "marketId": "RTJVFCMFZZQQLLYVSXTWEN62P6AH6OCN",
       "openVolume": "0",
-      "partyID": "ac9d9fe2e5904308d9c0f6fe758f8a4f4dd9636a23423sdff0b7ec7edc9",
+      "partyId": "ac9d9fe2e5904308d9c0f6fe758f8a4f4dd9636a23423sdff0b7ec7edc9",
       "realisedPNL": "231",
       "unrealisedPNL": "0",
       "updatedAt": "1606232706823742661"

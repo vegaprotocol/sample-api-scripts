@@ -95,7 +95,7 @@ proposals = response.json()
 print("Proposals:\n{}".format(json.dumps(proposals, indent=2, sort_keys=True)))
 # :get_proposals__
 
-proposalID = proposals["data"][0]["proposal"]["ID"]
+proposalID = proposals["data"][0]["proposal"]["id"]
 assert proposalID != ""
 print(f"Proposal found: {proposalID}")
 

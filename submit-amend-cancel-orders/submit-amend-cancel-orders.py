@@ -117,12 +117,12 @@ print(f"Blockchain time: {blockchain_time}")
 # Prepare a submit order message
 req = {
     "submission": {
-        "marketID": marketID,
-        "partyID": pubkey,
+        "marketId": marketID,
+        "partyId": pubkey,
         "price": "1",  # Note: price is an integer. For example 123456
         "size": "100",  # is a price of 1.23456, assuming 5 decimal places.
         "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTT",
+        "timeInForce": "TIME_IN_FORCE_GTT",
         "expiresAt": expiresAt,
         "type": "TYPE_LIMIT",
     }
@@ -133,7 +133,7 @@ helpers.check_response(response)
 prepared_order = response.json()
 # :prepare_submit_order__
 
-order_ref = prepared_order["submitID"]
+order_ref = prepared_order["submitId"]
 print(f"Prepared order, ref: {order_ref}")
 
 # __sign_tx_order:
@@ -170,14 +170,14 @@ print(f"\nOrder processed, ID: {orderID}, Status: {orderStatus}")
 # Prepare the amend order message
 req = {
     "amendment": {
-        "orderID": orderID,
-        "marketID": marketID,
-        "partyID": pubkey,
+        "orderId": orderID,
+        "marketId": marketID,
+        "partyId": pubkey,
         "price": {
             "value": "2"
         },
         "sizeDelta": "-25",
-        "timeInForce": "TIF_GTC",
+        "timeInForce": "TIME_IN_FORCE_GTC",
     }
 }
 url = f"{node_url_rest}/orders/prepare/amend"
@@ -215,7 +215,7 @@ orderStatus = response_json["order"]["status"]
 print("Amended Order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
@@ -228,9 +228,9 @@ print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
 req = {
     "cancellation": {
         # Include party, market and order identifier fields to cancel single order.
-        "partyID": pubkey,
-        "marketID": marketID,
-        "orderID": orderID,
+        "partyId": pubkey,
+        "marketId": marketID,
+        "orderId": orderID,
     }
 }
 # :prepare_cancel_order_req1__
@@ -240,8 +240,8 @@ req = {
 req = {
     "cancellation": {
         # Only include party & market identifier fields.
-        "partyID": pubkey,
-        "marketID": marketID,
+        "partyId": pubkey,
+        "marketId": marketID,
     }
 }
 # :prepare_cancel_order_req2__
@@ -251,7 +251,7 @@ req = {
 req = {
     "cancellation": {
         # Only include party identifier field.
-        "partyID": pubkey,
+        "partyId": pubkey,
     }
 }
 # :prepare_cancel_order_req3__

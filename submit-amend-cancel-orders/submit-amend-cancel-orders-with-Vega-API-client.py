@@ -118,24 +118,24 @@ print(f"Blockchain time: {blockchain_time}")
 
 # __prepare_submit_order:
 # Prepare a submit order message
-order = vac.api.trading.SubmitOrderRequest(
+order = vac.api.trading.PrepareSubmitOrderRequest(
     submission=vac.vega.OrderSubmission(
-        marketID=marketID,
-        partyID=pubkey,
+        market_id=marketID,
+        party_id=pubkey,
         # price is an integer. For example 123456 is a price of 1.23456,
         # assuming 5 decimal places.
         price=1,
         side=vac.vega.Side.SIDE_BUY,
         size=10,
-        expiresAt=expiresAt,
-        timeInForce=vac.vega.Order.TimeInForce.TIF_GTT,
+        expires_at=expiresAt,
+        time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTT,
         type=vac.vega.Order.Type.TYPE_LIMIT,
     )
 )
 prepared_order = trading_client.PrepareSubmitOrder(order)
 # :prepare_submit_order__
 
-order_ref = prepared_order.submitID
+order_ref = prepared_order.submit_id
 print(f"Prepared order, ref: {order_ref}")
 
 # __sign_tx_order:
@@ -165,13 +165,13 @@ print(f"Order processed, ID: {orderID}, Status: {orderStatus}")
 # __prepare_amend_order:
 # Prepare the amend order message
 amend = vac.vega.OrderAmendment(
-    marketID=marketID,
-    partyID=pubkey,
-    orderID=orderID,
+    market_id=marketID,
+    party_id=pubkey,
+    order_id=orderID,
     price=vac.vega.Price(value=2),
-    timeInForce=vac.vega.Order.TimeInForce.TIF_GTC,
+    time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
 )
-order = vac.api.trading.AmendOrderRequest(amendment=amend)
+order = vac.api.trading.PrepareAmendOrderRequest(amendment=amend)
 prepared_order = trading_client.PrepareAmendOrder(order)
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 # :prepare_amend_order__
@@ -190,18 +190,19 @@ print("Signed amendment and sent to Vega")
 # Wait for amendment to be included in a block
 print("Waiting for blockchain...")
 time.sleep(4)
-order_id_request = vac.api.trading.OrderByIDRequest(orderID=orderID)
+order_id_request = vac.api.trading.OrderByIDRequest(order_id=orderID)
 response = data_client.OrderByID(order_id_request)
-orderID = response.id
-orderPrice = response.status
-orderSize = response.size
-orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.timeInForce)
-orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.status)
+
+orderID = response.order.id
+orderPrice = response.order.status
+orderSize = response.order.size
+orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.order.time_in_force)
+orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
 
 print("Amended Order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIF_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
@@ -213,9 +214,9 @@ print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
 # 1 - Cancel single order for party (pubkey)
 cancel = vac.vega.OrderCancellation(
     # Include party, market and order identifier fields to cancel single order.
-    marketID=marketID,
-    partyID=pubkey,
-    orderID=orderID,
+    market_id=marketID,
+    party_id=pubkey,
+    order_id=orderID,
 )
 # :prepare_cancel_order_req1__
 
@@ -223,8 +224,8 @@ cancel = vac.vega.OrderCancellation(
 # 2 - Cancel all orders on market for party (pubkey)
 cancel = vac.vega.OrderCancellation(
     # Only include party & market identifier fields.
-    marketID=marketID,
-    partyID=pubkey,
+    market_id=marketID,
+    party_id=pubkey,
 )
 # :prepare_cancel_order_req2__
 
@@ -232,13 +233,13 @@ cancel = vac.vega.OrderCancellation(
 # 3 - Cancel all orders on all markets for party (pubkey)
 cancel = vac.vega.OrderCancellation(
     # Only include party identifier field.
-    partyID=pubkey,
+    party_id=pubkey,
 )
 # :prepare_cancel_order_req3__
 
 # __prepare_cancel_order:
 # Prepare the cancel order message
-order = vac.api.trading.CancelOrderRequest(cancellation=cancel)
+order = vac.api.trading.PrepareCancelOrderRequest(cancellation=cancel)
 prepared_order = trading_client.PrepareCancelOrder(order)
 blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 # :prepare_cancel_order__

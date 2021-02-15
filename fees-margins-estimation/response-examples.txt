@@ -6,6 +6,17 @@
     "liquidityFee": "10000",
     "makerFee": "2500"
   }
+  {
+  "order": {
+    "marketId": "076BB86A5AA41E3E",
+    "partyId": "7c03c4965a46799765fa1e025c5c541ba678970133987220dcbb8e582d1b5ad2",
+    "price": "600000",
+    "side": "SIDE_BUY",
+    "size": "10",
+    "timeInForce": "TIME_IN_FORCE_GTC",
+    "type": "TYPE_LIMIT"
+  }
+
 }
 ### :example_get_fees_estimate_response__
 
@@ -17,8 +28,8 @@
     "collateralReleaseLevel": "617",
     "initialMargin": "529",
     "maintenanceMargin": "440",
-    "marketID": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
-    "partyID": "0f8bd6211ca2e89895135b7cc3e2ec8752b52704215790ea7a2de89082d21dc3",
+    "marketId": "LBXRA65PN4FN5HBWRI2YBCOYDG2PBGYU",
+    "partyId": "0f8bd6211ca2e89895135b7cc3e2ec8752b52704215790ea7a2de89082d21dc3",
     "searchLevel": "484",
     "timestamp": "0"
   }

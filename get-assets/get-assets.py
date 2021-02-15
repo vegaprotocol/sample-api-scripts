@@ -42,16 +42,16 @@ print("Assets:\n{}".format(
 found_asset_id = "UNKNOWN"
 assets = response.json()["assets"]
 for asset in assets:
-    if asset["name"] == "DAI":
+    if asset["name"] == "tDAI":
         print()
-        print("Found an asset with name DAI:")
-        found_asset_id = asset["ID"]
+        print("Found an asset with name tDAI:")
+        found_asset_id = asset["id"]
         print(found_asset_id)
         print()
         break
 
 if found_asset_id == "UNKNOWN":
-    print("DAI asset not found on specified Vega network, please propose and create the DAI asset")
+    print("tDAI asset not found on specified Vega network, please propose and create the tDAI asset")
 
 assert found_asset_id != "UNKNOWN"
 print()

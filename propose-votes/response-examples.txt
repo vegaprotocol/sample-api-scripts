@@ -1,9 +1,9 @@
 ### __example_proposals_response:
 # Response for proposals on a Vega network
 {
-    ID: "fefb8e7a6b86d77f5846f6ca8ac6bdd415d7c0c5bdf65cf0bbc4a48d868d47fc"
+    id: "fefb8e7a6b86d77f5846f6ca8ac6bdd415d7c0c5bdf65cf0bbc4a48d868d47fc"
     reference: "6c1255f3-164f-4c4f-b9a2-f0bcd61845e1"
-    partyID: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
+    partyId: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
     state: STATE_ENACTED
     timestamp: 1605876045102272496
     terms {
@@ -42,17 +42,17 @@
     }
   }
   yes {
-    partyID: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
+    partyId: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
     value: VALUE_YES
-    proposalID: "fefb8e7a6b86d77f5846f6ca8ac6bdd415d7c0c5bdf65cf0bbc4a48d868d47fc"
+    proposalId: "fefb8e7a6b86d77f5846f6ca8ac6bdd415d7c0c5bdf65cf0bbc4a48d868d47fc"
     timestamp: 1605876046695085212
   }
   yesParty {
     key: "fe6c26706cb64f33e323d6755d2bcda8ba09ab65b7c7fba89102b2c8b36c41aa"
     value {
-      partyID: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
+      partyId: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
       value: VALUE_YES
-      proposalID: "fefb8e7a6b86d77f5846f6ca8ac6bdd415d7c0c5bdf65cf0bbc4a48d868d47fc"
+      proposalId: "fefb8e7a6b86d77f5846f6ca8ac6bdd415d7c0c5bdf65cf0bbc4a48d868d47fc"
       timestamp: 1605876046695085212
     }
   }

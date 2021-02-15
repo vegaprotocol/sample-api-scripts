@@ -92,11 +92,11 @@ echo "Blockchain time: $expiresAt"
 cat >req.json <<EOF
 {
     "submission": {
-        "marketID": "$marketID",
-        "partyID": "$pubKey",
+        "marketId": "$marketID",
+        "partyId": "$pubKey",
         "size": "50",
         "side": "SIDE_BUY",
-        "timeInForce": "TIF_GTT",
+        "timeInForce": "TIME_IN_FORCE_GTT",
         "expiresAt": "$expiresAt",
         "type": "TYPE_LIMIT",
         "peggedOrder": {
@@ -108,7 +108,7 @@ cat >req.json <<EOF
 EOF
 url="$NODE_URL_REST/orders/prepare/submit"
 response="$(curl -s -XPOST -d @req.json "$url")"
-orderRef="$(echo "$response" | jq -r '.submitID')"
+orderRef="$(echo "$response" | jq -r '.submitId')"
 # :prepare_submit_pegged_order__
 
 echo "Prepared pegged order, ref: $orderRef"
@@ -155,11 +155,11 @@ echo "Pegged at: $orderPegged"
 cat >req.json <<EOF
 {
     "amendment": {
-        "partyID": "$pubKey",
-        "marketID": "$marketID",
-        "orderID": "$orderID",
+        "partyId": "$pubKey",
+        "marketId": "$marketID",
+        "orderId": "$orderID",
         "sizeDelta": "-25",
-        "timeInForce": "TIF_GTC",
+        "timeInForce": "TIME_IN_FORCE_GTC",
         "peggedReference": "PEGGED_REFERENCE_BEST_BID",
         "peggedOffset": "-100"
     }
@@ -203,7 +203,7 @@ orderPegged="$(echo "$response" | jq -r '.order.peggedOrder')"
 echo "Amended pegged order:"
 echo "ID: $orderID, Status: $orderStatus,"
 echo " Size(Old): 50, Size(New): $orderSize,"
-echo " TimeInForce(Old): TIF_GTT, TimeInForce(New): $orderTif"
+echo " TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): $orderTif"
 echo "Pegged at: $orderPegged"
 
 # Completed.

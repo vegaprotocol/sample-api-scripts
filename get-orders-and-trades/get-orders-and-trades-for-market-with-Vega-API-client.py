@@ -36,8 +36,7 @@ assert market_id != ""
 # __get_orders_for_market:
 # Request a list of orders by market on a Vega network
 orders_by_market_request = vac.api.trading.OrdersByMarketRequest(
-    # Note: marketID has capitalised ID in OrdersByMarketRequest
-    marketID=market_id
+    market_id=market_id
 )
 orders_response = data_client.OrdersByMarket(orders_by_market_request)
 print("OrdersByMarket:\n{}".format(orders_response))
@@ -46,8 +45,7 @@ print("OrdersByMarket:\n{}".format(orders_response))
 # __get_trades_for_market:
 # Request a list of trades by market on a Vega network
 trades_by_market_request = vac.api.trading.TradesByMarketRequest(
-    # Note: marketID has capitalised ID in TradesByMarketRequest
-    marketID=market_id
+    market_id=market_id
 )
 trades_response = data_client.TradesByMarket(trades_by_market_request)
 print("TradesByMarket:\n{}".format(trades_response))
