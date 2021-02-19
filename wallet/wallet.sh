@@ -98,7 +98,7 @@ cat >req.json <<EOF
     "propagate": false
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 signedTx="$(echo "$response" | jq .signedTx)"
 # :sign_tx__

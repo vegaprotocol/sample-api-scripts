@@ -125,7 +125,7 @@ cat >req.json <<EOF
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_pegged_order__
 

@@ -137,7 +137,7 @@ blob = preparedOrder["blob"]
 req = {"tx": blob, "pubKey": pubKey, "propagate": False}
 print("Request for SignTx:")
 print(json.dumps(req, indent=2, sort_keys=True))
-url = f"{walletserver_url}/api/v1/messages"
+url = f"{walletserver_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 signedTx = response.json()["signedTx"]
