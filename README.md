@@ -23,11 +23,14 @@ And you're good to go. Now choose a sample program to run from the following (se
 
 | Script description            | Languages |   API transport                      | Folder & README |
 | :----------------- | :------- | :------------------------------ | :---------- |
-| Orders by reference | bash, python3 | Vega node [REST, gRPC]  | / [get-by-reference](get-by-reference) |
-| List market details and market data | bash, python3  | Vega node [REST, gRPC]  | / [get-markets-and-market-data](get-markets-and-market-data) |
+| Get Asset | python3, go | Vega node [REST, gRPC]  | / [get-assets](get-assets) |
+| Orders by reference | bash, python3, go | Vega node [REST, gRPC]  | / [get-by-reference](get-by-reference) |
+| List market details and market data | bash, python3, go  | Vega node [REST, gRPC]  | / [get-markets-and-market-data](get-markets-and-market-data) |
+| List Vega network parameters | bash, python3, go  | Vega node [REST, gRPC]  | / [get-netowork-parameters](get-network-parameters) |
 | List orders and trades | bash, python3 | Vega node [REST, gRPC]  | / [get-orders-and-trades](get-orders-and-trades) |
-| Vega statistics | bash, python3 | Vega node [REST, gRPC]  | / [get-statistics](get-statistics) |
+| Vega statistics | bash, python3, go | Vega node [REST, gRPC]  | / [get-statistics](get-statistics) |
 | List parties and accounts | bash, python3 | Vega node [REST, gRPC]  | / [parties-and-accounts](parties-and-accounts) |
+| Stream events | python3, go | Vega node [REST, gRPC] | / [stream-events](stream-events) |
 | Stream market data | python3 | Vega node [GraphQL] | / [stream-marketdata](stream-marketdata) |
 | Stream orders and trades | python3  | Vega node [GraphQL] | / [stream-orders-and-trades](stream-orders-and-trades) |
 | Interact with Vega wallet API | bash, python3 | Vega wallet [REST] | / [wallet](wallet) |

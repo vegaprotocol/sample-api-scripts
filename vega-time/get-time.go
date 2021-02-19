@@ -11,7 +11,8 @@ import (
 func main() {
 	conn, err := grpc.Dial("NODE_gRPC_URL", grpc.WithInsecure())
 	if err != nil {
-
+		fmt.Println(err)
+		return 1
 	}
 	defer conn.Close()
 
