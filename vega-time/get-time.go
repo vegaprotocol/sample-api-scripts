@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"code.vegaprotocol.io/vega/proto/api"
+	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -12,7 +12,7 @@ func main() {
 	conn, err := grpc.Dial("NODE_gRPC_URL", grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err)
-		return 1
+		return
 	}
 	defer conn.Close()
 

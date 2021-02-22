@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"code.vegaprotocol.io/vega/proto/api"
+	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"google.golang.org/grpc"
 )
 
