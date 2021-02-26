@@ -92,12 +92,12 @@ cat >req.json <<EOF
         "fee": "0.1",
 		"buys": [
 			{
-				"offset": "1",
+				"offset": "-1",
 				"proportion": "2",
 				"reference": "PEGGED_REFERENCE_MID"
 			},
 			{
-				"offset": "2",
+				"offset": "-2",
 				"proportion": "2",
 				"reference": "PEGGED_REFERENCE_MID"
 			}
