@@ -20,5 +20,5 @@ func main() {
 	request := api.GetVegaTimeRequest{}
 	vegaTime, err := dataClient.GetVegaTime(context.Background(), &request)
 
-	fmt.Printf("Vega time: %d", vegaTime)
+	fmt.Printf("Vega time: %s", vegaTime)
 }
