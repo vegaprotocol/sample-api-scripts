@@ -1,48 +1,16 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
-
-type Req struct {
-	Wallet     string `json:"wallet"`
-	Passphrase string `json:"passphrase"`
-}
-
-type Token struct {
-	Token string `json:"token"`
-}
-
-type Keypair struct {
-	Keys []struct {
-		Pub     string      `json:"pub"`
-		Algo    string      `json:"algo"`
-		Tainted bool        `json:"tainted"`
-		Meta    interface{} `json:"meta"`
-	} `json:"keys"`
-}
-
-func checkWalletURL(url string) string {
-	suffixs := []string{"/api/v1/", "/api/v1", "/"}
-	for _, suffix := range suffixs {
-		if strings.HasSuffix(url, suffix) {
-			fmt.Printf("There's no need to add %s to WALLETSERVER_URL.", suffix)
-			fmt.Printf("Removing it.")
-			url = string(url[:len(url)-len(suffix)])
-		}
-	}
-	return url
-}
 
 func main() {
 	nodeURLGrpc := os.Getenv("NODE_URL_GRPC")
@@ -57,12 +25,18 @@ func main() {
 	if len(walletName) == 0 {
 		panic("WALLET_NAME is null or empty")
 	}
-	walletPassword := os.Getenv("WALLET_PASSPHRASE")
-	if len(walletPassword) == 0 {
+	walletPassphrase := os.Getenv("WALLET_PASSPHRASE")
+	if len(walletPassphrase) == 0 {
 		panic("WALLET_PASSPHRASE is null or empty")
 	}
 
-	walletserverURL = checkWalletURL(walletserverURL)
+	walletserverURL = CheckWalletUrl(walletserverURL)
+
+	walletConfig := WalletConfig{
+		URL:        walletserverURL,
+		Name:       walletName,
+		Passphrase: walletPassphrase,
+	}
 
 	conn, err := grpc.Dial(nodeURLGrpc, grpc.WithInsecure())
 	if err != nil {
@@ -72,18 +46,19 @@ func main() {
 
 	dataClient := api.NewTradingDataServiceClient(conn)
 
-	// Create new wallet
-	createNewWallet := false
-	var url string
-	if createNewWallet {
-		url = walletserverURL + "/api/v1/wallets"
-	} else {
-		url = walletserverURL + "/api/v1/auth/token"
+	var token Token
+	body, err := LoginWallet(walletConfig)
+	if err != nil {
+		panic(err)
 	}
+	json.Unmarshal([]byte(body), &token)
 
-	// Make request to create new wallet or log in to existing wallet
-	jsonStr := []byte("{\"wallet\":\"" + walletName + "\",\"passphrase\":\"" + walletPassword + "\"}")
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	fmt.Println(token.Token)
+
+	// List existing keypairs
+	url := walletserverURL + "/api/v1/keys"
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -92,31 +67,9 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	fmt.Println(url, " returns response Status:", resp.Status)
-	fmt.Println("response Headers:", resp.Header)
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
-	var token Token
-	json.Unmarshal([]byte(body), &token)
-
-	fmt.Println(token.Token)
-
-	// List existing keypairs
-	url = walletserverURL + "/api/v1/keys"
-	req, err = http.NewRequest("GET", url, nil)
-	req.Header.Set("Authorization", "Bearer "+token.Token)
-
-	client = &http.Client{}
-	resp, err = client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
 	body, _ = ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
-	var keypair Keypair
+	var keypair Keys
 	json.Unmarshal([]byte(body), &keypair)
 
 	if len(keypair.Keys) == 0 {
@@ -126,14 +79,17 @@ func main() {
 	pubkey := keypair.Keys[0].Pub
 	fmt.Println("pubkey: ", pubkey)
 
+	// __get_orders_for_party:
 	// Request a list of orders by party (pubKey)
 	ordersByPartyReq := api.OrdersByPartyRequest{PartyId: pubkey}
 	ordersByPartyResp, _ := dataClient.OrdersByParty(context.Background(), &ordersByPartyReq)
 	fmt.Printf("OrdersByParty: %v\n", ordersByPartyResp)
+	// :get_orders_for_party__
 
+	// __get_trades_for_party:
 	//Request a list of trades by market on a Vega network
 	tradesByPartyReq := api.TradesByPartyRequest{PartyId: pubkey}
 	tradesByPartyResp, _ := dataClient.TradesByParty(context.Background(), &tradesByPartyReq)
 	fmt.Printf("TradesByParty: %v\n", tradesByPartyResp)
-
+	// :get_trades_for_party__
 }

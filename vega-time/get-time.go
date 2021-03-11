@@ -16,9 +16,13 @@ func main() {
 	}
 	defer conn.Close()
 
+	// __get_time:
+	// Request the latest timestamp in nanoseconds since epoch from the Vega network
 	dataClient := api.NewTradingDataServiceClient(conn)
 	request := api.GetVegaTimeRequest{}
 	vegaTime, err := dataClient.GetVegaTime(context.Background(), &request)
 
-	fmt.Printf("Vega time: %s", vegaTime)
+	// The "timestamp" field contains the resulting data we need.
+	fmt.Printf("Vega time: %s", vegaTime.Timestamp)
+	// :get_time__
 }

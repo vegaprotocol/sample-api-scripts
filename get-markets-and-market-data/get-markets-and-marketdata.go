@@ -23,6 +23,7 @@ func main() {
 
 	dataClient := api.NewTradingDataServiceClient(conn)
 
+	// __get_markets:
 	// Request a list of markets available on the specified Vega Network
 	request := api.MarketsRequest{}
 	markets, err := dataClient.Markets(context.Background(), &request)
@@ -31,8 +32,10 @@ func main() {
 	}
 
 	fmt.Printf("Markets: %s", markets)
+	// :get_markets__
 	marketId := markets.Markets[0].Id
 
+	// __get_market_data:
 	// Request a single market by identifier on a Vega network
 	requestMarket := api.MarketByIDRequest{MarketId: marketId}
 	MarketObject, err := dataClient.MarketByID(context.Background(), &requestMarket)
@@ -40,5 +43,6 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("Asset by id: %s", MarketObject)
+	fmt.Printf("MarketData: %s", MarketObject)
+	// :get_market_data__
 }

@@ -23,10 +23,12 @@ func main() {
 
 	dataClient := api.NewTradingDataServiceClient(conn)
 
+	// __get_trades_for_order:
 	// Request a list of trades for a specific order on a Vega network
 	orderID := "V0000929211-0046318720"
 	tradesByOrderReq := api.TradesByOrderRequest{OrderId: orderID}
 	tradesByOrderResp, _ := dataClient.TradesByOrder(context.Background(), &tradesByOrderReq)
 	fmt.Printf("TradesByOrder: %v\n", tradesByOrderResp)
+	// :get_trades_for_order__
 
 }

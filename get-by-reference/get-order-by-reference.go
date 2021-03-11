@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-	reference := "4617844f-6fab-4cf6-8852-e29dbd96e5f1"
 	nodeURLGrpc := os.Getenv("NODE_URL_GRPC")
 	if len(nodeURLGrpc) == 0 {
 		panic("NODE_URL_GRPC is null or empty")
@@ -22,6 +21,12 @@ func main() {
 	}
 	defer conn.Close()
 
+	// __get_order_by_ref:
+	// Request an order by reference on a Vega network
+	// Note: This is an example and order reference will be provided in the response
+	// from a prepareSubmitOrder request in the field named `submitID` or similar.
+	reference := "4617844f-6fab-4cf6-8852-e29dbd96e5f1"
+
 	dataClient := api.NewTradingDataServiceClient(conn)
 	request := api.OrderByReferenceRequest{Reference: reference}
 	order, err := dataClient.OrderByReference(context.Background(), &request)
@@ -30,4 +35,5 @@ func main() {
 	}
 
 	fmt.Printf("OrderByReference: %s", order)
+	// :get_order_by_ref__
 }

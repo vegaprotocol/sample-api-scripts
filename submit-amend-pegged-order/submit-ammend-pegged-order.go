@@ -1,14 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto"
@@ -17,36 +15,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
-
-type Req struct {
-	Wallet     string `json:"wallet"`
-	Passphrase string `json:"passphrase"`
-}
-
-type Token struct {
-	Token string `json:"token"`
-}
-
-type Keypair struct {
-	Keys []struct {
-		Pub     string      `json:"pub"`
-		Algo    string      `json:"algo"`
-		Tainted bool        `json:"tainted"`
-		Meta    interface{} `json:"meta"`
-	} `json:"keys"`
-}
-
-func checkWalletURL(url string) string {
-	suffixs := []string{"/api/v1/", "/api/v1", "/"}
-	for _, suffix := range suffixs {
-		if strings.HasSuffix(url, suffix) {
-			fmt.Printf("There's no need to add %s to WALLETSERVER_URL.", suffix)
-			fmt.Printf("Removing it.")
-			url = string(url[:len(url)-len(suffix)])
-		}
-	}
-	return url
-}
 
 func main() {
 	nodeURLGrpc := os.Getenv("NODE_URL_GRPC")
@@ -61,12 +29,18 @@ func main() {
 	if len(walletName) == 0 {
 		panic("WALLET_NAME is null or empty")
 	}
-	walletPassword := os.Getenv("WALLET_PASSPHRASE")
-	if len(walletPassword) == 0 {
+	walletPassphrase := os.Getenv("WALLET_PASSPHRASE")
+	if len(walletPassphrase) == 0 {
 		panic("WALLET_PASSPHRASE is null or empty")
 	}
 
-	walletserverURL = checkWalletURL(walletserverURL)
+	walletserverURL = CheckWalletUrl(walletserverURL)
+
+	walletConfig := WalletConfig{
+		URL:        walletserverURL,
+		Name:       walletName,
+		Passphrase: walletPassphrase,
+	}
 
 	conn, err := grpc.Dial(nodeURLGrpc, grpc.WithInsecure())
 	if err != nil {
@@ -77,18 +51,18 @@ func main() {
 	dataClient := api.NewTradingDataServiceClient(conn)
 	tradingClient := api.NewTradingServiceClient(conn)
 
-	// Create new wallet
-	createNewWallet := false
-	var url string
-	if createNewWallet {
-		url = walletserverURL + "/api/v1/wallets"
-	} else {
-		url = walletserverURL + "/api/v1/auth/token"
+	var token Token
+	body, err := LoginWallet(walletConfig)
+	if err != nil {
+		panic(err)
 	}
+	json.Unmarshal([]byte(body), &token)
+	fmt.Println(token.Token)
 
-	// Make request to create new wallet or log in to existing wallet
-	jsonStr := []byte("{\"wallet\":\"" + walletName + "\",\"passphrase\":\"" + walletPassword + "\"}")
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	// List existing keypairs
+	url := walletserverURL + "/api/v1/keys"
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -97,31 +71,9 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	fmt.Println(url, " returns response Status:", resp.Status)
-	fmt.Println("response Headers:", resp.Header)
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
-	var token Token
-	json.Unmarshal([]byte(body), &token)
-
-	fmt.Println(token.Token)
-
-	// List existing keypairs
-	url = walletserverURL + "/api/v1/keys"
-	req, err = http.NewRequest("GET", url, nil)
-	req.Header.Set("Authorization", "Bearer "+token.Token)
-
-	client = &http.Client{}
-	resp, err = client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
 	body, _ = ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
-	var keypair Keypair
+	var keypair Keys
 	json.Unmarshal([]byte(body), &keypair)
 
 	if len(keypair.Keys) == 0 {
@@ -131,23 +83,29 @@ func main() {
 	pubkey := keypair.Keys[0].Pub
 	fmt.Println("pubkey: ", pubkey)
 
-	// Get market
+	// __get_market:
+	// Request the identifier for the market to place on
 	marketRequest := api.MarketsRequest{}
 	markets, err := dataClient.Markets(context.Background(), &marketRequest)
 	if err != nil {
 		panic(err)
 	}
 	marketId := markets.Markets[0].Id
+	// :get_market__
 
-	// Get Blockchain time
+	// __get_expiry_time:
+	// Request the current blockchain time, calculate an expiry time
 	request := api.GetVegaTimeRequest{}
 	vegaTime, err := dataClient.GetVegaTime(context.Background(), &request)
 
 	expireAt := vegaTime.Timestamp + (120 * 1e9)
+	// :get_expiry_time__
+
 	fmt.Printf("Blockchain time: %d\n", vegaTime.Timestamp)
 	fmt.Printf("Order expiration time: %d\n", expireAt)
 
-	// Submit pegged order
+	// __prepare_submit_pegged_order:
+	// Prepare a submit order message with a pegged BUY order
 	peggedOrder := proto.PeggedOrder{
 		Offset:    -5,
 		Reference: proto.PeggedReference_PEGGED_REFERENCE_MID,
@@ -168,6 +126,7 @@ func main() {
 
 	fmt.Printf("Request for PrepareSubmitOrder: %v\n", order)
 	orderRequest, err := tradingClient.PrepareSubmitOrder(context.Background(), &order)
+	// :prepare_submit_pegged_order__
 
 	fmt.Printf("%v\n", err)
 	fmt.Printf("%v\n", orderRequest)
@@ -175,20 +134,10 @@ func main() {
 	// Sign the prepared transaction
 	data := orderRequest.Blob
 	sEnc := base64.StdEncoding.EncodeToString([]byte(data))
-	jsonStr = []byte("{\"tx\":\"" + string(sEnc) + "\",\"pubkey\":\"" + pubkey + "\", \"propagate\": true}")
-
-	req, err = http.NewRequest("POST", walletserverURL+"/api/v1/messages", bytes.NewBuffer(jsonStr))
-	req.Header.Add("Authorization", "Bearer "+token.Token)
-
-	client = &http.Client{}
-	resp, err = client.Do(req)
+	_, err = SignTransaction(walletConfig, token.Token, pubkey, string(sEnc))
 	if err != nil {
 		panic(err)
 	}
-	defer resp.Body.Close()
-
-	body, _ = ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 
 	orderRef := orderRequest.SubmitId
 
@@ -204,7 +153,8 @@ func main() {
 	orderStatus := orderByRefResp.Order.Status
 	fmt.Printf("Pegged order processed. ID: %s, Status: %d\n", orderID, orderStatus)
 
-	// Amend pegged order
+	// __prepare_amend_pegged_order:
+	// Prepare the amend pegged order message
 	var peggedOffset wrapperspb.Int64Value
 	peggedOffset.Value = -100
 	amend := proto.OrderAmendment{
@@ -219,24 +169,16 @@ func main() {
 
 	amendObj := api.PrepareAmendOrderRequest{Amendment: &amend}
 	amendResp, _ := tradingClient.PrepareAmendOrder(context.Background(), &amendObj)
+	// :prepare_amend_pegged_order__
 
 	// Sign the prepared transaction
 	data = amendResp.Blob
 	sEnc = base64.StdEncoding.EncodeToString([]byte(data))
-	jsonStr = []byte("{\"tx\":\"" + string(sEnc) + "\",\"pubkey\":\"" + pubkey + "\", \"propagate\": true}")
 
-	req, err = http.NewRequest("POST", walletserverURL+"/api/v1/messages", bytes.NewBuffer(jsonStr))
-	req.Header.Add("Authorization", "Bearer "+token.Token)
-
-	client = &http.Client{}
-	resp, err = client.Do(req)
+	_, err = SignTransaction(walletConfig, token.Token, pubkey, string(sEnc))
 	if err != nil {
 		panic(err)
 	}
-	defer resp.Body.Close()
-
-	body, _ = ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 
 	fmt.Printf("Signed pegged order amendment and sent to Vega\n")
 

@@ -22,6 +22,8 @@ func main() {
 	defer conn.Close()
 
 	dataClient := api.NewTradingDataServiceClient(conn)
+	// __get_statistics:
+	// Request the statistics for a node on Vega
 	request := api.StatisticsRequest{}
 	statistics, err := dataClient.Statistics(context.Background(), &request)
 	if err != nil {
@@ -29,4 +31,5 @@ func main() {
 	}
 
 	fmt.Printf("Network statistics: %s", statistics)
+	// :get_statistics__
 }

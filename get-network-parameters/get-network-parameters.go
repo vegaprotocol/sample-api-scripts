@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"code.vegaprotocol.io/vega/proto"
+	"code.vegaprotocol.io/vega/proto/api"
 	"google.golang.org/grpc"
 )
 
@@ -22,6 +22,8 @@ func main() {
 	defer conn.Close()
 
 	dataClient := api.NewTradingDataServiceClient(conn)
+	// __get_network_params:
+	// Request a list of network parameters configured on a Vega network
 	request := api.NetworkParametersRequest{}
 	network, err := dataClient.NetworkParameters(context.Background(), &request)
 	if err != nil {
@@ -29,4 +31,5 @@ func main() {
 	}
 
 	fmt.Printf("Network Parameters: %s", network)
+	// :get_network_params__
 }

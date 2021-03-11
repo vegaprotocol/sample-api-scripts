@@ -37,6 +37,11 @@ func main() {
 
 	fmt.Println("Connecting to stream...")
 
+	// __stream_trades:
+	// Subscribe to the Trades stream for the marketID specified
+	// Optional: Market identifier - filter by market
+	//            Party identifier - filter by party
+	// By default, all trades on all markets for all parties will be returned on the stream.
 	eventType := proto.BusEventType_BUS_EVENT_TYPE_TRADE
 	event, err := dataClient.ObserveEventBus(context.Background())
 
@@ -62,6 +67,8 @@ func main() {
 	event.CloseSend()
 
 	<-done //we will wait until all response is received
+	// :stream_trades__
+
 	fmt.Printf("finished")
 
 }

@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto"
+	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"google.golang.org/grpc"
 )
 
@@ -37,6 +37,14 @@ func main() {
 
 	fmt.Println("Connecting to stream...")
 
+	// __stream_events:
+	// Subscribe to the events bus stream for the marketID specified
+	// Required: type field - A collection of one or more event types e.g. BUS_EVENT_TYPE_ORDER.
+	// Required: batch_size field - Default: 0 - Total number of events to batch on server before sending to client.
+	// Optional: Market identifier - filter by market
+	//           Party identifier - filter by party
+	// By default, all events on all markets for all parties will be returned on the stream.
+	// e.g. all_types = vac.events.BUS_EVENT_TYPE_ALL
 	eventType := proto.BusEventType_BUS_EVENT_TYPE_MARKET_TICK
 	event, err := dataClient.ObserveEventBus(context.Background())
 
@@ -62,6 +70,7 @@ func main() {
 	event.CloseSend()
 
 	<-done //we will wait until all response is received
+	// :stream_events__
 	fmt.Printf("finished")
 
 }

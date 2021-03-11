@@ -37,6 +37,11 @@ func main() {
 
 	fmt.Println("Connecting to stream...")
 
+	// __stream_orders:
+	// Subscribe to the Orders stream for the marketID specified
+	// Optional: Market identifier - filter by market
+	//            Party identifier - filter by party
+	// By default, all orders on all markets for all parties will be returned on the stream.
 	eventType := proto.BusEventType_BUS_EVENT_TYPE_ORDER
 	event, err := dataClient.ObserveEventBus(context.Background())
 
@@ -62,6 +67,7 @@ func main() {
 	event.CloseSend()
 
 	<-done //we will wait until all response is received
+	// :stream_orders__
 	fmt.Printf("finished")
 
 }

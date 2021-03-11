@@ -134,18 +134,24 @@ func main() {
 	}
 	marketID := markets.Markets[0].Id
 
+	// __get_accounts_by_market:
 	// Request a list of accounts for a market on a Vega network
 	accountsReq := api.MarketAccountsRequest{MarketId: marketID}
 	acconutsResp, _ := dataClient.MarketAccounts(context.Background(), &accountsReq)
 	fmt.Printf("Market accounts: %v\n", acconutsResp)
+	// :get_accounts_by_market__
 
+	// __get_accounts_by_party:
 	// Request a list of accounts for a party (pubkey) on a Vega network
 	partyReq := api.PartyAccountsRequest{PartyId: pubkey}
 	partyResp, _ := dataClient.PartyAccounts(context.Background(), &partyReq)
 	fmt.Printf("Party accounts: %v\n", partyResp)
+	// :get_accounts_by_party__
 
+	// __get_positions_by_party:
 	// Request a list of positions for a party (pubkey) on a Vega network
 	partyPosReq := api.PositionsByPartyRequest{PartyId: pubkey}
 	partyPosResp, _ := dataClient.PositionsByParty(context.Background(), &partyPosReq)
 	fmt.Printf("Party positions: %v\n", partyPosResp)
+	// :get_positions_by_party__
 }

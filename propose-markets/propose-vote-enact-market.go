@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto"
@@ -16,24 +15,6 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
-
-type Req struct {
-	Wallet     string `json:"wallet"`
-	Passphrase string `json:"passphrase"`
-}
-
-type Token struct {
-	Token string `json:"token"`
-}
-
-type Keypair struct {
-	Keys []struct {
-		Pub     string      `json:"pub"`
-		Algo    string      `json:"algo"`
-		Tainted bool        `json:"tainted"`
-		Meta    interface{} `json:"meta"`
-	} `json:"keys"`
-}
 
 type PendingProposal struct {
 	Blob            string `json:"blob"`
@@ -97,21 +78,7 @@ type VoteResponse struct {
 	} `json:"vote"`
 }
 
-func checkWalletURL(url string) string {
-	suffixs := []string{"/api/v1/", "/api/v1", "/"}
-	for _, suffix := range suffixs {
-		if strings.HasSuffix(url, suffix) {
-			fmt.Printf("There's no need to add %s to WALLETSERVER_URL.", suffix)
-			fmt.Printf("Removing it.")
-			url = string(url[:len(url)-len(suffix)])
-		}
-	}
-	return url
-}
-
 func main() {
-	nodeURLRest := "https://lb.testnet.vega.xyz"
-
 	nodeURLGrpc := os.Getenv("NODE_URL_GRPC")
 	if len(nodeURLGrpc) == 0 {
 		panic("NODE_URL_GRPC is null or empty")
@@ -124,12 +91,22 @@ func main() {
 	if len(walletName) == 0 {
 		panic("WALLET_NAME is null or empty")
 	}
-	walletPassword := os.Getenv("WALLET_PASSPHRASE")
-	if len(walletPassword) == 0 {
+	walletPassphrase := os.Getenv("WALLET_PASSPHRASE")
+	if len(walletPassphrase) == 0 {
 		panic("WALLET_PASSPHRASE is null or empty")
 	}
+	nodeURLRest := os.Getenv("NODE_URL_REST")
+	if len(walletPassphrase) == 0 {
+		panic("NODE_URL_REST is null or empty")
+	}
 
-	walletserverURL = checkWalletURL(walletserverURL)
+	walletserverURL = CheckWalletUrl(walletserverURL)
+
+	walletConfig := WalletConfig{
+		URL:        walletserverURL,
+		Name:       walletName,
+		Passphrase: walletPassphrase,
+	}
 
 	conn, err := grpc.Dial(nodeURLGrpc, grpc.WithInsecure())
 	if err != nil {
@@ -138,19 +115,20 @@ func main() {
 	defer conn.Close()
 
 	dataClient := api.NewTradingDataServiceClient(conn)
+	tradingClient := api.NewTradingServiceClient(conn)
 
-	// Create new wallet
-	createNewWallet := false
-	var url string
-	if createNewWallet {
-		url = walletserverURL + "/api/v1/wallets"
-	} else {
-		url = walletserverURL + "/api/v1/auth/token"
+	var token Token
+	body, err := LoginWallet(walletConfig)
+	if err != nil {
+		panic(err)
 	}
+	json.Unmarshal([]byte(body), &token)
+	fmt.Println(token.Token)
 
-	// Make request to create new wallet or log in to existing wallet
-	jsonStr := []byte("{\"wallet\":\"" + walletName + "\",\"passphrase\":\"" + walletPassword + "\"}")
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	// List existing keypairs
+	url := walletserverURL + "/api/v1/keys"
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -159,31 +137,9 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	fmt.Println(url, " returns response Status:", resp.Status)
-	fmt.Println("response Headers:", resp.Header)
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
-	var token Token
-	json.Unmarshal([]byte(body), &token)
-
-	fmt.Println(token.Token)
-
-	// List existing keypairs
-	url = walletserverURL + "/api/v1/keys"
-	req, err = http.NewRequest("GET", url, nil)
-	req.Header.Set("Authorization", "Bearer "+token.Token)
-
-	client = &http.Client{}
-	resp, err = client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
 	body, _ = ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
-	var keypair Keypair
+	var keypair Keys
 	json.Unmarshal([]byte(body), &keypair)
 
 	if len(keypair.Keys) == 0 {
@@ -194,13 +150,16 @@ func main() {
 	fmt.Println("pubkey: ", pubkey)
 
 	// Find Assets
+	// __get_assets:
 	// Request a list of assets available on a Vega network
 	request := api.AssetsRequest{}
 	assets, err := dataClient.Assets(context.Background(), &request)
 	if err != nil {
 		panic(err)
 	}
+	// :get_assets__
 
+	// __find_asset:
 	// Find asset with name DAI
 	assetFound := false
 	var assetID string
@@ -217,12 +176,14 @@ func main() {
 			assetID = asset.Id
 		}
 	}
+	// :find_asset__
 
 	if !assetFound {
 		panic("tDAI asset not found on specified Vega network, please propose and create the tDAI asset")
 	}
 
 	// Governance token check
+	// Get the identifier of the governance asset on the Vega network
 	partyReq := api.PartyAccountsRequest{PartyId: pubkey}
 	partyResp, _ := dataClient.PartyAccounts(context.Background(), &partyReq)
 	fmt.Printf("Party accounts: %v\n", partyResp)
@@ -244,17 +205,21 @@ func main() {
 	}
 
 	// Get Blockchain time
+	// __get_time:
+	// Request the current blockchain time, and convert to time in seconds
 	timeRequest := api.GetVegaTimeRequest{}
 	vegaTime, err := dataClient.GetVegaTime(context.Background(), &timeRequest)
 
 	blockchainTime := vegaTime.Timestamp
 	blockchainTimeSeconds := vegaTime.Timestamp / 1e9
+	// :get_time__
 	fmt.Printf("Blockchain time: %d  (%d seconds past epoch)\n", blockchainTime, blockchainTimeSeconds)
 
 	// Propose Market
 	// STEP 1 - Propose a BTC/DAI futures market
 	//Further documentation on creating markets: https://docs.testnet.vega.xyz/docs/api-howtos/create-market/
 
+	// __prepare_propose_market:
 	// Prepare a market proposal for a new market
 	validationTimestamp := blockchainTimeSeconds + 1
 	closingTimestamp := blockchainTimeSeconds + 3601
@@ -315,24 +280,16 @@ func main() {
 
 	var pendingProposal PendingProposal
 	json.Unmarshal([]byte(respBody), &pendingProposal)
+	// :prepare_propose_market__
 
 	// Sign the prepared proposal transaction
 	// Note: Setting propagate to true will also submit to a Vega node
 	proposalRef := pendingProposal.PendingProposal.Reference
-	jsonStr = []byte("{\"tx\":\"" + pendingProposal.Blob + "\",\"pubkey\":\"" + pubkey + "\", \"propagate\": true}")
 
-	req, err = http.NewRequest("POST", walletserverURL+"/api/v1/messages", bytes.NewBuffer(jsonStr))
-	req.Header.Add("Authorization", "Bearer "+token.Token)
-
-	client = &http.Client{}
-	resp, err = client.Do(req)
+	_, err = SignTransaction(walletConfig, token.Token, pubkey, pendingProposal.Blob)
 	if err != nil {
 		panic(err)
 	}
-	defer resp.Body.Close()
-
-	body, _ = ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 
 	fmt.Printf("Signed proposal and sent to Vega\n")
 
@@ -371,6 +328,8 @@ func main() {
 	// Community forums (https://community.vega.xyz/c/testnet) or Discord (https://vega.xyz/discord)
 
 	// Further documentation on proposal voting and review here: https://docs.testnet.vega.xyz/docs/api-howtos/proposals/
+	// __prepare_vote:
+	// Prepare a vote for the proposal
 	vote := `{
 		"vote": {
 			"partyId": "` + pubkey + `",
@@ -394,6 +353,7 @@ func main() {
 
 	fmt.Println(voteURL, " returns response Status:", resp.Status)
 	respBody, _ = ioutil.ReadAll(resp.Body)
+	// :prepare_vote__
 
 	// Sign the prepared vote transaction
 	// Note: Setting propagate to true will also submit to a Vega node
@@ -402,20 +362,10 @@ func main() {
 
 	// Sign the prepared proposal transaction
 	// Note: Setting propagate to true will also submit to a Vega node
-	jsonStr = []byte("{\"tx\":\"" + voteResponse.Blob + "\",\"pubkey\":\"" + pubkey + "\", \"propagate\": true}")
-
-	req, err = http.NewRequest("POST", walletserverURL+"/api/v1/messages", bytes.NewBuffer(jsonStr))
-	req.Header.Add("Authorization", "Bearer "+token.Token)
-
-	client = &http.Client{}
-	resp, err = client.Do(req)
+	_, err = SignTransaction(walletConfig, token.Token, pubkey, string(sEnc))
 	if err != nil {
 		panic(err)
 	}
-	defer resp.Body.Close()
-
-	body, _ = ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 
 	fmt.Println("Signed vote on proposal and sent to Vega")
 
@@ -457,6 +407,7 @@ func main() {
 	// YES vote from the proposer will not be enough to vote the market into existence.
 	// As described above in STEP 2, a market will need community voting support to be
 	// passed and then enacted.
+	// __wait_for_market:
 	fmt.Println("Waiting for proposal to be enacted or failed...")
 	done = false
 
@@ -482,4 +433,5 @@ func main() {
 		}
 
 	}
+	// :wait_for_market__
 }

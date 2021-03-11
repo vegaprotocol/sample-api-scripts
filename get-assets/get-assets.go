@@ -22,11 +22,14 @@ func main() {
 	defer conn.Close()
 
 	dataClient := api.NewTradingDataServiceClient(conn)
+	// __get_assets:
+	// Request a list of assets available on a Vega network
 	request := api.AssetsRequest{}
 	assets, err := dataClient.Assets(context.Background(), &request)
 	if err != nil {
 		panic(err)
 	}
+	// :get_assets__
 
 	// Find asset with name DAI
 	assetFound := false
@@ -46,12 +49,14 @@ func main() {
 		panic("tDAI asset not found on specified Vega network, please propose and create the tDAI asset")
 	}
 
+	// __get_asset:
 	// Request a single asset by identifier on a Vega network
 	requestAsset := api.AssetByIDRequest{Id: assetId}
 	assetObject, err := dataClient.AssetByID(context.Background(), &requestAsset)
 	if err != nil {
 		panic(err)
 	}
+	// :get_asset__
 
 	fmt.Printf("Asset by id: %s", assetObject.Asset)
 }
