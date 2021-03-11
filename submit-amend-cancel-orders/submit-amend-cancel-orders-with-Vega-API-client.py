@@ -194,7 +194,7 @@ order_id_request = vac.api.trading.OrderByIDRequest(order_id=orderID)
 response = data_client.OrderByID(order_id_request)
 
 orderID = response.order.id
-orderPrice = response.order.status
+orderPrice = response.order.price
 orderSize = response.order.size
 orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.order.time_in_force)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
