@@ -60,7 +60,7 @@ func main() {
 
 	// List existing keypairs
 	url := walletserverURL + "/api/v1/keys"
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	client := &http.Client{}
@@ -70,7 +70,10 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("response Body:", string(body))
 	var keypair Keys
 	json.Unmarshal([]byte(body), &keypair)
@@ -140,7 +143,10 @@ func main() {
 	fmt.Printf("Waiting for blockchain...\n")
 	time.Sleep(4 * time.Second)
 	orderByRef := api.OrderByReferenceRequest{Reference: orderRef}
-	orderByRefResp, _ := dataClient.OrderByReference(context.Background(), &orderByRef)
+	orderByRefResp, err := dataClient.OrderByReference(context.Background(), &orderByRef)
+	if err != nil {
+		panic(err)
+	}
 
 	orderID := orderByRefResp.Order.Id
 	orderStatus := orderByRefResp.Order.Status
@@ -159,7 +165,10 @@ func main() {
 	}
 
 	amendObj := api.PrepareAmendOrderRequest{Amendment: &amend}
-	amendResp, _ := tradingClient.PrepareAmendOrder(context.Background(), &amendObj)
+	amendResp, err := tradingClient.PrepareAmendOrder(context.Background(), &amendObj)
+	if err != nil {
+		panic(err)
+	}
 	// :prepare_amend_order__
 
 	// Sign the prepared transaction
@@ -176,7 +185,10 @@ func main() {
 	fmt.Printf("Waiting for blockchain...\n")
 	time.Sleep(4 * time.Second)
 	orderByRef = api.OrderByReferenceRequest{Reference: orderRef}
-	orderByRefResp, _ = dataClient.OrderByReference(context.Background(), &orderByRef)
+	orderByRefResp, err = dataClient.OrderByReference(context.Background(), &orderByRef)
+	if err != nil {
+		panic(err)
+	}
 
 	orderID = orderByRefResp.Order.Id
 	orderStatus = orderByRefResp.Order.Status
@@ -219,7 +231,10 @@ func main() {
 	orderCancelReq := api.PrepareCancelOrderRequest{
 		Cancellation: &cancel,
 	}
-	orderCancelResp, _ := tradingClient.PrepareCancelOrder(context.Background(), &orderCancelReq)
+	orderCancelResp, err := tradingClient.PrepareCancelOrder(context.Background(), &orderCancelReq)
+	if err != nil {
+		panic(err)
+	}
 	// :prepare_cancel_order__
 	fmt.Printf("%v\n", err)
 	fmt.Printf("%v\n", orderCancelResp)
@@ -238,7 +253,10 @@ func main() {
 	fmt.Printf("Waiting for blockchain...\n")
 	time.Sleep(4 * time.Second)
 	orderByRef = api.OrderByReferenceRequest{Reference: orderRef}
-	orderByRefResp, _ = dataClient.OrderByReference(context.Background(), &orderByRef)
+	orderByRefResp, err = dataClient.OrderByReference(context.Background(), &orderByRef)
+	if err != nil {
+		panic(err)
+	}
 
 	orderID = orderByRefResp.Order.Id
 	orderStatus = orderByRefResp.Order.Status

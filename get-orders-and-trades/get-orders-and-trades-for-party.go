@@ -57,7 +57,7 @@ func main() {
 
 	// List existing keypairs
 	url := walletserverURL + "/api/v1/keys"
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	client := &http.Client{}
@@ -67,7 +67,10 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("response Body:", string(body))
 	var keypair Keys
 	json.Unmarshal([]byte(body), &keypair)
@@ -82,14 +85,20 @@ func main() {
 	// __get_orders_for_party:
 	// Request a list of orders by party (pubKey)
 	ordersByPartyReq := api.OrdersByPartyRequest{PartyId: pubkey}
-	ordersByPartyResp, _ := dataClient.OrdersByParty(context.Background(), &ordersByPartyReq)
+	ordersByPartyResp, err := dataClient.OrdersByParty(context.Background(), &ordersByPartyReq)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("OrdersByParty: %v\n", ordersByPartyResp)
 	// :get_orders_for_party__
 
 	// __get_trades_for_party:
 	//Request a list of trades by market on a Vega network
 	tradesByPartyReq := api.TradesByPartyRequest{PartyId: pubkey}
-	tradesByPartyResp, _ := dataClient.TradesByParty(context.Background(), &tradesByPartyReq)
+	tradesByPartyResp, err := dataClient.TradesByParty(context.Background(), &tradesByPartyReq)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("TradesByParty: %v\n", tradesByPartyResp)
 	// :get_trades_for_party__
 }

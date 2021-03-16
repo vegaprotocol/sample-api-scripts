@@ -8,6 +8,8 @@ import (
 	"math/big"
 	"net/http"
 	"strings"
+	"code.vegaprotocol.io/go-wallet/wallet"
+	"encoding/json"
 )
 
 type WalletConfig struct {
@@ -32,15 +34,19 @@ type Keys struct {
 	} `json:"keys"`
 }
 
+
 var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
-func randSeq(n int) string {
+func randSeq(n int) (string, error) {
 	b := make([]rune, n)
 	for i := range b {
-		v, _ := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
+		v, err := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
+		if err != nil {
+			return "", err
+		}
 		b[i] = chars[v.Int64()]
 	}
-	return string(b)
+	return string(b), nil
 }
 
 func CheckUrl(url string) bool {
@@ -61,8 +67,13 @@ func CheckWalletUrl(url string) string {
 func CreateWallet(config WalletConfig) ([]byte, error) {
 	// __create_wallet:
 	// Create a new wallet:
-	jsonStr := []byte("{\"wallet\":\"" + config.Name + "\",\"passphrase\":\"" + config.Passphrase + "\"}")
-	req, err := http.NewRequest("POST", config.URL+"/api/v1/wallets", bytes.NewBuffer(jsonStr))
+	creationReq :=  &wallet.CreateLoginWalletRequest{Wallet: config.Name, Passphrase: config.Passphrase}
+	payload, err := json.Marshal(creationReq)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/wallets", bytes.NewBuffer(payload))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -71,7 +82,10 @@ func CreateWallet(config WalletConfig) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println("response Body:", string(body))
 	// :create_wallet__
 
@@ -81,8 +95,12 @@ func CreateWallet(config WalletConfig) ([]byte, error) {
 func LoginWallet(config WalletConfig) ([]byte, error) {
 	// __login_wallet:
 	// Log in to an existing wallet
-	jsonStr := []byte("{\"wallet\":\"" + config.Name + "\",\"passphrase\":\"" + config.Passphrase + "\"}")
-	req, err := http.NewRequest("POST", config.URL+"/api/v1/auth/token", bytes.NewBuffer(jsonStr))
+	creationReq :=  &wallet.CreateLoginWalletRequest{Wallet: config.Name, Passphrase: config.Passphrase}
+	payload, err := json.Marshal(creationReq)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/auth/token", bytes.NewBuffer(payload))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -91,7 +109,10 @@ func LoginWallet(config WalletConfig) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println("response Body:", string(body))
 	// :login_wallet__
 
@@ -102,7 +123,7 @@ func GenerateKeyPairs(config WalletConfig, token string) ([]byte, error) {
 	// __generate_keypair:
 	// Generate a new key pair
 	jsonStr := []byte("{\"meta\":[{\"key\": \"alias\", \"value\": \"my_key_alias\"}],\"passphrase\":\"" + config.Passphrase + "\"}")
-	req, err := http.NewRequest("POST", config.URL+"/api/v1/keys", bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/keys", bytes.NewBuffer(jsonStr))
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	client := &http.Client{}
@@ -112,7 +133,10 @@ func GenerateKeyPairs(config WalletConfig, token string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println("response Body:", string(body))
 
 	// :generate_keypair__
@@ -122,7 +146,7 @@ func GenerateKeyPairs(config WalletConfig, token string) ([]byte, error) {
 func GetKeyPairs(config WalletConfig, token string) ([]byte, error) {
 	// __get_keys:
 	// Request all key pairs
-	req, err := http.NewRequest("GET", config.URL+"/api/v1/keys", bytes.NewBuffer(nil))
+	req, err := http.NewRequest(http.MethodGet, config.URL+"/api/v1/keys", bytes.NewBuffer(nil))
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	client := &http.Client{}
@@ -132,7 +156,10 @@ func GetKeyPairs(config WalletConfig, token string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println("response Body:", string(body))
 	// :get_keys__
 
@@ -142,7 +169,7 @@ func GetKeyPairs(config WalletConfig, token string) ([]byte, error) {
 func GetKeyPair(config WalletConfig, token string, pubkey string) ([]byte, error) {
 	// __get_key:
 	// Request a single key pair
-	req, err := http.NewRequest("GET", config.URL+"/api/v1/keys/"+pubkey, bytes.NewBuffer(nil))
+	req, err := http.NewRequest(http.MethodGet, config.URL+"/api/v1/keys/"+pubkey, bytes.NewBuffer(nil))
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	client := &http.Client{}
@@ -152,7 +179,10 @@ func GetKeyPair(config WalletConfig, token string, pubkey string) ([]byte, error
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println("response Body:", string(body))
 	// :get_key__
 
@@ -164,7 +194,7 @@ func SignTransaction(config WalletConfig, token string, pubkey string, message s
 	// Sign a transaction - Note: setting "propagate" to True will also submit the
 	// tx to Vega node
 	jsonStr := []byte("{\"tx\":\"" + message + "\",\"pubkey\":\"" + pubkey + "\", \"propagate\": false}")
-	req, err := http.NewRequest("POST", config.URL+"/api/v1/messages", bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/messages", bytes.NewBuffer(jsonStr))
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	client := &http.Client{}
@@ -174,7 +204,10 @@ func SignTransaction(config WalletConfig, token string, pubkey string, message s
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println("response Body:", string(body))
 	// :sign_tx__
 
@@ -184,7 +217,7 @@ func SignTransaction(config WalletConfig, token string, pubkey string, message s
 func LogoutWallet(config WalletConfig, token string) ([]byte, error) {
 	// __logout_wallet:
 	// Log out of a wallet
-	req, err := http.NewRequest("DELETE", config.URL+"/api/v1/auth/token", nil)
+	req, err := http.NewRequest(http.MethodDelete, config.URL+"/api/v1/auth/token", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	client := &http.Client{}
@@ -194,7 +227,10 @@ func LogoutWallet(config WalletConfig, token string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	//:logout_wallet__
 
 	return body, nil

@@ -36,14 +36,20 @@ func main() {
 	// __get_orders_for_market:
 	// Request a list of orders by market on a Vega network
 	ordersByMarketReq := api.OrdersByMarketRequest{MarketId: marketID}
-	ordersByMarketResp, _ := dataClient.OrdersByMarket(context.Background(), &ordersByMarketReq)
+	ordersByMarketResp, err := dataClient.OrdersByMarket(context.Background(), &ordersByMarketReq)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("OrdersByMarket: %v\n", ordersByMarketResp)
 	// :get_orders_for_market__
 
 	// __get_trades_for_market:
 	//Request a list of trades by market on a Vega network
 	tradesByMarketReq := api.TradesByMarketRequest{MarketId: marketID}
-	tradesByMarketResp, _ := dataClient.TradesByMarket(context.Background(), &tradesByMarketReq)
+	tradesByMarketResp, err := dataClient.TradesByMarket(context.Background(), &tradesByMarketReq)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("TradesByMarket: %v\n", tradesByMarketResp)
 	// :get_trades_for_market__
 

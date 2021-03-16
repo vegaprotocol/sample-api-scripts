@@ -127,7 +127,7 @@ func main() {
 
 	// List existing keypairs
 	url := walletserverURL + "/api/v1/keys"
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	client := &http.Client{}
@@ -137,7 +137,10 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("response Body:", string(body))
 	var keypair Keys
 	json.Unmarshal([]byte(body), &keypair)
@@ -185,7 +188,10 @@ func main() {
 	// Governance token check
 	// Get the identifier of the governance asset on the Vega network
 	partyReq := api.PartyAccountsRequest{PartyId: pubkey}
-	partyResp, _ := dataClient.PartyAccounts(context.Background(), &partyReq)
+	partyResp, err := dataClient.PartyAccounts(context.Background(), &partyReq)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("Party accounts: %v\n", partyResp)
 
 	var votingBalance uint64
@@ -264,7 +270,7 @@ func main() {
 
 	marketBytes := []byte(market)
 	proposalURL := nodeURLRest + "/governance/prepare/proposal"
-	reqProposal, err := http.NewRequest("POST", proposalURL, bytes.NewBuffer(marketBytes))
+	reqProposal, err := http.NewRequest(http.MethodPost, proposalURL, bytes.NewBuffer(marketBytes))
 
 	clientProposal := &http.Client{}
 	resp, err = clientProposal.Do(reqProposal)
@@ -276,7 +282,10 @@ func main() {
 	fmt.Println(proposalURL, " returns response Status:", resp.Status)
 	fmt.Println("response Headers:", resp.Header)
 
-	respBody, _ := ioutil.ReadAll(resp.Body)
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 
 	var pendingProposal PendingProposal
 	json.Unmarshal([]byte(respBody), &pendingProposal)
@@ -306,7 +315,10 @@ func main() {
 		}
 		time.Sleep(1 * time.Second)
 		fmt.Printf(".")
-		proposalResp, _ := dataClient.GetProposalByReference(context.Background(), &proposalReq)
+		proposalResp, err := dataClient.GetProposalByReference(context.Background(), &proposalReq)
+		if err != nil {
+			panic(err)
+		}
 
 		if proposalResp != nil {
 			if proposalResp.Data.Proposal.Reference == proposalRef {
@@ -342,7 +354,7 @@ func main() {
 
 	voteBytes := []byte(vote)
 	voteURL := nodeURLRest + "/governance/prepare/vote"
-	reqVote, err := http.NewRequest("POST", voteURL, bytes.NewBuffer(voteBytes))
+	reqVote, err := http.NewRequest(http.MethodPost, voteURL, bytes.NewBuffer(voteBytes))
 
 	clientVote := &http.Client{}
 	resp, err = clientVote.Do(reqVote)
@@ -352,7 +364,10 @@ func main() {
 	defer resp.Body.Close()
 
 	fmt.Println(voteURL, " returns response Status:", resp.Status)
-	respBody, _ = ioutil.ReadAll(resp.Body)
+	respBody, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 	// :prepare_vote__
 
 	// Sign the prepared vote transaction
@@ -379,7 +394,10 @@ func main() {
 			break
 		}
 		time.Sleep(1 * time.Second)
-		proposalByIDResp, _ := dataClient.GetProposalByID(context.Background(), &proposalByIDReq)
+		proposalByIDResp, err := dataClient.GetProposalByID(context.Background(), &proposalByIDReq)
+		if err != nil {
+			panic(err)
+		}
 
 		if proposalByIDResp != nil {
 			if proposalByIDResp.Data.Proposal.Reference == proposalRef {

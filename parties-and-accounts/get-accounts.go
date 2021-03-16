@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
+	"code.vegaprotocol.io/go-wallet/wallet"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -82,8 +83,12 @@ func main() {
 	}
 
 	// Make request to create new wallet or log in to existing wallet
-	jsonStr := []byte("{\"wallet\":\"" + walletName + "\",\"passphrase\":\"" + walletPassword + "\"}")
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	creationReq :=  &wallet.CreateLoginWalletRequest{Wallet: walletName, Passphrase: walletPassword}
+	payload, err := json.Marshal(creationReq)
+	if err != nil {
+		panic(err)
+	}
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(payload))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -95,7 +100,10 @@ func main() {
 	fmt.Println(url, " returns response Status:", resp.Status)
 	fmt.Println("response Headers:", resp.Header)
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("response Body:", string(body))
 	var token Token
 	json.Unmarshal([]byte(body), &token)
@@ -104,7 +112,7 @@ func main() {
 
 	// List existing keypairs
 	url = walletserverURL + "/api/v1/keys"
-	req, err = http.NewRequest("GET", url, nil)
+	req, err = http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	client = &http.Client{}
@@ -114,7 +122,10 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("response Body:", string(body))
 	var keypair Keypair
 	json.Unmarshal([]byte(body), &keypair)
@@ -137,21 +148,30 @@ func main() {
 	// __get_accounts_by_market:
 	// Request a list of accounts for a market on a Vega network
 	accountsReq := api.MarketAccountsRequest{MarketId: marketID}
-	acconutsResp, _ := dataClient.MarketAccounts(context.Background(), &accountsReq)
+	acconutsResp, err := dataClient.MarketAccounts(context.Background(), &accountsReq)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("Market accounts: %v\n", acconutsResp)
 	// :get_accounts_by_market__
 
 	// __get_accounts_by_party:
 	// Request a list of accounts for a party (pubkey) on a Vega network
 	partyReq := api.PartyAccountsRequest{PartyId: pubkey}
-	partyResp, _ := dataClient.PartyAccounts(context.Background(), &partyReq)
+	partyResp, err := dataClient.PartyAccounts(context.Background(), &partyReq)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("Party accounts: %v\n", partyResp)
 	// :get_accounts_by_party__
 
 	// __get_positions_by_party:
 	// Request a list of positions for a party (pubkey) on a Vega network
 	partyPosReq := api.PositionsByPartyRequest{PartyId: pubkey}
-	partyPosResp, _ := dataClient.PositionsByParty(context.Background(), &partyPosReq)
+	partyPosResp, err := dataClient.PositionsByParty(context.Background(), &partyPosReq)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("Party positions: %v\n", partyPosResp)
 	// :get_positions_by_party__
 }

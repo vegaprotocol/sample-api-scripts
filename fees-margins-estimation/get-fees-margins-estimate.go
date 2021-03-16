@@ -58,7 +58,7 @@ func main() {
 
 	// List existing keypairs
 	url := walletserverURL + "/api/v1/keys"
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	client := &http.Client{}
@@ -68,7 +68,10 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("response Body:", string(body))
 	var keypair Keys
 	json.Unmarshal([]byte(body), &keypair)
@@ -106,7 +109,10 @@ func main() {
 		Type:        proto.Order_TYPE_LIMIT,
 	}
 	estimationRequest := api.EstimateFeeRequest{Order: &order}
-	estimation, _ := dataClient.EstimateFee(context.Background(), &estimationRequest)
+	estimation, err := dataClient.EstimateFee(context.Background(), &estimationRequest)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("Estimation: %v\n", estimation)
 	// :get_fees_estimate__
 
@@ -123,7 +129,10 @@ func main() {
 		Type:        proto.Order_TYPE_LIMIT,
 	}
 	marginRequest := api.EstimateMarginRequest{Order: &order}
-	margin, _ := dataClient.EstimateMargin(context.Background(), &marginRequest)
+	margin, err := dataClient.EstimateMargin(context.Background(), &marginRequest)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("Margin estimation: %v\n", margin)
 	// :get_margins_estimate__
 }

@@ -60,7 +60,7 @@ func main() {
 
 	// List existing keypairs
 	url := walletserverURL + "/api/v1/keys"
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	client := &http.Client{}
@@ -70,7 +70,10 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("response Body:", string(body))
 	var keypair Keys
 	json.Unmarshal([]byte(body), &keypair)
