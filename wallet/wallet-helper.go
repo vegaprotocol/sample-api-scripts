@@ -18,23 +18,6 @@ type WalletConfig struct {
 	Name       string `json:"Name"`
 }
 
-type Token struct {
-	Token string `json:"token"`
-}
-
-type Keys struct {
-	Keys []struct {
-		Pub     string `json:"pub"`
-		Algo    string `json:"algo"`
-		Tainted bool   `json:"tainted"`
-		Meta    []struct {
-			Key   string `json:"key"`
-			Value string `json:"value"`
-		} `json:"meta"`
-	} `json:"keys"`
-}
-
-
 var chars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 func randSeq(n int) (string, error) {
@@ -122,8 +105,14 @@ func LoginWallet(config WalletConfig) ([]byte, error) {
 func GenerateKeyPairs(config WalletConfig, token string) ([]byte, error) {
 	// __generate_keypair:
 	// Generate a new key pair
-	jsonStr := []byte("{\"meta\":[{\"key\": \"alias\", \"value\": \"my_key_alias\"}],\"passphrase\":\"" + config.Passphrase + "\"}")
-	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/keys", bytes.NewBuffer(jsonStr))
+	meta := &wallet.Meta{Key: "alias", Value: "my_key_alias"}
+	metaArray := []wallet.Meta{*meta}
+	creationReq :=  &wallet.PassphraseMetaRequest{Meta: metaArray, Passphrase: config.Passphrase}
+	payload, err := json.Marshal(creationReq)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/keys", bytes.NewBuffer(payload))
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	client := &http.Client{}
@@ -193,8 +182,12 @@ func SignTransaction(config WalletConfig, token string, pubkey string, message s
 	// __sign_tx:
 	// Sign a transaction - Note: setting "propagate" to True will also submit the
 	// tx to Vega node
-	jsonStr := []byte("{\"tx\":\"" + message + "\",\"pubkey\":\"" + pubkey + "\", \"propagate\": false}")
-	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/messages", bytes.NewBuffer(jsonStr))
+	txSignRequest := &wallet.SignTxRequest{Tx: message, PubKey: pubkey, Propagate: false}
+	payload, err := json.Marshal(txSignRequest)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/messages", bytes.NewBuffer(payload))
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	client := &http.Client{}

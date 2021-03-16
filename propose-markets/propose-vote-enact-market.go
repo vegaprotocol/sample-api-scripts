@@ -14,6 +14,7 @@ import (
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"code.vegaprotocol.io/go-wallet/wallet"
 )
 
 type PendingProposal struct {
@@ -115,9 +116,8 @@ func main() {
 	defer conn.Close()
 
 	dataClient := api.NewTradingDataServiceClient(conn)
-	tradingClient := api.NewTradingServiceClient(conn)
 
-	var token Token
+	var token wallet.TokenResponse
 	body, err := LoginWallet(walletConfig)
 	if err != nil {
 		panic(err)
@@ -142,7 +142,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("response Body:", string(body))
-	var keypair Keys
+	var keypair wallet.KeysResponse
 	json.Unmarshal([]byte(body), &keypair)
 
 	if len(keypair.Keys) == 0 {
@@ -377,7 +377,7 @@ func main() {
 
 	// Sign the prepared proposal transaction
 	// Note: Setting propagate to true will also submit to a Vega node
-	_, err = SignTransaction(walletConfig, token.Token, pubkey, string(sEnc))
+	_, err = SignTransaction(walletConfig, token.Token, pubkey, string(voteResponse.Blob))
 	if err != nil {
 		panic(err)
 	}

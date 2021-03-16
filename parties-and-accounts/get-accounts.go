@@ -105,7 +105,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("response Body:", string(body))
-	var token Token
+	var token wallet.TokenResponse
 	json.Unmarshal([]byte(body), &token)
 
 	fmt.Println(token.Token)

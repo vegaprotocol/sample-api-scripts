@@ -5,12 +5,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"code.vegaprotocol.io/go-wallet/wallet"
 )
 
 func main() {
 
-	walletName := randSeq(8)
-	walletPassphrase := randSeq(12)
+	walletName, err := randSeq(8)
+	if err != nil {
+		panic(err)
+	}
+	walletPassphrase, err := randSeq(12)
+	if err != nil {
+		panic(err)
+	}
 
 	walletServerURL := os.Getenv("WALLETSERVER_URL")
 	if !CheckUrl(walletServerURL) {
@@ -33,8 +40,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	var token Token
+ 
+	var token wallet.TokenResponse
 	json.Unmarshal([]byte(reps), &token)
 	fmt.Println("Token : ", token.Token)
 
@@ -69,7 +76,7 @@ func main() {
 		panic(err)
 	}
 
-	var keys Keys
+	var keys wallet.KeysResponse
 	json.Unmarshal([]byte(keysBody), &keys)
 	fmt.Printf("%+v\n", keys)
 
