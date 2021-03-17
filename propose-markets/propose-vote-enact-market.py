@@ -27,28 +27,24 @@ import os
 import helpers
 
 node_url_rest = os.getenv("NODE_URL_REST")
-node_url_rest = "https://lb.testnet.vega.xyz"
 if not helpers.check_url(node_url_rest):
     print("Error: Invalid or missing NODE_URL_REST environment variable.")
     exit(1)
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
-wallet_server_url = "https://wallet.testnet.vega.xyz"
 
 wallet_name = os.getenv("WALLET_NAME")
-wallet_name = "0xfb57BC8Dc8cf2B8a5578249FAAe73c7D22ea33ff"
 if not helpers.check_var(wallet_name):
     print("Error: Invalid or missing WALLET_NAME environment variable.")
     exit(1)
 
 wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
-wallet_passphrase = "WhSjZ7KmwyYTZrj8kkKk5VczGjXp5p"
 if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
 # Help guide users against including api version suffix on url
-#wallet_server_url = helpers.check_wallet_url(wallet_server_url)
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
 #####################################################################################
 #                           W A L L E T   S E R V I C E                             #
@@ -86,9 +82,8 @@ print("Selected pubkey for signing")
 # __get_assets:
 # Request a list of assets available on a Vega network
 url = f"{node_url_rest}/assets"
-print(url)
 response = requests.get(url)
-#helpers.check_response(response)
+helpers.check_response(response)
 # :get_assets__
 
 # Debugging
@@ -190,7 +185,7 @@ market = {
                 "continuous": {"tickSize": "0.01"},
                 "decimalPlaces": "5",
                 "instrument": {
-                    "code": "CRYPTO:BTCDAI/JUL22",
+                    "code": "CRYPTO:BTCDAI/JUN21",
                     "future": {
                         # Settlement asset identifier (found above)
                         "settlementAsset": found_asset_id,
@@ -207,7 +202,7 @@ market = {
                         #     ]
                         # }
                     },
-                    "name": "BTCDAI/JUL22",
+                    "name": "BTC/DAI",
                 },
                 "logNormal": {
                     "params": {"mu": 0, "r": 0.016, "sigma": 0.05},

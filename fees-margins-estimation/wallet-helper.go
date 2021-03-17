@@ -10,6 +10,7 @@ import (
 	"strings"
 	"code.vegaprotocol.io/go-wallet/wallet"
 	"encoding/json"
+	"github.com/pkg/errors"
 )
 
 type WalletConfig struct {
@@ -25,7 +26,7 @@ func randSeq(n int) (string, error) {
 	for i := range b {
 		v, err := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
 		if err != nil {
-			return "", err
+			return "", errors.Wrap(err, "Failed to create random number")
 		}
 		b[i] = chars[v.Int64()]
 	}
@@ -53,7 +54,7 @@ func CreateWallet(config WalletConfig) ([]byte, error) {
 	creationReq :=  &wallet.CreateLoginWalletRequest{Wallet: config.Name, Passphrase: config.Passphrase}
 	payload, err := json.Marshal(creationReq)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to marshal waller login request")
 	}
 
 	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/wallets", bytes.NewBuffer(payload))
@@ -61,7 +62,7 @@ func CreateWallet(config WalletConfig) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to perform create wallet post http call")
 	}
 	defer resp.Body.Close()
 
@@ -88,13 +89,13 @@ func LoginWallet(config WalletConfig) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to perform login post http call")
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to read login wallet http response")
 	}
 	fmt.Println("response Body:", string(body))
 	// :login_wallet__
@@ -110,7 +111,7 @@ func GenerateKeyPairs(config WalletConfig, token string) ([]byte, error) {
 	creationReq :=  &wallet.PassphraseMetaRequest{Meta: metaArray, Passphrase: config.Passphrase}
 	payload, err := json.Marshal(creationReq)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to marshal metadata object")
 	}
 	req, err := http.NewRequest(http.MethodPost, config.URL+"/api/v1/keys", bytes.NewBuffer(payload))
 	req.Header.Add("Authorization", "Bearer "+token)
@@ -118,13 +119,13 @@ func GenerateKeyPairs(config WalletConfig, token string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to perform keys post http call")
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to read keys post http response")
 	}
 	fmt.Println("response Body:", string(body))
 
@@ -141,13 +142,13 @@ func GetKeyPairs(config WalletConfig, token string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to perform keys get http call")
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to read keys get http response")
 	}
 	fmt.Println("response Body:", string(body))
 	// :get_keys__
@@ -164,13 +165,13 @@ func GetKeyPair(config WalletConfig, token string, pubkey string) ([]byte, error
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to perform key get http call")
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to read key get http response")
 	}
 	fmt.Println("response Body:", string(body))
 	// :get_key__
@@ -193,13 +194,13 @@ func SignTransaction(config WalletConfig, token string, pubkey string, message s
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to perform sign transaction post http call")
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to read sign transaction post http response")
 	}
 	fmt.Println("response Body:", string(body))
 	// :sign_tx__
@@ -216,13 +217,13 @@ func LogoutWallet(config WalletConfig, token string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		return nil, errors.Wrap(err, "Failed to perform logout delete http request")
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to read logout delete http response")
 	}
 	//:logout_wallet__
 
