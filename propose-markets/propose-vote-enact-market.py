@@ -178,9 +178,9 @@ market = {
         # Set validation timestamp to a valid time offset from the current Vega blockchain time
         "validationTimestamp": blockchain_time_seconds + 1,
         # Set closing timestamp to a valid time offset from the current Vega blockchain time
-        "closingTimestamp": blockchain_time_seconds + 3601,
+        "closingTimestamp": blockchain_time_seconds + 121,
         # Set enactment timestamp to a valid time offset from the current Vega blockchain time
-        "enactmentTimestamp": blockchain_time_seconds + 3701,
+        "enactmentTimestamp": blockchain_time_seconds + 241,
         # Note: the timestamps above are specified in seconds, and must meet minimums required by network
         "newMarket": {
             "changes": {
@@ -193,16 +193,22 @@ market = {
                         "settlementAsset": found_asset_id,
                         "quoteName": "DAI",
                         "maturity": "2021-06-30T23:59:59Z",
-                        # "settlementPriceSource: {
-                        #     "sourceType": "signedMessage",
-                        #     "sourcePubkeys": ["YOUR_PUBKEY_HERE"],
-                        #     "field": "price",
-                        #     "dataType": "decimal",
-                        #     "filters": [
-                        #         { "field": "feed_id", "equals": "BTCDAI/EOD" },
-                        #         { "field": "mark_time", "equals": "31/12/20" }
-                        #     ]
-                        # }
+                        "oracleSpec": {
+                            "pubKeys": ["G6VC6AB0QIAGNRU"],
+                            "filters": [{
+                                "key": {
+                                    "name": "price.BTC.value",
+                                    "type": "TYPE_STRING"
+                                },
+                                "conditions": [{
+                                    "operator": "OPERATOR_EQUALS",
+                                    "value": "5797800153"
+                                }]
+                            }],
+                        },
+                        "oracleSpecBinding": {
+                            "settlementPriceProperty": "price.BTC.value"
+                        }
                     },
                     "name": "BTC/DAI",
                 },
