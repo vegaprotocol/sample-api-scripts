@@ -178,9 +178,9 @@ market = {
         # Set validation timestamp to a valid time offset from the current Vega blockchain time
         "validationTimestamp": blockchain_time_seconds + 1,
         # Set closing timestamp to a valid time offset from the current Vega blockchain time
-        "closingTimestamp": blockchain_time_seconds + 121,
+        "closingTimestamp": blockchain_time_seconds + 360,
         # Set enactment timestamp to a valid time offset from the current Vega blockchain time
-        "enactmentTimestamp": blockchain_time_seconds + 241,
+        "enactmentTimestamp": blockchain_time_seconds + 480,
         # Note: the timestamps above are specified in seconds, and must meet minimums required by network
         "newMarket": {
             "changes": {
