@@ -155,7 +155,10 @@ response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
 createVersion = response.order.version
+orderReason = response.order.reason
 print(f"Order processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
 
 #####################################################################################
 #                               A M E N D   O R D E R                               #
@@ -198,12 +201,15 @@ orderSize = response.order.size
 orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.order.time_in_force)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
 orderVersion = response.order.version
+orderReason = response.order.reason
 
 print("Amended Order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}, "
       f"Version(Old): {createVersion}, Version(new): {orderVersion}")
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
@@ -262,8 +268,11 @@ time.sleep(4)
 order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+orderReason = response.order.reason
 
 print("Cancelled Order:")
 print(f"ID: {orderID}, Status: {orderStatus}")
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
 
 # Completed.

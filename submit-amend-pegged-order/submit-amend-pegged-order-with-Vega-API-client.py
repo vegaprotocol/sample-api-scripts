@@ -158,8 +158,14 @@ response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
 createVersion = response.order.version
+orderReason = response.order.reason
+
 print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
-print(f"Pegged at:\n{response.order.pegged_order}")
+
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
+else:
+    print(f"Pegged at:\n{response.order.pegged_order}")
 
 #####################################################################################
 #                        A M E N D   P E G G E D   O R D E R                        #
@@ -203,12 +209,17 @@ orderSize = response.order.size
 orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.order.time_in_force)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
 orderVersion = response.order.version
+orderReason = response.order.reason
 
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
       f"Size(Old): 50, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}, "
       f"Version(Old): {createVersion}, Version(new): {orderVersion}")
-print(f"Pegged at:\n{response.order.pegged_order}")
+
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
+else:
+    print(f"Pegged at:\n{response.order.pegged_order}")
 
 # Completed.

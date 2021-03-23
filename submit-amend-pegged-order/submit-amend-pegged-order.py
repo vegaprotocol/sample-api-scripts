@@ -144,7 +144,7 @@ print(f"Prepared pegged order, ref: {order_ref}")
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_order["blob"]
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
+url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_pegged_order__
@@ -165,8 +165,12 @@ orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
 orderPegged = response_json["order"]["peggedOrder"]
 createVersion = response_json["order"]["version"]
+orderReason = response_json["order"]["reason"]
 print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
-print(f"Pegged at: {orderPegged}")
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
+else:
+    print(f"Pegged at: {orderPegged}")
 
 #####################################################################################
 #                        A M E N D   P E G G E D   O R D E R                        #
@@ -198,7 +202,7 @@ print(f"Amendment prepared for order ID: {orderID}")
 # Sign the prepared pegged order transaction for amendment
 # Note: Setting propagate to true will also submit to a Vega node
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
+url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_pegged_amend__
@@ -218,13 +222,18 @@ orderTif = response_json["order"]["timeInForce"]
 orderStatus = response_json["order"]["status"]
 orderPegged = response_json["order"]["peggedOrder"]
 orderVersion = response_json["order"]["version"]
+orderReason = response_json["order"]["reason"]
 
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
       f"Size(Old): 50, Size(New): {orderSize}, "
       f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}, "
       f"Version(Old): {createVersion}, Version(new): {orderVersion}")
-print(f"Pegged at: {orderPegged}")
+
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
+else:
+    print(f"Pegged at: {orderPegged}")
 
 
 # Completed.

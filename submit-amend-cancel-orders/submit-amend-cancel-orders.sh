@@ -124,7 +124,7 @@ cat >req.json <<EOF
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_order__
 
@@ -182,7 +182,7 @@ cat >req.json <<EOF
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_amend__
 
@@ -271,7 +271,7 @@ cat >req.json <<EOF
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_cancel__
 
