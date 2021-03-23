@@ -92,7 +92,8 @@ marketID = response.json()["markets"][0]["id"]
 # :get_market__
 
 assert marketID != ""
-print(f"Market found: {marketID}")
+marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["name"]
+print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
 #                          B L O C K C H A I N   T I M E                            #
