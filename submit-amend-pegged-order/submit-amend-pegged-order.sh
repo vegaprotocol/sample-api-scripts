@@ -125,7 +125,7 @@ cat >req.json <<EOF
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_pegged_order__
 
@@ -142,8 +142,11 @@ response="$(curl -s "$url")"
 orderID="$(echo "$response" | jq -r '.order.id')"
 orderStatus="$(echo "$response" | jq -r '.order.status')"
 orderPegged="$(echo "$response" | jq -r '.order.peggedOrder')"
+createVersion="$(echo "$response" | jq -r '.order.version')"
+orderReason="$(echo "$response" | jq -r '.order.reason')"
 
-echo "Order pegged processed, ID: $orderID, Status: $orderStatus"
+echo "Order pegged processed, ID: $orderID, Status: $orderStatus, Version: $createVersion"
+echo "Reason: $orderReason"
 echo "Pegged at: $orderPegged"
 
 #####################################################################################
@@ -183,7 +186,7 @@ cat >req.json <<EOF
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_pegged_amend__
 
@@ -199,11 +202,15 @@ orderSize="$(echo "$response" | jq -r '.order.size')"
 orderTif="$(echo "$response" | jq -r '.order.timeInForce')"
 orderStatus="$(echo "$response" | jq -r '.order.status')"
 orderPegged="$(echo "$response" | jq -r '.order.peggedOrder')"
+orderVersion="$(echo "$response" | jq -r '.order.version')"
+orderReason="$(echo "$response" | jq -r '.order.reason')"
 
 echo "Amended pegged order:"
 echo "ID: $orderID, Status: $orderStatus,"
 echo " Size(Old): 50, Size(New): $orderSize,"
 echo " TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): $orderTif"
+echo " Version(Old): $createVersion, Version(New): $orderVersion"
+echo "Reason: $orderReason"
 echo "Pegged at: $orderPegged"
 
 # Completed.

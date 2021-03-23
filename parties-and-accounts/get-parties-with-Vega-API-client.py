@@ -23,7 +23,6 @@ Responses:
 # :something__
 
 import os
-from google.protobuf.empty_pb2 import Empty
 # __import_client:
 import vegaapiclient as vac
 # :import_client__
@@ -33,6 +32,7 @@ node_url_grpc = os.getenv("NODE_URL_GRPC")
 # __get_parties:
 # Request a list of parties trading on a Vega network
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-response = data_client.Parties(Empty())
+req = vac.api.trading.PartiesRequest()
+response = data_client.Parties(req)
 print("Parties:\n{}".format(response))
 # :get_parties__

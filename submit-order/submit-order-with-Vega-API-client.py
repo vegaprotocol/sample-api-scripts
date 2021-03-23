@@ -27,8 +27,6 @@ import grpc
 import json
 import os
 
-from google.protobuf.empty_pb2 import Empty
-
 # __import_client:
 import vegaapiclient as vac
 
@@ -74,7 +72,7 @@ helpers.check_response(login_response)
 
 # __get_market:
 # Get a list of markets
-markets = datacli.Markets(Empty()).markets
+markets = datacli.Markets(vac.api.trading.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 

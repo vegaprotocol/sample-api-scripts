@@ -124,7 +124,7 @@ cat >req.json <<EOF
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_order__
 
@@ -140,8 +140,9 @@ url="$NODE_URL_REST/orders/$orderRef"
 response="$(curl -s "$url")"
 orderID="$(echo "$response" | jq -r '.order.id')"
 orderStatus="$(echo "$response" | jq -r '.order.status')"
+createVersion="$(echo "$response" | jq -r '.order.version')"
 
-echo "Order processed, ID: $orderID, Status: $orderStatus"
+echo "Order processed, ID: $orderID, Status: $orderStatus, Version: $createVersion"
 
 #####################################################################################
 #                               A M E N D   O R D E R                               #
@@ -181,7 +182,7 @@ cat >req.json <<EOF
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_amend__
 
@@ -197,11 +198,13 @@ orderPrice="$(echo "$response" | jq -r '.order.price')"
 orderSize="$(echo "$response" | jq -r '.order.size')"
 orderTif="$(echo "$response" | jq -r '.order.timeInForce')"
 orderStatus="$(echo "$response" | jq -r '.order.status')"
+orderVersion="$(echo "$response" | jq -r '.order.version')"
 
 echo "Amended Order:"
 echo "ID: $orderID, Status: $orderStatus, Price(Old): 1,"
 echo " Price(New): $orderPrice, Size(Old): 100, Size(New): $orderSize,"
 echo " TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): $orderTif"
+echo " Version(Old): $createVersion, Version(New): $orderVersion"
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
@@ -268,7 +271,7 @@ cat >req.json <<EOF
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/messages/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_cancel__
 

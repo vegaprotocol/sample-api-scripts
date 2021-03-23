@@ -25,7 +25,6 @@ import helpers
 import os
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 
-from google.protobuf.empty_pb2 import Empty
 # __import_client:
 import vegaapiclient as vac
 data_client = vac.VegaTradingDataClient(node_url_grpc)
@@ -48,10 +47,6 @@ if not helpers.check_var(wallet_passphrase):
 
 # Help guide users against including api version suffix on url
 wallet_server_url = helpers.check_wallet_url(wallet_server_url)
-
-markets = data_client.Markets(Empty()).markets
-market_id = markets[0].id
-assert market_id != ""
 
 # __existing_wallet:
 # Make request to log in to existing wallet

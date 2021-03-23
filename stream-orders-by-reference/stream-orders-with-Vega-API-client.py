@@ -23,7 +23,6 @@ import os
 import signal
 import sys
 
-from google.protobuf.empty_pb2 import Empty
 # __import_client:
 import vegaapiclient as vac
 # :import_client__
