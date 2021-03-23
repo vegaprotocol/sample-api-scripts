@@ -142,8 +142,9 @@ response="$(curl -s "$url")"
 orderID="$(echo "$response" | jq -r '.order.id')"
 orderStatus="$(echo "$response" | jq -r '.order.status')"
 orderPegged="$(echo "$response" | jq -r '.order.peggedOrder')"
+createVersion="$(echo "$response" | jq -r '.order.version')"
 
-echo "Order pegged processed, ID: $orderID, Status: $orderStatus"
+echo "Order pegged processed, ID: $orderID, Status: $orderStatus, Version: $createVersion"
 echo "Pegged at: $orderPegged"
 
 #####################################################################################
@@ -199,11 +200,13 @@ orderSize="$(echo "$response" | jq -r '.order.size')"
 orderTif="$(echo "$response" | jq -r '.order.timeInForce')"
 orderStatus="$(echo "$response" | jq -r '.order.status')"
 orderPegged="$(echo "$response" | jq -r '.order.peggedOrder')"
+orderVersion="$(echo "$response" | jq -r '.order.version')"
 
 echo "Amended pegged order:"
 echo "ID: $orderID, Status: $orderStatus,"
 echo " Size(Old): 50, Size(New): $orderSize,"
 echo " TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): $orderTif"
+echo " Version(Old): $createVersion, Version(New): $orderVersion"
 echo "Pegged at: $orderPegged"
 
 # Completed.

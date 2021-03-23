@@ -160,7 +160,8 @@ while response.status_code != 200:
 response_json = response.json()
 orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
-print(f"\nOrder processed, ID: {orderID}, Status: {orderStatus}")
+createVersion = response_json["order"]["version"]
+print(f"\nOrder processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
 
 #####################################################################################
 #                               A M E N D   O R D E R                               #
@@ -211,11 +212,13 @@ orderPrice = response_json["order"]["price"]
 orderSize = response_json["order"]["size"]
 orderTif = response_json["order"]["timeInForce"]
 orderStatus = response_json["order"]["status"]
+orderVersion = response_json["order"]["version"]
 
 print("Amended Order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}, "
+      f"Version(Old): {createVersion}, Version(new): {orderVersion}")
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #

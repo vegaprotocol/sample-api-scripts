@@ -164,7 +164,8 @@ response_json = response.json()
 orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
 orderPegged = response_json["order"]["peggedOrder"]
-print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}")
+createVersion = response_json["order"]["version"]
+print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
 print(f"Pegged at: {orderPegged}")
 
 #####################################################################################
@@ -216,11 +217,13 @@ orderSize = response_json["order"]["size"]
 orderTif = response_json["order"]["timeInForce"]
 orderStatus = response_json["order"]["status"]
 orderPegged = response_json["order"]["peggedOrder"]
+orderVersion = response_json["order"]["version"]
 
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
       f"Size(Old): 50, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}, "
+      f"Version(Old): {createVersion}, Version(new): {orderVersion}")
 print(f"Pegged at: {orderPegged}")
 
 

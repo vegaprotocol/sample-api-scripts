@@ -157,7 +157,8 @@ order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
-print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}")
+createVersion = response.order.version
+print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
 print(f"Pegged at:\n{response.order.pegged_order}")
 
 #####################################################################################
@@ -201,11 +202,13 @@ orderPrice = response.order.status
 orderSize = response.order.size
 orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.order.time_in_force)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+orderVersion = response.order.version
 
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
       f"Size(Old): 50, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}, "
+      f"Version(Old): {createVersion}, Version(new): {orderVersion}")
 print(f"Pegged at:\n{response.order.pegged_order}")
 
 # Completed.

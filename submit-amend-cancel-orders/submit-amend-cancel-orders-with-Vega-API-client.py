@@ -90,7 +90,7 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-markets = data_client.Markets(Empty()).markets
+markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 
@@ -103,7 +103,7 @@ print(f"Market found: {marketID}")
 
 # __get_expiry_time:
 # Request the current blockchain time, calculate an expiry time
-blockchain_time = data_client.GetVegaTime(Empty()).timestamp
+blockchain_time = data_client.GetVegaTime(vac.api.trading.GetVegaTimeRequest()).timestamp
 expiresAt = int(blockchain_time + 120 * 1e9)  # expire in 2 minutes
 # :get_expiry_time__
 
@@ -154,7 +154,8 @@ order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
-print(f"Order processed, ID: {orderID}, Status: {orderStatus}")
+createVersion = response.order.version
+print(f"Order processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
 
 #####################################################################################
 #                               A M E N D   O R D E R                               #
@@ -196,11 +197,13 @@ orderPrice = response.order.status
 orderSize = response.order.size
 orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.order.time_in_force)
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+orderVersion = response.order.version
 
 print("Amended Order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}, "
+      f"Version(Old): {createVersion}, Version(new): {orderVersion}")
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
