@@ -26,8 +26,6 @@ import helpers
 import time
 import os
 
-from google.protobuf.empty_pb2 import Empty
-
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 if not helpers.check_var(node_url_grpc):
     print("Error: Invalid or missing NODE_URL_GRPC environment variable.")

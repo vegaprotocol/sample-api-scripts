@@ -21,7 +21,6 @@ Apps/Libraries:
 
 import os
 
-from google.protobuf.empty_pb2 import Empty
 # __import_client:
 import vegaapiclient as vac
 # :import_client__
@@ -31,6 +30,6 @@ node_url_grpc = os.getenv("NODE_URL_GRPC")
 # __get_statistics:
 # Request the statistics for a node on Vega
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-response = data_client.Statistics(Empty())
+response = data_client.Statistics(vac.api.trading.StatisticsRequest())
 print("Statistics:\n{}".format(response))
 # :get_statistics__

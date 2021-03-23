@@ -26,7 +26,6 @@ import sys
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 
-from google.protobuf.empty_pb2 import Empty
 # __import_client:
 import vegaapiclient as vac
 data_client = vac.VegaTradingDataClient(node_url_grpc)
@@ -40,7 +39,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 # __get_market:
 # Request the identifier for a market
-markets = data_client.Markets(Empty()).markets
+markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
 market_id = markets[0].id
 # :get_market__
 

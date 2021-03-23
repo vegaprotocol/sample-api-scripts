@@ -23,7 +23,6 @@ import os
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 
-from google.protobuf.empty_pb2 import Empty
 # __import_client:
 import vegaapiclient as vac
 data_client = vac.VegaTradingDataClient(node_url_grpc)
@@ -31,7 +30,7 @@ data_client = vac.VegaTradingDataClient(node_url_grpc)
 
 # __get_markets:
 # Request a list of markets available on the specified Vega Network
-markets = data_client.Markets(Empty()).markets
+markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
 print("Markets:\n{}".format(markets))
 # :get_markets__
 

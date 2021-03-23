@@ -23,7 +23,6 @@ import os
 import signal
 import sys
 
-from google.protobuf.empty_pb2 import Empty
 # __import_client:
 import vegaapiclient as vac
 # :import_client__
@@ -43,7 +42,7 @@ data_client = vac.VegaTradingDataClient(node_url_grpc)
 
 # __find_market:
 # Get a list of markets, and select the first market returned
-markets = data_client.Markets(Empty()).markets
+markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
 market_id = markets[0].id
 # :find_market__
 

@@ -26,7 +26,6 @@ import helpers
 import time
 import os
 
-from google.protobuf.empty_pb2 import Empty
 from google.protobuf.wrappers_pb2 import Int64Value
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
@@ -93,7 +92,7 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-markets = data_client.Markets(Empty()).markets
+markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 
@@ -106,7 +105,7 @@ print(f"Market found: {marketID}")
 
 # __get_expiry_time:
 # Request the current blockchain time, calculate an expiry time
-blockchain_time = data_client.GetVegaTime(Empty()).timestamp
+blockchain_time = data_client.GetVegaTime(vac.api.trading.GetVegaTimeRequest()).timestamp
 expiresAt = int(blockchain_time + 120 * 1e9)  # expire in 2 minutes
 # :get_expiry_time__
 
