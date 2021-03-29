@@ -32,9 +32,6 @@ if not helpers.check_url(node_url_rest):
     exit(1)
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
-if not helpers.check_url(wallet_server_url):
-    print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
-    exit(1)
 
 wallet_name = os.getenv("WALLET_NAME")
 if not helpers.check_var(wallet_name):
@@ -96,6 +93,7 @@ helpers.check_response(response)
 # __find_asset:
 # Find settlement asset with name tDAI
 found_asset_id = "UNKNOWN"
+print(response)
 assets = response.json()["assets"]
 for asset in assets:
     if asset["symbol"] == "tDAI":
