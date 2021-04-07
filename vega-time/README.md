@@ -29,6 +29,14 @@ Get the latest time on the blockchain using python3 and the [Vega-API-client](ht
 python3 vega-time/get-time-with-Vega-API-client.py
 ```
 
+## Go
+
+Get the latest time on the blockchain using go [gRPC API]:
+
+```bash
+go run vega-time/get-time.go
+```
+
 ---
 
 **[Home](../README.md)**

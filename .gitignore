@@ -5,3 +5,4 @@ credentials.*
 /credentials
 *.tmp
 .idea
+.DS_Store

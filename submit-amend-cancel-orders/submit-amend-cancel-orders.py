@@ -92,7 +92,8 @@ marketID = response.json()["markets"][0]["id"]
 # :get_market__
 
 assert marketID != ""
-print(f"Market found: {marketID}")
+marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["name"]
+print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
 #                          B L O C K C H A I N   T I M E                            #
@@ -141,7 +142,7 @@ print(f"Prepared order, ref: {order_ref}")
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_order["blob"]
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
+url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_order__
@@ -160,7 +161,12 @@ while response.status_code != 200:
 response_json = response.json()
 orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
-print(f"\nOrder processed, ID: {orderID}, Status: {orderStatus}")
+createVersion = response_json["order"]["version"]
+orderReason = response_json["order"]["reason"]
+
+print(f"\nOrder processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
 
 #####################################################################################
 #                               A M E N D   O R D E R                               #
@@ -193,7 +199,7 @@ print(f"Amendment prepared for order ID: {orderID}")
 # Sign the prepared order transaction for amendment
 # Note: Setting propagate to true will also submit to a Vega node
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
+url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_amend__
@@ -211,11 +217,16 @@ orderPrice = response_json["order"]["price"]
 orderSize = response_json["order"]["size"]
 orderTif = response_json["order"]["timeInForce"]
 orderStatus = response_json["order"]["status"]
+orderVersion = response_json["order"]["version"]
+orderReason = response_json["order"]["reason"]
 
 print("Amended Order:")
 print(f"ID: {orderID}, Status: {orderStatus}, Price(Old): 1, "
       f"Price(New): {orderPrice}, Size(Old): 100, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}, "
+      f"Version(Old): {createVersion}, Version(new): {orderVersion}")
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
 
 #####################################################################################
 #                             C A N C E L   O R D E R S                             #
@@ -271,7 +282,7 @@ print(f"Cancellation prepared for order ID: {orderID}")
 # Sign the prepared order transaction for cancellation
 # Note: Setting propagate to true will also submit to a Vega node
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
+url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_cancel__
@@ -286,8 +297,11 @@ response = requests.get(url)
 response_json = response.json()
 orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
+orderReason = response_json["order"]["reason"]
 
 print("Cancelled Order:")
 print(f"ID: {orderID}, Status: {orderStatus}")
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
 
 # Completed.

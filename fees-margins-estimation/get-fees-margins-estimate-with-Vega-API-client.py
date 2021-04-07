@@ -22,8 +22,6 @@ Apps/Libraries:
 import helpers
 import os
 
-from google.protobuf.empty_pb2 import Empty
-
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 if not helpers.check_var(node_url_grpc):
     print("Error: Invalid or missing NODE_URL_GRPC environment variable.")
@@ -87,7 +85,7 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-markets = data_client.Markets(Empty()).markets
+markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 

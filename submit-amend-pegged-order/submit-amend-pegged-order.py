@@ -92,7 +92,8 @@ marketID = response.json()["markets"][0]["id"]
 # :get_market__
 
 assert marketID != ""
-print(f"Market found: {marketID}")
+marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["name"]
+print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
 #                          B L O C K C H A I N   T I M E                            #
@@ -144,7 +145,7 @@ print(f"Prepared pegged order, ref: {order_ref}")
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_order["blob"]
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
+url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_pegged_order__
@@ -164,8 +165,13 @@ response_json = response.json()
 orderID = response_json["order"]["id"]
 orderStatus = response_json["order"]["status"]
 orderPegged = response_json["order"]["peggedOrder"]
-print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}")
-print(f"Pegged at: {orderPegged}")
+createVersion = response_json["order"]["version"]
+orderReason = response_json["order"]["reason"]
+print(f"\nPegged order processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
+else:
+    print(f"Pegged at: {orderPegged}")
 
 #####################################################################################
 #                        A M E N D   P E G G E D   O R D E R                        #
@@ -197,7 +203,7 @@ print(f"Amendment prepared for order ID: {orderID}")
 # Sign the prepared pegged order transaction for amendment
 # Note: Setting propagate to true will also submit to a Vega node
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
+url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_pegged_amend__
@@ -216,12 +222,19 @@ orderSize = response_json["order"]["size"]
 orderTif = response_json["order"]["timeInForce"]
 orderStatus = response_json["order"]["status"]
 orderPegged = response_json["order"]["peggedOrder"]
+orderVersion = response_json["order"]["version"]
+orderReason = response_json["order"]["reason"]
 
 print("Amended pegged order:")
 print(f"ID: {orderID}, Status: {orderStatus}, "
       f"Size(Old): 50, Size(New): {orderSize}, "
-      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}")
-print(f"Pegged at: {orderPegged}")
+      f"TimeInForce(Old): TIME_IN_FORCE_GTT, TimeInForce(New): {orderTif}, "
+      f"Version(Old): {createVersion}, Version(new): {orderVersion}")
+
+if orderStatus == "STATUS_REJECTED":
+    print(f"Rejection reason: {orderReason}")
+else:
+    print(f"Pegged at: {orderPegged}")
 
 
 # Completed.

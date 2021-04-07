@@ -32,9 +32,6 @@ if not helpers.check_url(node_url_rest):
     exit(1)
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
-if not helpers.check_url(wallet_server_url):
-    print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
-    exit(1)
 
 wallet_name = os.getenv("WALLET_NAME")
 if not helpers.check_var(wallet_name):
@@ -96,6 +93,7 @@ helpers.check_response(response)
 # __find_asset:
 # Find settlement asset with name tDAI
 found_asset_id = "UNKNOWN"
+print(response)
 assets = response.json()["assets"]
 for asset in assets:
     if asset["symbol"] == "tDAI":
@@ -178,9 +176,9 @@ market = {
         # Set validation timestamp to a valid time offset from the current Vega blockchain time
         "validationTimestamp": blockchain_time_seconds + 1,
         # Set closing timestamp to a valid time offset from the current Vega blockchain time
-        "closingTimestamp": blockchain_time_seconds + 3601,
+        "closingTimestamp": blockchain_time_seconds + 360,
         # Set enactment timestamp to a valid time offset from the current Vega blockchain time
-        "enactmentTimestamp": blockchain_time_seconds + 3701,
+        "enactmentTimestamp": blockchain_time_seconds + 480,
         # Note: the timestamps above are specified in seconds, and must meet minimums required by network
         "newMarket": {
             "changes": {
@@ -193,16 +191,22 @@ market = {
                         "settlementAsset": found_asset_id,
                         "quoteName": "DAI",
                         "maturity": "2021-06-30T23:59:59Z",
-                        # "settlementPriceSource: {
-                        #     "sourceType": "signedMessage",
-                        #     "sourcePubkeys": ["YOUR_PUBKEY_HERE"],
-                        #     "field": "price",
-                        #     "dataType": "decimal",
-                        #     "filters": [
-                        #         { "field": "feed_id", "equals": "BTCDAI/EOD" },
-                        #         { "field": "mark_time", "equals": "31/12/20" }
-                        #     ]
-                        # }
+                        "oracleSpec": {
+                            "pubKeys": ["G6VC6AB0QIAGNRU"],
+                            "filters": [{
+                                "key": {
+                                    "name": "price.BTC.value",
+                                    "type": "TYPE_STRING"
+                                },
+                                "conditions": [{
+                                    "operator": "OPERATOR_EQUALS",
+                                    "value": "5797800153"
+                                }]
+                            }],
+                        },
+                        "oracleSpecBinding": {
+                            "settlementPriceProperty": "price.BTC.value"
+                        }
                     },
                     "name": "BTC/DAI",
                 },
@@ -240,7 +244,7 @@ assert proposal_ref != ""
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_proposal["blob"]
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
+url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_proposal__
@@ -311,7 +315,7 @@ prepared_vote = response.json()
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_vote["blob"]
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
+url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_vote__

@@ -23,13 +23,12 @@ import os
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 
-from google.protobuf.empty_pb2 import Empty
 # __import_client:
 import vegaapiclient as vac
 data_client = vac.VegaTradingDataClient(node_url_grpc)
 # :import_client__
 
-markets = data_client.Markets(Empty()).markets
+markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
 market_id = markets[0].id
 assert market_id != ""
 
