@@ -95,17 +95,6 @@ helpers.check_response(response)
 found_asset_id = "UNKNOWN"
 print(response)
 assets = response.json()["assets"]
-for asset in assets:
-    if asset["symbol"] == "tDAI":
-        print("Found an asset with symbol tDAI")
-        print(asset)
-        found_asset_id = asset["id"]
-        break
-# :find_asset__
-
-if found_asset_id == "UNKNOWN":
-    print("tDAI asset not found on specified Vega network, please propose and create this asset first")
-    exit(1)
 
 #####################################################################################
 #                   G O V E R N A N C E   T O K E N   C H E C K                     #
@@ -177,14 +166,17 @@ market = {
         # Set validation timestamp to a valid time offset from the current Vega blockchain time
         "validationTimestamp": blockchain_time_seconds + 1,
         # Set closing timestamp to a valid time offset from the current Vega blockchain time
-        "closingTimestamp": blockchain_time_seconds + 360,
+        "closingTimestamp": blockchain_time_seconds + 3600 + 60,
         # Set enactment timestamp to a valid time offset from the current Vega blockchain time
-        "enactmentTimestamp": blockchain_time_seconds + 480,
+        "enactmentTimestamp": blockchain_time_seconds + 3600 + 120,
         # Note: the timestamps above are specified in seconds, and must meet minimums required by network
-        "updateNetwokParameter": {
+
+        # This is the main part: "key" is any network parameter and "value" is its value
+        # As an example we vote to chage the parameter market.liquidity.targetstake.triggering.ratio. 
+        "updateNetworkParameter": {
             "changes": {
-                "key": parameter,
-                "value": value,
+                "key": "market.liquidity.targetstake.triggering.ratio",
+                "value": "0.7",
             }
         },
     }
@@ -238,7 +230,7 @@ while not done:
 assert proposal_id != ""
 
 #####################################################################################
-#                            V O T E   O N   M A R K E T                            #
+#                            V O T E   O N   P A R A M T E R                        #
 #####################################################################################
 
 # STEP 2 - Let's vote on the market proposal
