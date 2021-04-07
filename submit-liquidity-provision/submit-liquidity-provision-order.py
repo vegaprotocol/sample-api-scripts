@@ -107,6 +107,7 @@ print(f"Market found: {marketID} {marketName}")
 req = {
     "submission": {
         "marketId": marketID,
+        "partyId": pubkey,
         "commitmentAmount": "100",
         "fee": "0.1",
         "buys": [

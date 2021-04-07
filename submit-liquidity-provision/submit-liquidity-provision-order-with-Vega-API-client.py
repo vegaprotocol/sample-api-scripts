@@ -110,7 +110,7 @@ print(f"Market found: {marketID} {marketName}")
 order = vac.api.trading.PrepareLiquidityProvisionRequest(
     submission=vac.vega.LiquidityProvisionSubmission(
         market_id=marketID,
-        commitment_amount=100,
+        commitment_amount=0,
         fee="0.1",
         reference="my-lp-reference",
         buys=[
