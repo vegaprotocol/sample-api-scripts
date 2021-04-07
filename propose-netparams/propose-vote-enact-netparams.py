@@ -20,7 +20,6 @@ Apps/Libraries:
 # some code here
 # :something__
 
-import json
 import requests
 import time
 import os
@@ -170,16 +169,15 @@ market = {
         # Set enactment timestamp to a valid time offset from the current Vega blockchain time
         "enactmentTimestamp": blockchain_time_seconds + 3600 + 120,
         # Note: the timestamps above are specified in seconds, and must meet minimums required by network
-
         # This is the main part: "key" is any network parameter and "value" is its value
-        # As an example we vote to chage the parameter market.liquidity.targetstake.triggering.ratio. 
+        # As an example we vote to chage the parameter market.liquidity.targetstake.triggering.ratio.
         "updateNetworkParameter": {
             "changes": {
                 "key": "market.liquidity.targetstake.triggering.ratio",
                 "value": "0.7",
             }
         },
-    }
+    },
 }
 
 url = f"{node_url_rest}/governance/prepare/proposal"
@@ -249,7 +247,7 @@ assert proposal_id != ""
 vote = {
     "vote": {
         "partyId": pubkey,
-        "value": "VALUE_YES",           # Can be either VALUE_YES or VALUE_NO
+        "value": "VALUE_YES",  # Can be either VALUE_YES or VALUE_NO
         "proposalId": proposal_id,
     }
 }
