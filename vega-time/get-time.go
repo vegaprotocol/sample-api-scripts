@@ -9,7 +9,11 @@ import (
 )
 
 func main() {
-	conn, err := grpc.Dial("NODE_gRPC_URL", grpc.WithInsecure())
+    nodeURLGrpc := os.Getenv("NODE_URL_GRPC")
+	if len(nodeURLGrpc) == 0 {
+		panic("NODE_URL_GRPC is null or empty")
+	}
+	conn, err := grpc.Dial(nodeURLGrpc, grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err)
 		return
