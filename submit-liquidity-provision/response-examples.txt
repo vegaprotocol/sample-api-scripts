@@ -1,0 +1,25 @@
+### __example_prepare_liquidity_order_response:
+# Response for preparing a liquidity submission message
+{
+  "blob": "YWQ5M2NmYzktYTU5OC00MmNmLTk4ZmMtOTA1NWY0MWUzMTBmQBI ... mItZjA4NDllOTY1YzIy",
+}
+# Note: some fields have been shortened to improve readability
+### :example_prepare_liquidity_order_response__
+
+
+### __example_sign_tx_liquidity_response:
+# Response for signing the prepared transaction
+{
+  "base64Bundle": "CvQBCsMBNzYwMWUxMjUtYzZiMC00ZGRjLWIzZTQt6SDC ... 2ZWdhL2VkMjU1MTkYAQ==",
+  "hexBundle": "0af4010ac30137363031653132352d63366230 ... db907120c766567612f656432353531391801",
+  "signedTx": {
+    "sig": {
+      "algo": "vega/ed25519",
+      "sig": "6nFF/38QjNdHpaNIk6OvMnrDWnEzrRzl+88gnkME+TBVb2mIbNiHEwPz26z1WUK6E5nDFRMa6FqG71PuOM25Bw==",
+      "version": 1
+    },
+    "tx": "CsMBNzYwMWUxMjUtYzZiMC00ZGRjLWIzZTQtMGU2YmE ... QELfsftyQ=="
+  }
+}
+# Note: some fields have been shortened to improve readability
+### :example_sign_tx_liquidity_response__
