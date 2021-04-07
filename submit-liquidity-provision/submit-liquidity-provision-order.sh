@@ -66,70 +66,69 @@ fi
 test -n "$pubKey" || exit 1
 test "$pubKey" == null && exit 1
 
-# __get_market:
 ### Next, get a Market ID ###
+# __get_market:
 url="$NODE_URL_REST/markets"
 echo "get market ID url: $url"
 response="$(curl -s "$url")"
 marketID="$(echo "$response" | jq -r '.markets[0].id')"
 # :get_market__
 
-# __prepare_order:
-### Next, prepare a SubmitOrder ###
+# Note: commitment_amount is an integer. For example 123456 is a price of 1.23456,
+# for a market which is configured to have a precision of 5 decimal places.
 
-# Note: price is an integer. For example 123456 is a price of 1.23456,
-# assuming 5 decimal places.
-
+# __prepare_liquidity_order:
+# Prepare a liquidity commitment order message
 url="$NODE_URL_REST/time"
 response="$(curl -s "$url")"
-blockchaintime="$(echo "$response" | jq -r .timestamp)"
-expiresAt="$((blockchaintime+120*10**9))" # expire in 2 minutes
 cat >req.json <<EOF
 {
     "submission": {
         "market_id": "$marketID",
         "commitment_amount": "100",
         "fee": "0.1",
-		"buys": [
-			{
-				"offset": "-1",
-				"proportion": "2",
-				"reference": "PEGGED_REFERENCE_MID"
-			},
-			{
-				"offset": "-2",
-				"proportion": "2",
-				"reference": "PEGGED_REFERENCE_MID"
-			}
-		],
-		"sells": [
-			{
-				"offset": "1",
-				"proportion": "2",
-				"reference": "PEGGED_REFERENCE_MID"
-			},
-			{
-				"offset": "2",
-				"proportion": "2",
-				"reference": "PEGGED_REFERENCE_MID"
-			},
-			{
-				"offset": "3",
-				"proportion": "2",
-				"reference": "PEGGED_REFERENCE_MID"
-			}
-		] 
+        "buys": [
+          {
+            "offset": "-1",
+            "proportion": "2",
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          {
+            "offset": "-2",
+            "proportion": "2",
+            "reference": "PEGGED_REFERENCE_MID"
+          }
+        ],
+        "sells": [
+          {
+            "offset": "1",
+            "proportion": "2",
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          {
+            "offset": "2",
+            "proportion": "2",
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          {
+            "offset": "3",
+            "proportion": "2",
+            "reference": "PEGGED_REFERENCE_MID"
+          }
+        ]
     }
 }
 EOF
 echo "Request for PrepareLiquidityProvision: $(cat req.json)"
 url="$NODE_URL_REST/liquidity-provisions/prepare/submit"
 response="$(curl -s -XPOST -d @req.json "$url")"
-echo "Response from PrepareLiquidityProvision: $response"
-# :prepare_order__
+# :prepare_liquidity_order__
 
-# __sign_tx:
-### Wallet server: Sign the prepared transaction ###
+echo "Response from PrepareLiquidityProvision: $response"
+
+# __sign_tx_liquidity_order:
+# Sign the prepared liquidity order transaction
+# Note: Setting propagate to true will also submit to a Vega node
 blob="$(echo "$response" | jq -r .blob)"
 test "$blob" == null && exit 1
 cat >req.json <<EOF
@@ -144,11 +143,11 @@ url="$WALLETSERVER_URL/api/v1/messages"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"}
 signedTx="$(echo "$response" | jq .signedTx)"
 echo "Response from SignTx: $signedTx"
-# :sign_tx__
+# :sign_tx_liquidity_order__
 test "$signedTx" == null && exit 1
 
-# __submit_tx:
-### Vega node: Submit the signed transaction ###
+# __submit_tx_liquidity_order:
+# Submit the signed transaction to Vega network
 cat >req.json <<EOF
 {
     "tx": $signedTx
@@ -157,7 +156,7 @@ EOF
 echo "Request for SubmitTransaction: $(cat req.json)"
 url="$NODE_URL_REST/transaction"
 response="$(curl -s -XPOST -d @req.json "$url")"
-# :submit_tx__
+# :submit_tx_liquidity_order__
 
 if ! echo "$response" | jq -r .success | grep -q '^true$' ; then
 	echo "Failed"

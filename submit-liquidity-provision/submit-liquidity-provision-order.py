@@ -96,16 +96,18 @@ marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["
 print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
-#                   S U B M I T   L I Q U I D I T Y   O R D E R                     #
+#                    S U B M I T   L I Q U I D I T Y   O R D E R                    #
 #####################################################################################
 
+# Note: commitment_amount is an integer. For example 123456 is a price of 1.23456,
+# for a market which is configured to have a precision of 5 decimal places.
+
 # __prepare_liquidity_order:
-# Prepare a liquidity order message
+# Prepare a liquidity commitment order message
 req = {
     "submission": {
         "marketId": marketID,
-        "partyId": pubkey,
-        "commitment_amount": "100",
+        "commitmentAmount": "100",
         "fee": "0.1",
         "buys": [
             {
@@ -154,7 +156,6 @@ req = {"tx": blob, "pubKey": pubkey, "propagate": True}
 url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
-
 # :sign_tx_liquidity_order__
 
 print("Signed liquidity order and sent to Vega")
