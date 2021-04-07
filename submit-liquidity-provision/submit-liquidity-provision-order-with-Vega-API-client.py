@@ -99,7 +99,7 @@ marketName = markets[0].tradable_instrument.instrument.name
 print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
-#                    S U B M I T   L I Q U I D I T Y   O R D E R                    #
+#                   S U B M I T   L I Q U I D I T Y   O R D E R S                   #
 #####################################################################################
 
 # Note: commitment_amount is an integer. For example 123456 is a price of 1.23456,
@@ -110,7 +110,7 @@ print(f"Market found: {marketID} {marketName}")
 order = vac.api.trading.PrepareLiquidityProvisionRequest(
     submission=vac.vega.LiquidityProvisionSubmission(
         market_id=marketID,
-        commitment_amount=0,
+        commitment_amount=100,
         fee="0.1",
         reference="my-lp-reference",
         buys=[
