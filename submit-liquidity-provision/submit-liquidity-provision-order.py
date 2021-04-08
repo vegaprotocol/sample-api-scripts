@@ -168,8 +168,8 @@ time.sleep(10)
 #               A M E N D    L I Q U I D I T Y   C O M M I T M E N T                #
 #####################################################################################
 
-# __prepare_liquidity_order:
-# Prepare a liquidity commitment order message, modify fields to be amended
+# __amend_liquidity_order:
+# Prepare a liquidity commitment order message (it will now serve as an amendment request), modify fields to be amended
 
 req = {
     "submission": {
@@ -220,8 +220,8 @@ time.sleep(10)
 #               C A N C E L    L I Q U I D I T Y   C O M M I T M E N T              #
 #####################################################################################
 
-# __prepare_liquidity_order:
-# Prepare a liquidity commitment order message, set commitmentAmount to 0, \
+# __cancel_liquidity_order:
+# Prepare a liquidity commitment order message (it will now serve as a cancellation request), set commitmentAmount to 0, 
 # note that transaction may get rejected if removing previously supplied liquidity 
 # will result in insufficient liquidity for the market
 
