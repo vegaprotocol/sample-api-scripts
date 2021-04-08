@@ -200,7 +200,6 @@ prepared_order = response.json()
 
 print(f"Prepared liquidity commitment (amendment) for market: {marketID} {marketName}")
 
-# __sign_tx_liquidity_order:
 # Sign the prepared liquidity commitment transaction
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_order["blob"]
@@ -239,7 +238,6 @@ prepared_order = response.json()
 
 print(f"Prepared liquidity commitment (cancellation) for market: {marketID} {marketName}")
 
-# __sign_tx_liquidity_order:
 # Sign the prepared liquidity commitment transaction
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_order["blob"]
