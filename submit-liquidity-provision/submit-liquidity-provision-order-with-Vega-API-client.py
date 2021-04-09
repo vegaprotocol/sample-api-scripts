@@ -99,24 +99,38 @@ marketName = markets[0].tradable_instrument.instrument.name
 print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
-#                   S U B M I T   L I Q U I D I T Y   O R D E R S                   #
+#                 L I S T   L I Q U I D I T Y   P R O V I S I O N S                 #
+#####################################################################################
+
+# __get_liquidity_provisions:
+# Request liquidity provisions for the market
+partyID="" # specify party ID if needed, otherwise all liquidity provisions for the market get returned 
+liquidityProvisions = data_client.LiquidityProvisions(vac.api.trading.LiquidityProvisionsRequest(
+    party=partyID,
+    market=marketID
+))
+
+print("Liquidity provisions:\n{}".format(liquidityProvisions))
+
+#####################################################################################
+#              S U B M I T   L I Q U I D I T Y   C O M M I T M E N T                #
 #####################################################################################
 
 # Note: commitment_amount is an integer. For example 123456 is a price of 1.23456,
 # for a market which is configured to have a precision of 5 decimal places.
 
 # __prepare_liquidity_order:
-# Prepare a liquidity commitment order message
+# Prepare a liquidity commitment transaction message
 order = vac.api.trading.PrepareLiquidityProvisionRequest(
     submission=vac.vega.LiquidityProvisionSubmission(
         market_id=marketID,
         commitment_amount=100,
-        fee="0.1",
+        fee="0.01",
         reference="my-lp-reference",
         buys=[
             vac.vega.LiquidityOrder(
                 reference=vac.vega.PEGGED_REFERENCE_MID,
-                proportion=2,
+                proportion=1,
                 offset=-1
             ),
             vac.vega.LiquidityOrder(
@@ -128,7 +142,7 @@ order = vac.api.trading.PrepareLiquidityProvisionRequest(
         sells=[
             vac.vega.LiquidityOrder(
                 reference=vac.vega.PEGGED_REFERENCE_MID,
-                proportion=2,
+                proportion=1,
                 offset=1
             ),
             vac.vega.LiquidityOrder(
@@ -138,7 +152,7 @@ order = vac.api.trading.PrepareLiquidityProvisionRequest(
             ),
             vac.vega.LiquidityOrder(
                 reference=vac.vega.PEGGED_REFERENCE_MID,
-                proportion=2,
+                proportion=5,
                 offset=3
             )
         ]
@@ -147,7 +161,7 @@ order = vac.api.trading.PrepareLiquidityProvisionRequest(
 prepared_order = trading_client.PrepareLiquidityProvision(order)
 # :prepare_liquidity_order__
 
-print(f"Prepared liquidity commitment order for market: {marketID}")
+print(f"Prepared liquidity commitment for market: {marketID}")
 
 # __sign_tx_liquidity_order:
 # Sign the prepared transaction
@@ -160,5 +174,83 @@ print(response.json())
 # :sign_tx_liquidity_order__
 
 print("Signed order and sent to Vega")
+
+time.sleep(10)
+
+#####################################################################################
+#               A M E N D    L I Q U I D I T Y   C O M M I T M E N T                #
+#####################################################################################
+
+# __amend_liquidity_order:
+# Prepare a liquidity commitment order message: (it will now serve as an amendment request), modify fields to be amended
+order = vac.api.trading.PrepareLiquidityProvisionRequest(
+    submission=vac.vega.LiquidityProvisionSubmission(
+        market_id=marketID,
+        commitment_amount=500,
+        fee="0.005",
+        reference="my-lp-reference",
+        buys=[
+            vac.vega.LiquidityOrder(
+                reference=vac.vega.PEGGED_REFERENCE_MID,
+                proportion=1,
+                offset=-1
+            )
+        ],
+        sells=[
+            vac.vega.LiquidityOrder(
+                reference=vac.vega.PEGGED_REFERENCE_MID,
+                proportion=1,
+                offset=1
+            )
+        ]
+    )
+)
+prepared_order = trading_client.PrepareLiquidityProvision(order)
+# :amend_liquidity_order__
+
+print(f"Prepared liquidity commitment (amendment)  for market: {marketID}")
+
+# Sign the prepared transaction
+# Note: Setting propagate to true will submit to a Vega node
+blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
+response = wallet_client.signtx(blob_base64, pubkey, True)
+helpers.check_response(response)
+signedTx = response.json()["signedTx"]
+print(response.json())
+
+print("Signed order and sent to Vega")
+
+time.sleep(10)
+
+#####################################################################################
+#               C A N C E L    L I Q U I D I T Y   C O M M I T M E N T              #
+#####################################################################################
+
+# __cancel_liquidity_order:
+# Prepare a liquidity commitment order message (it will now serve as a cancellation request), set commitmentAmount to 0, 
+# note that transaction may get rejected if removing previously supplied liquidity 
+# will result in insufficient liquidity for the market
+order = vac.api.trading.PrepareLiquidityProvisionRequest(
+    submission=vac.vega.LiquidityProvisionSubmission(
+        market_id=marketID,
+        commitment_amount=0,
+        reference="my-lp-reference",
+    )
+)
+prepared_order = trading_client.PrepareLiquidityProvision(order)
+# :cancel_liquidity_order__
+
+print(f"Prepared liquidity commitment (cancellation) for market: {marketID}")
+
+# Sign the prepared transaction
+# Note: Setting propagate to true will submit to a Vega node
+blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
+response = wallet_client.signtx(blob_base64, pubkey, True)
+helpers.check_response(response)
+signedTx = response.json()["signedTx"]
+print(response.json())
+
+print("Signed order and sent to Vega")
+
 
 # Completed.
