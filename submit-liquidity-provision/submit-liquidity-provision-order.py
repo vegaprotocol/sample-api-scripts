@@ -107,7 +107,7 @@ response = requests.get(url)
 helpers.check_response(response)
 response_json = response.json()
 
-print("LiquidityProvisionsData:\n{}".format(json.dumps(response_json, indent=2, sort_keys=True)))
+print("Liquidity provisions:\n{}".format(json.dumps(response_json, indent=2, sort_keys=True)))
 # :get_liquidity_provisions__
 
 #####################################################################################

@@ -78,12 +78,12 @@ marketID="$(echo "$response" | jq -r '.markets[0].id')"
 
 ### List liquidity provisions on the specified market
 # __get_liquidity_provisions:
-# Request all the liquidity provisions for the market
+# Request liquidity provisions for the market
 $partyID="" # specify party ID if needed, otherwise all liquidity provisions for the market get returned 
 url="$NODE_URL_REST/liquidity-provisions/party/$partyID/market/$marketID"
 echo "get liquidity provisions data for the market: $url"
 response="$(curl -s "$url")"
-echo "LiquidityProvisions: $response"
+echo "Liquidity provisions: $response"
 # :get_liquidity_provisions__
 
 ### Submit liquidity commitment for the selected market
