@@ -84,7 +84,9 @@ url="$NODE_URL_REST/liquidity-provisions/party/$partyID/market/$marketID"
 echo "get liquidity provisions data for the market: $url"
 response="$(curl -s "$url")"
 echo "LiquidityProvisions: $response"
+# :get_liquidity_provisions__
 
+### Submit liquidity commitment for the selected market
 # Note: commitment_amount is an integer. For example 123456 is a price of 1.23456,
 # for a market which is configured to have a precision of 5 decimal places.
 
@@ -171,6 +173,8 @@ response="$(curl -s -XPOST -d @req.json "$url")"
 
 sleep 10s
 
+### Amend liquidity commitment for the selected market
+
 # __amend_liquidity_order:
 # Prepare a liquidity commitment order message: (it will now serve as an amendment request), modify fields to be amended
 url="$NODE_URL_REST/time"
@@ -234,6 +238,8 @@ url="$NODE_URL_REST/transaction"
 response="$(curl -s -XPOST -d @req.json "$url")"
 
 sleep 10s
+
+### Cancel liquidity commitment for the selected market
 
 # __cancel_liquidity_order:
 # Prepare a liquidity commitment order message (it will now serve as a cancellation request), set commitmentAmount to 0, 

@@ -106,7 +106,9 @@ url = "{base}/liquidity-provisions/party/{party}/market/{marketId}".format(base=
 response = requests.get(url)
 helpers.check_response(response)
 response_json = response.json()
+
 print("LiquidityProvisionsData:\n{}".format(json.dumps(response_json, indent=2, sort_keys=True)))
+# :get_liquidity_provisions__
 
 #####################################################################################
 #              S U B M I T   L I Q U I D I T Y   C O M M I T M E N T                #

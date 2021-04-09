@@ -111,6 +111,7 @@ liquidityProvisions = data_client.LiquidityProvisions(vac.api.trading.LiquidityP
 ))
 
 print("Liquidity provisions:\n{}".format(liquidityProvisions))
+# :get_liquidity_provisions__
 
 #####################################################################################
 #              S U B M I T   L I Q U I D I T Y   C O M M I T M E N T                #
