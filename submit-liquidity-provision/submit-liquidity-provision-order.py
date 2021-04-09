@@ -96,6 +96,18 @@ marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["
 print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
+#                 L I S T   L I Q U I D I T Y   P R O V I S I O N S                 #
+#####################################################################################
+
+# __get_liquidity_provisions:
+# Request all the liquidity provisions for the market
+url = "{base}/liquidity-provisions/party/{party}/market/{marketId}".format(base=node_url_rest, party="", marketId=marketID)
+response = requests.get(url)
+helpers.check_response(response)
+response_json = response.json()
+print("LiquidityProvisionsData:\n{}".format(json.dumps(response_json, indent=2, sort_keys=True)))
+
+#####################################################################################
 #              S U B M I T   L I Q U I D I T Y   C O M M I T M E N T                #
 #####################################################################################
 
@@ -169,7 +181,7 @@ time.sleep(10)
 #####################################################################################
 
 # __amend_liquidity_order:
-# Prepare a liquidity commitment order message (it will now serve as an amendment request), modify fields to be amended
+# Prepare a liquidity commitment order message: (it will now serve as an amendment request), modify fields to be amended
 
 req = {
     "submission": {
