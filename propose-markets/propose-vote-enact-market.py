@@ -224,6 +224,12 @@ market = {
                    }],
                    "updateFrequency": "120"
                 },
+                "commitment": {
+                    "commitmentAmount": 150000,
+                    "fee": "0.001",
+                    "sells": { "reference" : "Mid", "proportion": 1, "offset": 1},
+                    "buys": { "reference" : "Mid", "proportion": 1, "offset": -1},
+                }
             }
         },
     }

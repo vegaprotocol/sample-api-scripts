@@ -10,11 +10,11 @@ import (
 	"strconv"
 	"time"
 
+	"code.vegaprotocol.io/go-wallet/wallet"
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto"
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"code.vegaprotocol.io/go-wallet/wallet"
 )
 
 type PendingProposal struct {
@@ -262,6 +262,12 @@ func main() {
 						 "probability": 0.9999999
 					   }],
 					   "updateFrequency": "120"
+					},
+					"commitment": {
+						"commitmentAmount": 150000,
+						"fee": "0.001",
+						"sells": { "reference" : "Mid", "proportion": 1, "offset": 1},
+						"buys": { "reference" : "Mid", "proportion": 1, "offset": -1},
 					}
 				}
 			}
