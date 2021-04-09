@@ -176,7 +176,7 @@ sleep 10s
 ### Amend liquidity commitment for the selected market
 
 # __amend_liquidity_order:
-# Prepare a liquidity commitment order message: (it will now serve as an amendment request), modify fields to be amended
+# Prepare a liquidity commitment order message (it will now serve as an amendment request): modify fields to be amended
 url="$NODE_URL_REST/time"
 response="$(curl -s "$url")"
 cat >req.json <<EOF
@@ -242,7 +242,7 @@ sleep 10s
 ### Cancel liquidity commitment for the selected market
 
 # __cancel_liquidity_order:
-# Prepare a liquidity commitment order message (it will now serve as a cancellation request), set commitmentAmount to 0, 
+# Prepare a liquidity commitment order message (it will now serve as a cancellation request): set commitmentAmount to 0, 
 # note that transaction may get rejected if removing previously supplied liquidity 
 # will result in insufficient liquidity for the market
 url="$NODE_URL_REST/time"
@@ -258,7 +258,7 @@ EOF
 echo "Request for PrepareLiquidityProvision (cancellation): $(cat req.json)"
 url="$NODE_URL_REST/liquidity-provisions/prepare/submit"
 response="$(curl -s -XPOST -d @req.json "$url")"
-# :amend_liquidity_order__
+# :cancel_liquidity_order__
 
 echo "Response from PrepareLiquidityProvision (cancellation): $response"
 
