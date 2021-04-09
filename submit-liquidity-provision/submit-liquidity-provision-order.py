@@ -100,8 +100,9 @@ print(f"Market found: {marketID} {marketName}")
 #####################################################################################
 
 # __get_liquidity_provisions:
-# Request all the liquidity provisions for the market
-url = "{base}/liquidity-provisions/party/{party}/market/{marketId}".format(base=node_url_rest, party="", marketId=marketID)
+# Request liquidity provisions for the market
+partyID="" # specify party ID if needed, otherwise all liquidity provisions for the market get returned 
+url = "{base}/liquidity-provisions/party/{party}/market/{marketId}".format(base=node_url_rest, party=partyID, marketId=marketID)
 response = requests.get(url)
 helpers.check_response(response)
 response_json = response.json()
@@ -208,7 +209,7 @@ url = f"{node_url_rest}/liquidity-provisions/prepare/submit"
 response = requests.post(url, json=req)
 helpers.check_response(response)
 prepared_order = response.json()
-# :prepare_liquidity_order__
+# :amend_liquidity_order__
 
 print(f"Prepared liquidity commitment (amendment) for market: {marketID} {marketName}")
 
@@ -219,7 +220,6 @@ req = {"tx": blob, "pubKey": pubkey, "propagate": True}
 url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
-# :sign_tx_liquidity_order__
 
 print("Signed liquidity commitment (amendment) and sent to Vega")
 
@@ -246,7 +246,7 @@ url = f"{node_url_rest}/liquidity-provisions/prepare/submit"
 response = requests.post(url, json=req)
 helpers.check_response(response)
 prepared_order = response.json()
-# :prepare_liquidity_order__
+# :cancel_liquidity_order__
 
 print(f"Prepared liquidity commitment (cancellation) for market: {marketID} {marketName}")
 
@@ -257,7 +257,6 @@ req = {"tx": blob, "pubKey": pubkey, "propagate": True}
 url = f"{wallet_server_url}/api/v1/messages/sync"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
-# :sign_tx_liquidity_order__
 
 print("Signed liquidity commitment (cancellation) and sent to Vega")
 
