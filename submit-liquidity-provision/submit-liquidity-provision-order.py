@@ -180,56 +180,6 @@ print("Signed liquidity commitment and sent to Vega")
 time.sleep(10)
 
 #####################################################################################
-#               A M E N D    L I Q U I D I T Y   C O M M I T M E N T                #
-#####################################################################################
-
-# __amend_liquidity_order:
-# Prepare a liquidity commitment order message (it will now serve as an amendment request): modify fields to be amended
-
-req = {
-    "submission": {
-        "marketId": marketID,
-        "commitmentAmount": "500",
-        "fee": "0.005",
-        "buys": [
-            {
-                "offset": "-1",
-                "proportion": "1",
-                "reference": "PEGGED_REFERENCE_MID"
-            }
-        ],
-        "sells": [
-            {
-                "offset": "1",
-                "proportion": "1",
-                "reference": "PEGGED_REFERENCE_MID"
-            }
-        ]
-    }
-}
-url = f"{node_url_rest}/liquidity-provisions/prepare/submit"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-prepared_order = response.json()
-# :amend_liquidity_order__
-
-print(f"Prepared liquidity commitment (amendment) for market: {marketID} {marketName}")
-
-# Sign the prepared liquidity commitment transaction
-# Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_order["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages/sync"
-response = requests.post(url, headers=headers, json=req)
-helpers.check_response(response)
-
-print("Signed liquidity commitment (amendment) and sent to Vega")
-
-# Completed.
-
-time.sleep(10)
-
-#####################################################################################
 #               C A N C E L    L I Q U I D I T Y   C O M M I T M E N T              #
 #####################################################################################
 

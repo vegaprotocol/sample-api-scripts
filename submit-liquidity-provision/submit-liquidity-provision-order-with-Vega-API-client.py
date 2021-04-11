@@ -179,51 +179,6 @@ print("Signed order and sent to Vega")
 time.sleep(10)
 
 #####################################################################################
-#               A M E N D    L I Q U I D I T Y   C O M M I T M E N T                #
-#####################################################################################
-
-# __amend_liquidity_order:
-# Prepare a liquidity commitment order message (it will now serve as an amendment request): modify fields to be amended
-order = vac.api.trading.PrepareLiquidityProvisionRequest(
-    submission=vac.vega.LiquidityProvisionSubmission(
-        market_id=marketID,
-        commitment_amount=500,
-        fee="0.005",
-        reference="my-lp-reference",
-        buys=[
-            vac.vega.LiquidityOrder(
-                reference=vac.vega.PEGGED_REFERENCE_MID,
-                proportion=1,
-                offset=-1
-            )
-        ],
-        sells=[
-            vac.vega.LiquidityOrder(
-                reference=vac.vega.PEGGED_REFERENCE_MID,
-                proportion=1,
-                offset=1
-            )
-        ]
-    )
-)
-prepared_order = trading_client.PrepareLiquidityProvision(order)
-# :amend_liquidity_order__
-
-print(f"Prepared liquidity commitment (amendment)  for market: {marketID}")
-
-# Sign the prepared transaction
-# Note: Setting propagate to true will submit to a Vega node
-blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
-response = wallet_client.signtx(blob_base64, pubkey, True)
-helpers.check_response(response)
-signedTx = response.json()["signedTx"]
-print(response.json())
-
-print("Signed order and sent to Vega")
-
-time.sleep(10)
-
-#####################################################################################
 #               C A N C E L    L I Q U I D I T Y   C O M M I T M E N T              #
 #####################################################################################
 
