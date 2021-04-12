@@ -10,11 +10,11 @@ import (
 	"strconv"
 	"time"
 
+	"code.vegaprotocol.io/go-wallet/wallet"
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto"
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"code.vegaprotocol.io/go-wallet/wallet"
 )
 
 type PendingProposal struct {

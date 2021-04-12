@@ -1,0 +1,108 @@
+### __example_prepare_liquidity_order_response:
+# Response for preparing a liquidity submission message
+{
+  "blob": "YWQ5M2NmYzktYTU5OC00MmNmLTk4ZmMtOTA1NWY0MWUzMTBmQBI ... mItZjA4NDllOTY1YzIy",
+}
+# Note: some fields have been shortened to improve readability
+### :example_prepare_liquidity_order_response__
+
+
+### __example_sign_tx_liquidity_response:
+# Response for signing the prepared transaction
+{
+  "base64Bundle": "CvQBCsMBNzYwMWUxMjUtYzZiMC00ZGRjLWIzZTQt6SDC ... 2ZWdhL2VkMjU1MTkYAQ==",
+  "hexBundle": "0af4010ac30137363031653132352d63366230 ... db907120c766567612f656432353531391801",
+  "signedTx": {
+    "sig": {
+      "algo": "vega/ed25519",
+      "sig": "6nFF/38QjNdHpaNIk6OvMnrDWnEzrRzl+88gnkME+TBVb2mIbNiHEwPz26z1WUK6E5nDFRMa6FqG71PuOM25Bw==",
+      "version": 1
+    },
+    "tx": "CsMBNzYwMWUxMjUtYzZiMC00ZGRjLWIzZTQtMGU2YmE ... QELfsftyQ=="
+  }
+}
+# Note: some fields have been shortened to improve readability
+### :example_sign_tx_liquidity_response__
+
+
+### __example_get_liquidity_provisions:
+# Response for market's liquidity provisions
+{
+  "liquidityProvisions": [
+    {
+      "buys": [
+        {
+          "liquidityOrder": {
+            "offset": "-1",
+            "proportion": 2,
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          "orderId": "V0000658556-0029509134"
+        },
+        {
+          "liquidityOrder": {
+            "offset": "-2",
+            "proportion": 2,
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          "orderId": "V0000511139-0023502746"
+        }
+      ],
+      "commitmentAmount": "1900000000000",
+      "createdAt": "1617381959464262762",
+      "fee": "0.5",
+      "id": "fa3073e35d30ab7148cbdbf45fe36d4a0c75b5cd36c67d175fcd863ce4a3fb3a",
+      "marketId": "076BB86A5AA41E3E",
+      "partyId": "64685023985dcb0fa25afa8b0394632c0f6b3a9d75b81e815eb7a249b2df44f7",
+      "reference": "",
+      "sells": [
+        {
+          "liquidityOrder": {
+            "offset": "1",
+            "proportion": 2,
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          "orderId": "V0000658558-0029509243"
+        },
+        {
+          "liquidityOrder": {
+            "offset": "2",
+            "proportion": 2,
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          "orderId": "V0000658558-0029509244"
+        },
+        {
+          "liquidityOrder": {
+            "offset": "3",
+            "proportion": 2,
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          "orderId": "V0000511139-0023502749"
+        }
+      ],
+      "status": "STATUS_ACTIVE",
+      "updatedAt": "1617381959464262762",
+      "version": ""
+    },
+    {
+      "buys": [
+        {
+          "liquidityOrder": {
+            "offset": "-1",
+            "proportion": 2,
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          "orderId": "V0000509990-0023454845"
+        },
+        {
+          "liquidityOrder": {
+            "offset": "-2",
+            "proportion": 2,
+            "reference": "PEGGED_REFERENCE_MID"
+          },
+          "orderId": "V0000509990-0023454846"
+        }
+      ]
+}
+### :example_get_liquidity_provisions__

@@ -223,7 +223,7 @@ market = {
                      "probability": 0.9999999
                    }],
                    "updateFrequency": "120"
-                },
+                }
             }
         },
     }
