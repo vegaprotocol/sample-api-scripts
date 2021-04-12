@@ -171,9 +171,13 @@ url="$NODE_URL_REST/transaction"
 response="$(curl -s -XPOST -d @req.json "$url")"
 # :submit_tx_liquidity_order__
 
-sleep 10s
+### Comment out the lines below to add a cancellation of the newly created LP commitment
+echo "To add cancellation step, uncomment line 176 of the script file"
+exit 0
 
 ### Cancel liquidity commitment for the selected market
+
+sleep 10s
 
 # __cancel_liquidity_order:
 # Prepare a liquidity commitment order message (it will now serve as a cancellation request): set commitmentAmount to 0, 

@@ -176,11 +176,15 @@ print(response.json())
 
 print("Signed order and sent to Vega")
 
-time.sleep(10)
+# Comment out the lines below to add a cancellation of the newly created LP commitment
+print("To add cancellation step, uncomment line 181 of the script file")
+exit(0)
 
 #####################################################################################
 #               C A N C E L    L I Q U I D I T Y   C O M M I T M E N T              #
 #####################################################################################
+
+time.sleep(10)
 
 # __cancel_liquidity_order:
 # Prepare a liquidity commitment order message (it will now serve as a cancellation request): set commitmentAmount to 0, 
