@@ -180,6 +180,117 @@ print("Signed order and sent to Vega")
 print("To add cancellation step, uncomment line 181 of the script file")
 exit(0)
 
+### Amend liquidity commitment for the selected market
+
+# __amend_liquidity_order:
+# Prepare a liquidity commitment order message (it will now serve as an amendment request): modify fields to be amended
+url="$NODE_URL_REST/time"
+response="$(curl -s "$url")"
+cat >req.json <<EOF
+{
+    "submission": {
+        "market_id": "$marketID",
+        "commitment_amount": "500",
+        "fee": "0.005",
+        "buys": [
+          {
+            "offset": "-1",
+            "proportion": "1",
+            "reference": "PEGGED_REFERENCE_MID"
+          }
+        ],
+        "sells": [
+          {
+            "offset": "1",
+            "proportion": "1",
+            "reference": "PEGGED_REFERENCE_MID"
+          }
+        ]
+    }
+}
+EOF
+echo "Request for PrepareLiquidityProvision (amendment): $(cat req.json)"
+url="$NODE_URL_REST/liquidity-provisions/prepare/submit"
+response="$(curl -s -XPOST -d @req.json "$url")"
+# :amend_liquidity_order__
+
+echo "Response from PrepareLiquidityProvision (amendment): $response"
+
+# Sign the prepared liquidity order transaction
+# Note: Setting propagate to true will also submit to a Vega node
+blob="$(echo "$response" | jq -r .blob)"
+test "$blob" == null && exit 1
+cat >req.json <<EOF
+{
+    "tx": "$blob",
+    "pubKey": "$pubKey",
+    "propagate": false
+}
+EOF
+echo "Request for SignTx: $(cat req.json)"
+url="$WALLETSERVER_URL/api/v1/messages"
+response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
+signedTx="$(echo "$response" | jq .signedTx)"
+echo "Response from SignTx: $signedTx"
+test "$signedTx" == null && exit 1
+
+# Submit the signed transaction to Vega network
+cat >req.json <<EOF
+{
+    "tx": $signedTx
+}
+EOF
+echo "Request for SubmitTransaction: $(cat req.json)"
+url="$NODE_URL_REST/transaction"
+response="$(curl -s -XPOST -d @req.json "$url")"
+
+sleep 10s
+
+#####################################################################################
+#               A M E N D    L I Q U I D I T Y   C O M M I T M E N T                #
+#####################################################################################
+
+# __amend_liquidity_order:
+# Prepare a liquidity commitment order message (it will now serve as an amendment request): modify fields to be amended
+order = vac.api.trading.PrepareLiquidityProvisionRequest(
+    submission=vac.vega.LiquidityProvisionSubmission(
+        market_id=marketID,
+        commitment_amount=500,
+        fee="0.005",
+        reference="my-lp-reference",
+        buys=[
+            vac.vega.LiquidityOrder(
+                reference=vac.vega.PEGGED_REFERENCE_MID,
+                proportion=1,
+                offset=-1
+            )
+        ],
+        sells=[
+            vac.vega.LiquidityOrder(
+                reference=vac.vega.PEGGED_REFERENCE_MID,
+                proportion=1,
+                offset=1
+            )
+        ]
+    )
+)
+prepared_order = trading_client.PrepareLiquidityProvision(order)
+# :amend_liquidity_order__
+
+print(f"Prepared liquidity commitment (amendment)  for market: {marketID}")
+
+# Sign the prepared transaction
+# Note: Setting propagate to true will submit to a Vega node
+blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
+response = wallet_client.signtx(blob_base64, pubkey, True)
+helpers.check_response(response)
+signedTx = response.json()["signedTx"]
+print(response.json())
+
+print("Signed order and sent to Vega")
+
+time.sleep(10)
+
 #####################################################################################
 #               C A N C E L    L I Q U I D I T Y   C O M M I T M E N T              #
 #####################################################################################
