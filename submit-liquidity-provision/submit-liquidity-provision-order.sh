@@ -175,6 +175,72 @@ response="$(curl -s -XPOST -d @req.json "$url")"
 echo "To add cancellation step, uncomment line 176 of the script file"
 exit 0
 
+### Amend liquidity commitment for the selected market
+
+# __amend_liquidity_order:
+# Prepare a liquidity commitment order message (it will now serve as an amendment request): modify fields to be amended
+url="$NODE_URL_REST/time"
+response="$(curl -s "$url")"
+cat >req.json <<EOF
+{
+    "submission": {
+        "market_id": "$marketID",
+        "commitment_amount": "500",
+        "fee": "0.005",
+        "buys": [
+          {
+            "offset": "-1",
+            "proportion": "1",
+            "reference": "PEGGED_REFERENCE_MID"
+          }
+        ],
+        "sells": [
+          {
+            "offset": "1",
+            "proportion": "1",
+            "reference": "PEGGED_REFERENCE_MID"
+          }
+        ]
+    }
+}
+EOF
+echo "Request for PrepareLiquidityProvision (amendment): $(cat req.json)"
+url="$NODE_URL_REST/liquidity-provisions/prepare/submit"
+response="$(curl -s -XPOST -d @req.json "$url")"
+# :amend_liquidity_order__
+
+echo "Response from PrepareLiquidityProvision (amendment): $response"
+
+# Sign the prepared liquidity order transaction
+# Note: Setting propagate to true will also submit to a Vega node
+blob="$(echo "$response" | jq -r .blob)"
+test "$blob" == null && exit 1
+cat >req.json <<EOF
+{
+    "tx": "$blob",
+    "pubKey": "$pubKey",
+    "propagate": false
+}
+EOF
+echo "Request for SignTx: $(cat req.json)"
+url="$WALLETSERVER_URL/api/v1/messages"
+response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
+signedTx="$(echo "$response" | jq .signedTx)"
+echo "Response from SignTx: $signedTx"
+test "$signedTx" == null && exit 1
+
+# Submit the signed transaction to Vega network
+cat >req.json <<EOF
+{
+    "tx": $signedTx
+}
+EOF
+echo "Request for SubmitTransaction: $(cat req.json)"
+url="$NODE_URL_REST/transaction"
+response="$(curl -s -XPOST -d @req.json "$url")"
+
+sleep 10s
+
 ### Cancel liquidity commitment for the selected market
 
 sleep 10s
