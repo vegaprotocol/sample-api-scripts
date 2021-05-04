@@ -20,7 +20,6 @@ Apps/Libraries:
 # some code here
 # :something__
 
-import json
 import requests
 import time
 import os
@@ -46,9 +45,9 @@ if not helpers.check_var(wallet_passphrase):
 # Help guide users against including api version suffix on url
 wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
-#####################################################################################
-#                           W A L L E T   S E R V I C E                             #
-#####################################################################################
+###############################################################################
+#                           W A L L E T   S E R V I C E                       #
+###############################################################################
 
 print(f"Logging into wallet: {wallet_name}")
 
@@ -75,9 +74,9 @@ pubkey = keys[0]["pub"]
 assert pubkey != ""
 print("Selected pubkey for signing")
 
-#####################################################################################
-#                              F I N D   A S S E T S                                #
-#####################################################################################
+###############################################################################
+#                              F I N D   A S S E T S                          #
+###############################################################################
 
 # __get_assets:
 # Request a list of assets available on a Vega network
@@ -104,12 +103,15 @@ for asset in assets:
 # :find_asset__
 
 if found_asset_id == "UNKNOWN":
-    print("tDAI asset not found on specified Vega network, please propose and create this asset first")
+    print(
+        "tDAI asset not found on specified Vega network, please propose and "
+        "create this asset first"
+    )
     exit(1)
 
-#####################################################################################
-#                   G O V E R N A N C E   T O K E N   C H E C K                     #
-#####################################################################################
+###############################################################################
+#                   G O V E R N A N C E   T O K E N   C H E C K               #
+###############################################################################
 
 # Get the identifier of the governance asset on the Vega network
 vote_asset_id = "UNKNOWN"
@@ -119,7 +121,10 @@ for asset in assets:
         break
 
 if vote_asset_id == "UNKNOWN":
-    print("tVOTE asset not found on specified Vega network, please symbol name check and try again")
+    print(
+        "tVOTE asset not found on specified Vega network, please symbol name "
+        "check and try again"
+    )
     exit(1)
 
 # Request accounts for party and check governance asset balance
@@ -144,9 +149,9 @@ if voting_balance == 0:
     print(f"Please deposit tVOTE asset to public key {pubkey} and try again")
     exit(1)
 
-#####################################################################################
-#                          B L O C K C H A I N   T I M E                            #
-#####################################################################################
+###############################################################################
+#                          B L O C K C H A I N   T I M E                      #
+###############################################################################
 
 # __get_time:
 # Request the current blockchain time, and convert to time in seconds
@@ -158,75 +163,129 @@ blockchain_time_seconds = int(blockchain_time / 1e9)  # Seconds precision
 
 assert blockchain_time > 0
 assert blockchain_time_seconds > 0
-print(f"Blockchain time: {blockchain_time} ({blockchain_time_seconds} seconds past epoch)")
+print(
+    f"Blockchain time: {blockchain_time} ({blockchain_time_seconds} seconds "
+    "past epoch)"
+)
 
-#####################################################################################
-#                           P R O P O S E   M A R K E T                             #
-#####################################################################################
+###############################################################################
+#                           P R O P O S E   M A R K E T                       #
+###############################################################################
 
 # STEP 1 - Propose a BTC/DAI futures market
 
-# Further documentation on creating markets: https://docs.testnet.vega.xyz/docs/api-howtos/create-market/
+# Further documentation on creating markets:
+# https://docs.testnet.vega.xyz/docs/api-howtos/create-market/
 
 # __prepare_propose_market:
 # Prepare a market proposal for a new market
 market = {
     "partyId": pubkey,
     "proposal": {
-        # Set validation timestamp to a valid time offset from the current Vega blockchain time
-        "validationTimestamp": blockchain_time_seconds + 1,
-        # Set closing timestamp to a valid time offset from the current Vega blockchain time
+        # Set closing timestamp to a valid time offset from the current Vega
+        # blockchain time
         "closingTimestamp": blockchain_time_seconds + 360,
-        # Set enactment timestamp to a valid time offset from the current Vega blockchain time
+        # Set enactment timestamp to a valid time offset from the current Vega
+        # blockchain time
         "enactmentTimestamp": blockchain_time_seconds + 480,
-        # Note: the timestamps above are specified in seconds, and must meet minimums required by network
+        # Set validation timestamp to a valid time offset from the current Vega
+        # blockchain time
+        "validationTimestamp": blockchain_time_seconds + 1,
+        # Note: the timestamps above are specified in seconds, and must meet
+        # minimums required by network
         "newMarket": {
             "changes": {
-                "continuous": {"tickSize": "0.01"},
-                "decimalPlaces": "5",
                 "instrument": {
+                    "name": "BTC/DAI",
                     "code": "CRYPTO:BTCDAI/JUN21",
                     "future": {
+                        "maturity": "2021-06-30T23:59:59Z",
                         # Settlement asset identifier (found above)
                         "settlementAsset": found_asset_id,
                         "quoteName": "DAI",
-                        "maturity": "2021-06-30T23:59:59Z",
                         "oracleSpec": {
-                            "pubKeys": ["G6VC6AB0QIAGNRU"],
-                            "filters": [{
-                                "key": {
-                                    "name": "price.BTC.value",
-                                    "type": "TYPE_STRING"
+                            "pubKeys": ["0x0000"],
+                            "filters": [
+                                {
+                                    "key": {
+                                        "name": "price.DAI.value",
+                                        "type": "TYPE_STRING",
+                                    },
+                                    "conditions": [
+                                        {
+                                            "operator": "OPERATOR_EQUALS",
+                                            "value": "5797800153",
+                                        },
+                                    ],
                                 },
-                                "conditions": [{
-                                    "operator": "OPERATOR_EQUALS",
-                                    "value": "5797800153"
-                                }]
-                            }],
+                            ],
                         },
                         "oracleSpecBinding": {
-                            "settlementPriceProperty": "price.BTC.value"
-                        }
+                            "settlementPriceProperty": "price.DAI.value"
+                        },
                     },
-                    "name": "BTC/DAI",
+                },
+                "decimalPlaces": "5",
+                "metadata": [
+                    "base:BTC",
+                    "quote:DAI",
+                ],
+                "priceMonitoringParameters": {
+                    "triggers": [
+                        {
+                            "horizon": "43200",
+                            "probability": 0.9999999,
+                            "auctionExtension": "300",
+                        }
+                    ],
+                    "updateFrequency": "120",
+                },
+                "liquidityMonitoringParameters": {
+                    "targetStakeParameters": {
+                        "timeWindow": 3600,
+                        "scalingFactor": 10,
+                    },
+                    "triggeringRatio": 0,
+                    "auctionExtension": 0,
                 },
                 "logNormal": {
-                    "params": {"mu": 0, "r": 0.016, "sigma": 0.05},
                     "riskAversionParameter": 0.01,
                     "tau": 1.90128526884173e-06,
+                    "params": {"mu": 0, "r": 0.016, "sigma": 0.05},
                 },
-                "metadata": [],
-                "priceMonitoringParameters": {
-                   "triggers": [{
-                     "auctionExtension": "300",
-                     "horizon": "43200",
-                     "probability": 0.9999999
-                   }],
-                   "updateFrequency": "120"
-                }
-            }
+                "continuous": {"tickSize": "0.01"},
+            },
+            "liquidityCommitment": {
+                "commitmentAmount": 1,
+                "fee": "0.01",
+                "sells": [
+                    {
+                        "reference": "PEGGED_REFERENCE_BEST_ASK",
+                        "proportion": 10,
+                        "offset": 2000,
+                    },
+                    {
+                        "reference": "PEGGED_REFERENCE_BEST_ASK",
+                        "proportion": 10,
+                        "offset": 1000,
+                    },
+                ],
+                "buys": [
+                    {
+                        "reference": "PEGGED_REFERENCE_BEST_BID",
+                        "proportion": 10,
+                        "offset": -1000,
+                    },
+                    {
+                        "reference": "PEGGED_REFERENCE_BEST_BID",
+                        "proportion": 10,
+                        "offset": -2000,
+                    },
+                ],
+                "reference": "",
+            },
         },
-    }
+    },
 }
 
 url = f"{node_url_rest}/governance/prepare/proposal"
@@ -254,14 +313,17 @@ print("Signed market proposal and sent to Vega")
 # Debugging
 # print("Signed transaction:\n", response.json(), "\n")
 
-# Wait for proposal to be included in a block and to be accepted by Vega network
+# Wait for proposal to be included in a block and to be accepted by Vega
+# network
 print("Waiting for blockchain...", end="", flush=True)
 proposal_id = ""
 done = False
 while not done:
     time.sleep(0.5)
     print(".", end="", flush=True)
-    my_proposals = requests.get(node_url_rest + "/parties/" + pubkey + "/proposals")
+    my_proposals = requests.get(
+        node_url_rest + "/parties/" + pubkey + "/proposals"
+    )
     if my_proposals.status_code != 200:
         continue
 
@@ -276,27 +338,30 @@ while not done:
 
 assert proposal_id != ""
 
-#####################################################################################
-#                            V O T E   O N   M A R K E T                            #
-#####################################################################################
+###############################################################################
+#                            V O T E   O N   M A R K E T                      #
+###############################################################################
 
 # STEP 2 - Let's vote on the market proposal
 
 # IMPORTANT: When voting for a proposal on the Vega Testnet, typically a single
-# YES vote from the proposer will not be enough to vote the market into existence.
-# This is because of the network minimum threshold for voting on proposals, this
-# threshold for market proposals this is currently a 66% majority vote either YES or NO.
-# A proposer should enlist the help/YES votes from other community members, ideally on the
-# Community forums (https://community.vega.xyz/c/testnet) or Discord (https://vega.xyz/discord)
+# YES vote from the proposer will not be enough to vote the market into
+# existence. This is because of the network minimum threshold for voting on
+# proposals, this threshold for market proposals this is currently a 66%
+# majority vote either YES or NO.
+# A proposer should enlist the help/YES votes from other community members,
+# ideally on the Community forums (https://community.vega.xyz/c/testnet) or
+# Discord (https://vega.xyz/discord)
 
-# Further documentation on proposal voting and review here: https://docs.testnet.vega.xyz/docs/api-howtos/proposals/
+# Further documentation on proposal voting and review here:
+# https://docs.testnet.vega.xyz/docs/api-howtos/proposals/
 
 # __prepare_vote:
 # Prepare a vote for the proposal
 vote = {
     "vote": {
         "partyId": pubkey,
-        "value": "VALUE_YES",           # Can be either VALUE_YES or VALUE_NO
+        "value": "VALUE_YES",  # Can be either VALUE_YES or VALUE_NO
         "proposalId": proposal_id,
     }
 }
@@ -329,7 +394,9 @@ print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
 done = False
 while not done:
     time.sleep(0.5)
-    my_proposals = requests.get(node_url_rest + "/parties/" + pubkey + "/proposals")
+    my_proposals = requests.get(
+        node_url_rest + "/parties/" + pubkey + "/proposals"
+    )
     if my_proposals.status_code != 200:
         continue
 
@@ -346,16 +413,16 @@ while not done:
                     print(n)
                     exit(1)
 
-#####################################################################################
-#                           W A I T   F O R   M A R K E T                           #
-#####################################################################################
+###############################################################################
+#                           W A I T   F O R   M A R K E T                     #
+###############################################################################
 
 # STEP 3 - Wait for market to be enacted
 
 # IMPORTANT: When voting for a proposal on the Vega Testnet, typically a single
-# YES vote from the proposer will not be enough to vote the market into existence.
-# As described above in STEP 2, a market will need community voting support to be
-# passed and then enacted.
+# YES vote from the proposer will not be enough to vote the market into
+# existence. As described above in STEP 2, a market will need community voting
+# support to be passed and then enacted.
 
 # __wait_for_market:
 print("Waiting for proposal to be enacted or failed...", end="", flush=True)
