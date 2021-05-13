@@ -253,7 +253,7 @@ sleep 10s
 # __amend_liquidity_order:
 # Prepare a liquidity commitment order message (it will now serve as an amendment request): modify fields to be amended
 order = vac.api.trading.PrepareLiquidityProvisionRequest(
-    submission=vac.vega.LiquidityProvisionSubmission(
+    submission=vac.commands.v1.commands.LiquidityProvisionSubmission(
         market_id=marketID,
         commitment_amount=500,
         fee="0.005",
@@ -302,7 +302,7 @@ time.sleep(10)
 # note that transaction may get rejected if removing previously supplied liquidity 
 # will result in insufficient liquidity for the market
 order = vac.api.trading.PrepareLiquidityProvisionRequest(
-    submission=vac.vega.LiquidityProvisionSubmission(
+    submission=vac.commands.v1.commands.LiquidityProvisionSubmission(
         market_id=marketID,
         commitment_amount=0,
         reference="my-lp-reference",

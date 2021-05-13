@@ -119,9 +119,8 @@ print(f"Blockchain time: {blockchain_time}")
 # __prepare_submit_pegged_order:
 # Prepare a submit order message with a pegged BUY order
 order = vac.api.trading.PrepareSubmitOrderRequest(
-    submission=vac.vega.OrderSubmission(
+    submission=vac.commands.v1.commands.OrderSubmission(
         market_id=marketID,
-        party_id=pubkey,
         side=vac.vega.Side.SIDE_BUY,
         size=50,
         expires_at=expiresAt,
@@ -173,9 +172,8 @@ else:
 
 # __prepare_amend_pegged_order:
 # Prepare the amend pegged order message
-amend = vac.vega.OrderAmendment(
+amend = vac.commands.v1.commands.OrderAmendment(
     market_id=marketID,
-    party_id=pubkey,
     order_id=orderID,
     size_delta=-25,
     time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,

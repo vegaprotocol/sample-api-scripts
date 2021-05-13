@@ -117,9 +117,8 @@ print(f"Blockchain time: {blockchain_time}")
 # __prepare_submit_order:
 # Prepare a submit order message
 order = vac.api.trading.PrepareSubmitOrderRequest(
-    submission=vac.vega.OrderSubmission(
+    submission=vac.commands.v1.commands.OrderSubmission(
         market_id=marketID,
-        party_id=pubkey,
         # price is an integer. For example 123456 is a price of 1.23456,
         # assuming 5 decimal places.
         price=1,
@@ -166,9 +165,8 @@ if orderStatus == "STATUS_REJECTED":
 
 # __prepare_amend_order:
 # Prepare the amend order message
-amend = vac.vega.OrderAmendment(
+amend = vac.commands.v1.commands.OrderAmendment(
     market_id=marketID,
-    party_id=pubkey,
     order_id=orderID,
     price=vac.vega.Price(value=2),
     time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
@@ -219,10 +217,9 @@ if orderStatus == "STATUS_REJECTED":
 
 # __prepare_cancel_order_req1:
 # 1 - Cancel single order for party (pubkey)
-cancel = vac.vega.OrderCancellation(
+cancel = vac.commands.v1.commands.OrderCancellation(
     # Include party, market and order identifier fields to cancel single order.
     market_id=marketID,
-    party_id=pubkey,
     order_id=orderID,
 )
 # :prepare_cancel_order_req1__
