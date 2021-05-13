@@ -88,7 +88,6 @@ cat >req.json <<EOF
 {
     "submission": {
         "marketId": "$marketID",
-        "partyId": "$pubKey",
         "price": "100000",
         "size": "100",
         "side": "SIDE_BUY",

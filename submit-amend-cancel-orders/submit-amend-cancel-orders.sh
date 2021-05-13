@@ -95,7 +95,6 @@ cat >req.json <<EOF
 {
     "submission": {
         "marketId": "$marketID",
-        "partyId": "$pubKey",
         "price": "1",
         "size": "10",
         "side": "SIDE_BUY",
@@ -214,11 +213,10 @@ echo " Version(Old): $createVersion, Version(New): $orderVersion"
 
 # __prepare_cancel_order_req1:
 # 1 - Cancel single order for party (pubkey)
-#     *** Include party, market and order identifier fields to cancel single order.
+#     *** Include market and order identifier fields to cancel single order.
 cat >req.json <<EOF
 {
     "cancellation": {
-        "partyId": "$pubKey",
         "marketId": "$marketID",
         "orderId": "$orderID"
     }
@@ -228,11 +226,10 @@ EOF
 
 # __prepare_cancel_order_req2:
 # 2 - Cancel all orders on market for party (pubkey)
-#     *** Only include party & market identifier fields.
+#     *** Only include market identifier field.
 cat >req.json <<EOF
 {
     "cancellation": {
-        "partyId": "$pubKey",
         "marketId": "$marketID"
     }
 }
@@ -241,12 +238,9 @@ EOF
 
 # __prepare_cancel_order_req3:
 # 3 - Cancel all orders on all markets for party (pubkey)
-#     *** Only include party identifier field.
 cat >req.json <<EOF
 {
-    "cancellation": {
-        "partyId": "$pubKey"
-    }
+    "cancellation": {}
 }
 EOF
 # :prepare_cancel_order_req3__

@@ -93,7 +93,6 @@ cat >req.json <<EOF
 {
     "submission": {
         "marketId": "$marketID",
-        "partyId": "$pubKey",
         "size": "50",
         "side": "SIDE_BUY",
         "timeInForce": "TIME_IN_FORCE_GTT",
@@ -158,7 +157,6 @@ echo "Pegged at: $orderPegged"
 cat >req.json <<EOF
 {
     "amendment": {
-        "partyId": "$pubKey",
         "marketId": "$marketID",
         "orderId": "$orderID",
         "sizeDelta": "-25",

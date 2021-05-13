@@ -119,7 +119,6 @@ print(f"Blockchain time: {blockchain_time}")
 req = {
     "submission": {
         "marketId": marketID,
-        "partyId": pubkey,
         "size": "50",
         "side": "SIDE_BUY",
         "timeInForce": "TIME_IN_FORCE_GTT",
@@ -183,7 +182,6 @@ req = {
     "amendment": {
         "orderId": orderID,
         "marketId": marketID,
-        "partyId": pubkey,
         "sizeDelta": "25",
         "timeInForce": "TIME_IN_FORCE_GTC",
         "peggedReference": "PEGGED_REFERENCE_BEST_BID",
