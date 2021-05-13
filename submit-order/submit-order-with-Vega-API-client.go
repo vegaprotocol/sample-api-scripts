@@ -98,10 +98,9 @@ func main() {
 
 	// __prepare_order:
 	// Vega node: Prepare the SubmitOrder
-	orderSubmission := proto.OrderSubmission{
+	orderSubmission := proto.commands.v1.OrderSubmission{
 		Size:        1,
 		Price:       100000,
-		PartyId:     pubkey,
 		MarketId:    marketId,
 		Side:        proto.Side_SIDE_BUY,
 		TimeInForce: proto.Order_TIME_IN_FORCE_GTC,
