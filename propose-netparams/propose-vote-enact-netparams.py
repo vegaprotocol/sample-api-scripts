@@ -160,7 +160,6 @@ value = "0.7"
 # __prepare_propose_updateNetworkParameter:
 # Prepare a proposal for a network parameter update
 market = {
-    "partyId": pubkey,
     "proposal": {
         # Set validation timestamp to a valid time offset from the current Vega blockchain time
         "validationTimestamp": blockchain_time_seconds + 1,
@@ -228,7 +227,7 @@ while not done:
 assert proposal_id != ""
 
 #####################################################################################
-#                            V O T E   O N   P A R A M T E R                        #
+#                         V O T E   O N   P A R A M E T E R                         #
 #####################################################################################
 
 # STEP 2 - Let's vote on the market proposal
@@ -246,7 +245,6 @@ assert proposal_id != ""
 # Prepare a vote for the proposal
 vote = {
     "vote": {
-        "partyId": pubkey,
         "value": "VALUE_YES",  # Can be either VALUE_YES or VALUE_NO
         "proposalId": proposal_id,
     }

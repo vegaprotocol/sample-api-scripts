@@ -231,7 +231,6 @@ func main() {
 	closingTimestamp := blockchainTimeSeconds + 3601
 	enactmentTimestamp := blockchainTimeSeconds + 3701
 	market := `{
-		"partyId": "` + pubkey + `",
 		"proposal": {
 			"validationTimestamp": ` + strconv.FormatInt(validationTimestamp, 10) + `,
 			"closingTimestamp": ` + strconv.FormatInt(closingTimestamp, 10) + `,
@@ -344,7 +343,6 @@ func main() {
 	// Prepare a vote for the proposal
 	vote := `{
 		"vote": {
-			"partyId": "` + pubkey + `",
 			"value": "VALUE_NO",          
 			"proposalId": "` + proposalID + `"
 		}
