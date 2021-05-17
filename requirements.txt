@@ -1,5 +1,5 @@
 googleapis-common-protos==1.52.0
 grpcio==1.35.0
 requests==2.25.1
-Vega-API-client==0.34.0
+Vega-API-client==0.36.0
 websocket-client==0.57.0

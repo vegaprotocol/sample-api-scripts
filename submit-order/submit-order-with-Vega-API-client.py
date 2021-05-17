@@ -95,9 +95,8 @@ else:
 # __prepare_order:
 # Vega node: Prepare the SubmitOrder
 order = vac.api.trading.PrepareSubmitOrderRequest(
-    submission=vac.vega.OrderSubmission(
+    submission=vac.commands.v1.commands.OrderSubmission(
         market_id=marketID,
-        party_id=pubKey,
         # price is an integer. For example 123456 is a price of 1.23456,
         # assuming 5 decimal places.
         price=100000,

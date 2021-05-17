@@ -114,10 +114,9 @@ func main() {
 		Offset:    -5,
 		Reference: proto.PeggedReference_PEGGED_REFERENCE_MID,
 	}
-	orderSubmission := proto.OrderSubmission{
+	orderSubmission := proto.commands.v1.OrderSubmission{
 		Size:        1,
 		Price:       100000,
-		PartyId:     pubkey,
 		MarketId:    marketId,
 		Side:        proto.Side_SIDE_BUY,
 		TimeInForce: proto.Order_TIME_IN_FORCE_GTT,
@@ -164,9 +163,8 @@ func main() {
 	// Prepare the amend pegged order message
 	var peggedOffset wrapperspb.Int64Value
 	peggedOffset.Value = -100
-	amend := proto.OrderAmendment{
+	amend := proto.commands.v1.OrderAmendment{
 		MarketId:        marketId,
-		PartyId:         pubkey,
 		OrderId:         orderID,
 		SizeDelta:       -25,
 		TimeInForce:     proto.Order_TIME_IN_FORCE_GTC,

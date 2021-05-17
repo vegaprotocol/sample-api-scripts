@@ -235,8 +235,6 @@ time.sleep(10)
 
 # __cancel_liquidity_order:
 
-time.sleep(10)
-
 # Prepare a liquidity commitment order message (it will now serve as a cancellation request): set commitmentAmount to 0, 
 # note that transaction may get rejected if removing previously supplied liquidity 
 # will result in insufficient liquidity for the market

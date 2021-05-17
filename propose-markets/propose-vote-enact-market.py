@@ -180,7 +180,6 @@ print(
 # __prepare_propose_market:
 # Prepare a market proposal for a new market
 market = {
-    "partyId": pubkey,
     "proposal": {
         # Set closing timestamp to a valid time offset from the current Vega
         # blockchain time

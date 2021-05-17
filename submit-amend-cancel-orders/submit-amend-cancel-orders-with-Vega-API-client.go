@@ -108,10 +108,9 @@ func main() {
 	// Submit order
 	// __prepare_submit_order:
 	// Prepare a submit order message
-	orderSubmission := proto.OrderSubmission{
+	orderSubmission := proto.commands.v1.OrderSubmission{
 		Size:        10,
 		Price:       1,
-		PartyId:     pubkey,
 		MarketId:    marketId,
 		Side:        proto.Side_SIDE_BUY,
 		TimeInForce: proto.Order_TIME_IN_FORCE_GTT,
@@ -157,9 +156,8 @@ func main() {
 	// __prepare_amend_order:
 	// Prepare the amend order message
 	price := proto.Price{Value: 2}
-	amend := proto.OrderAmendment{
+	amend := proto.commands.v1.OrderAmendment{
 		MarketId:    marketId,
-		PartyId:     pubkey,
 		OrderId:     orderID,
 		Price:       &price,
 		TimeInForce: proto.Order_TIME_IN_FORCE_GTC,
@@ -204,27 +202,23 @@ func main() {
 
 	// Cancel order
 	// __prepare_cancel_order_req1:
-	// 1 - Cancel single order for party (pubkey)
-	cancel := proto.OrderCancellation{
+	// 1 - Cancel single order for this party (pubkey)
+	cancel := proto.commands.v1.OrderCancellation{
 		OrderId:  orderID,
 		MarketId: marketId,
-		PartyId:  pubkey,
 	}
 	// :prepare_cancel_order_req1__
 
 	// __prepare_cancel_order_req2:
-	// 2 - Cancel all orders on market for party (pubkey)
-	cancel = proto.OrderCancellation{
+	// 2 - Cancel all orders on market for this party (pubkey)
+	cancel = proto.commands.v1.OrderCancellation{
 		MarketId: marketId,
-		PartyId:  pubkey,
 	}
 	// :prepare_cancel_order_req2__
 
 	// __prepare_cancel_order_req3:
-	// 3 - Cancel all orders on all markets for party (pubkey)
-	cancel = proto.OrderCancellation{
-		PartyId: pubkey,
-	}
+	// 3 - Cancel all orders on all markets for this party (pubkey)
+	cancel = proto.commands.v1.OrderCancellation{ }
 	// :prepare_cancel_order_req3__
 
 	// __prepare_cancel_order:
