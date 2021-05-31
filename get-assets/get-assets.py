@@ -42,9 +42,9 @@ print("Assets:\n{}".format(
 found_asset_id = "UNKNOWN"
 assets = response.json()["assets"]
 for asset in assets:
-    if asset["name"] == "tDAI":
+    if asset["symbol"] == "tDAI":
         print()
-        print("Found an asset with name tDAI:")
+        print("Found an asset with symbol tDAI:")
         found_asset_id = asset["id"]
         print(found_asset_id)
         print()
