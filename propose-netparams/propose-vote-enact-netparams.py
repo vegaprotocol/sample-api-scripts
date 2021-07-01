@@ -194,7 +194,7 @@ assert proposal_ref != ""
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_proposal["blob"]
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages/sync"
+url = f"{wallet_server_url}/api/v1/messages"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_proposal__
@@ -264,7 +264,7 @@ prepared_vote = response.json()
 # Note: Setting propagate to true will also submit to a Vega node
 blob = prepared_vote["blob"]
 req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages/sync"
+url = f"{wallet_server_url}/api/v1/messages"
 response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
 # :sign_tx_vote__
