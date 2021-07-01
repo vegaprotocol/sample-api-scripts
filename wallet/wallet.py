@@ -119,7 +119,7 @@ blob = b"data returned from a Vega node 'Prepare<operation>' call"
 tx = base64.b64encode(blob).decode("ascii")
 req = {"tx": tx, "pubKey": pubkey, "propagate": False}
 response = requests.post(
-    f"{wallet_server_url}/api/v1/messages/sync", headers=headers, json=req
+    f"{wallet_server_url}/api/v1/messages", headers=headers, json=req
 )
 helpers.check_response(response)
 signedTx = response.json()["signedTx"]
