@@ -162,7 +162,7 @@ submission = {
 print("Liquidity provision submission: ", submission)
 
 # __sign_tx_liquidity_order:
-# Sign the transaction with a liquidity provision submission command
+# Sign the transaction with a liquidity provision submission
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
 response = requests.post(url, headers=headers, json=submission)
@@ -172,7 +172,7 @@ helpers.check_response(response)
 print("Signed liquidity commitment and sent to Vega")
 
 # Comment out the lines below to add a cancellation of the newly created LP commitment
-print("To add cancellation step, uncomment line 180 of the script file")
+print("To add amend/cancellation step, comment line 176 of the script file")
 exit(0)
 
 #####################################################################################

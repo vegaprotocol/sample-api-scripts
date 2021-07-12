@@ -91,9 +91,6 @@ echo "Blockchain time: $expiresAt"
 # Compose your submit order command, with desired deal ticket information
 # Set your own user specific reference to find the order in next step and
 # as a foreign key to your local client/trading application
-
-# Set your own user specific reference to find the order in next step and
-# as a foreign key to your local client/trading application
 orderRef=$pubKey-$(shuf -i 11111111-99999999 -n 1)-$(shuf -i 1111-9999 -n 1)-$(shuf -i 111111111111-999999999999 -n 1)
 
 # Note: price is an integer. For example 123456 is a price of 1.23456,

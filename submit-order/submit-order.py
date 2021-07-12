@@ -103,49 +103,51 @@ marketID = response.json()["markets"][0]["id"]
 # :get_market__
 
 # __prepare_order:
-# Next, create an order submission
+# Next, prepare a SubmitOrder
 response = requests.get(f"{node_url_rest}/time")
 helpers.check_response(response)
 blockchaintime = int(response.json()["timestamp"])
 expiresAt = str(int(blockchaintime + 120 * 1e9))  # expire in 2 minutes
 
-submission = {
-    "orderSubmission": {
+req = {
+    "submission": {
         "marketId": marketID,
+        "partyId": pubKey,
         "price": "100000",  # Note: price is an integer. For example 123456
         "size": "100",  # is a price of 1.23456, assuming 5 decimal places.
         "side": "SIDE_BUY",
         "timeInForce": "TIME_IN_FORCE_GTT",
         "expiresAt": expiresAt,
         "type": "TYPE_LIMIT",
-    },
-    "pubKey": pubKey,
-    "propagate": False
+    }
 }
+print("Request for PrepareSubmitOrder:")
+print(json.dumps(req, indent=2, sort_keys=True))
+url = f"{node_url_rest}/orders/prepare/submit"
+response = requests.post(url, json=req)
+helpers.check_response(response)
+preparedOrder = response.json()
 # :prepare_order__
+print("Response from PrepareSubmitOrder:")
+print(json.dumps(preparedOrder, indent=2, sort_keys=True))
 
 # __sign_tx:
-# Wallet server: Sign the order submission message
-# Sign the transaction with a pegged order submission command
-url = f"{walletserver_url}/api/v1/command/sync"
-response = requests.post(url, headers=headers, json=submission)
+# Wallet server: Sign the prepared transaction
+blob = preparedOrder["blob"]
+req = {"tx": blob, "pubKey": pubKey, "propagate": False}
+print("Request for SignTx:")
+print(json.dumps(req, indent=2, sort_keys=True))
+url = f"{walletserver_url}/api/v1/messages"
+response = requests.post(url, headers=headers, json=req)
 helpers.check_response(response)
-print(response.json())
-signedTx = response.json()["signature"]
+signedTx = response.json()["signedTx"]
 # :sign_tx__
-print("Response from SignTransaction:")
+print("Response from SignTx:")
 print(json.dumps(signedTx, indent=2, sort_keys=True))
 
 # __submit_tx:
 # Vega node: Submit the signed transaction
-# Todo: update this when the v2 submit transaction endpoints exist
-req = {
-    "tx": {
-        "sig": signedTx,
-        "tx": ""
-    },
-    "type": "TYPE_SYNC"
-}
+req = {"tx": signedTx}
 print("Request for SubmitTransaction:")
 print(json.dumps(req, indent=2, sort_keys=True))
 url = f"{node_url_rest}/transaction"
