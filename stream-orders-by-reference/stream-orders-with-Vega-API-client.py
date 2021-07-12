@@ -42,8 +42,6 @@ data_client = vac.VegaTradingDataClient(node_url_grpc)
 
 # __stream_orders_by_ref:
 # Stream orders by reference on a Vega network
-# Note: This is an example and order reference will be provided in the response
-# from a prepareSubmitOrder request in the field named `submitID` or similar.
 reference = "4617844f-6fab-4cf6-8852-e29dbd96e5f1"
 pubkey = "94c21a5bfc212c0b4ee6e3593e8481559972ad31f1fb453491f255e72bdb6fdb"
 subscribe_request = vac.api.trading.OrdersSubscribeRequest(party_id=pubkey)
