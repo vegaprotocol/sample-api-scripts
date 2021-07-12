@@ -344,7 +344,7 @@ assert proposal_id != ""
 # https://docs.testnet.vega.xyz/docs/api-howtos/proposals/
 
 # __prepare_vote:
-# Prepare a vote for the proposal
+# Create a vote message, to vote on the proposal
 vote = {
     "voteSubmission": {
         "value": "VALUE_YES",  # Can be either VALUE_YES or VALUE_NO
