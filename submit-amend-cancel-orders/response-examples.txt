@@ -1,80 +1,46 @@
-### __example_prepare_submit_order_response:
-# Response for preparing a submit order message
-{
-  "blob": "YWQ5M2NmYzktYTU5OC00MmNmLTk4ZmMtOTA1NWY0MWUzMTBmQBI ... mItZjA4NDllOTY1YzIy",
-  "submitID": "50f790bc-c1c6-47fd-a52b-f0849e965c22"
-}
-# Note: some fields have been shortened to improve readability
-### :example_prepare_submit_order_response__
-
-
 ### __example_sign_tx_response:
-# Response for signing the prepared transaction
+# Response for signing the transaction
 {
-  "base64Bundle": "CvQBCsMBNzYwMWUxMjUtYzZiMC00ZGRjLWIzZTQt6SDC ... 2ZWdhL2VkMjU1MTkYAQ==",
-  "hexBundle": "0af4010ac30137363031653132352d63366230 ... db907120c766567612f656432353531391801",
-  "signedTx": {
-    "sig": {
-      "algo": "vega/ed25519",
-      "sig": "6nFF/38QjNdHpaNIk6OvMnrDWnEzrRzl+88gnkME+TBVb2mIbNiHEwPz26z1WUK6E5nDFRMa6FqG71PuOM25Bw==",
-      "version": 1
+    "inputData": "CNjKor2IwsPm4wEQ94EMyj6NAQoQMDc2QkI4NkE1QUE0MU ... k3NjVmYTJlMDI1YzVjNTQxYmE2Nzg5NzAxMzM5ODcyMjBkY2JiOGU1ODJkMWI1YWQyLWNiNGZmZDI5LTdlNGEtNGE2OS04ODYyLThmMGM4NTAzZWJlYQ==",
+    "pubKey": "7c03c4965a46799765fa2e025c5c541bh342970133987220dcbb8e582d1b5ad2",
+    "signature": {
+        "algo": "vega/ed25519",
+        "value": "c8c62d125940875ff3675b3e2c6e86db24199f3e0b78fe ... b6772ef1dc04b9c401766015dfc151bb06b0029dff0e",
+        "version": 1
     },
-    "tx": "CsMBNzYwMWUxMjUtYzZiMC00ZGRjLWIzZTQtMGU2YmE ... QELfsftyQ=="
-  }
+    "version": 1
 }
 # Note: some fields have been shortened to improve readability
 ### :example_sign_tx_response__
 
 
-### __example_prepare_amend_order_response:
-# Response for preparing an amend order message
-{
-  "blob": "MWY5MjViYzMtNjFhMi00YzNiLTg5ZmEtMGJlNDZkYmRhZTQwQgoW ... KOf//////////wE4AQ==",
-}
-# Note: some fields have been shortened to improve readability
-### :example_prepare_amend_order_response__
-
-
 ### __example_sign_tx_amend_response:
-# Response for signing the prepared transaction
+# Response for signing the transaction
 {
-  "base64Bundle": "CuIBCrIBMWY5MjViYzMtNjFhMi00YzNiLTg5ZmEtMGJlNDZkY ... QAIEgx2ZWdhL2VkMjU1MTkYAQ==",
-  "hexBundle": "0ae2010ab20131663932356263332d363161322d3463336 ... 823766567612f656432353531391801",
-  "signedTx": {
-    "sig": {
-      "algo": "vega/ed25519",
-      "sig": "0jsqbLcBc4nT4Y4u3OikFGxrmKWUKTLaOPo/zbbMiROJsAzVEXNgLTPhlmKdDA4BQViZSVdgqXvvVCZQC8kACA==",
-      "version": 1
+    "inputData": "CNjKor2IwsPm4wEQ94EMyj6NAQoQMDc2QkI4NkE1QUE0MU ... k3NjVmYTJlMDI1YzVjNTQxYmE2Nzg5NzAxMzM5ODcyMjBkY2JiOGU1ODJkMWI1YWQyLWNiNGZmZDI5LTdlNGEtNGE2OS04ODYyLThmMGM4NTAzZWJlYQ==",
+    "pubKey": "7c03c4965a46799765fa2e025c5c541bh342970133987220dcbb8e582d1b5ad2",
+    "signature": {
+        "algo": "vega/ed25519",
+        "value": "c8c62d125940875ff3675b3e2c6e86db24199f3e0b78fe ... b6772ef1dc04b9c401766015dfc151bb06b0029dff0e",
+        "version": 1
     },
-    "tx": "CrIBMWY5MjViYzMtNjFhMi00YzNiLTg5ZmEtMGJlNDZkYmRhZTQ ... QELfsftyQ=="
-  }
+    "version": 1
 }
 # Note: some fields have been shortened to improve readability
 ### :example_sign_tx_amend_response__
 
 
-### __example_prepare_cancel_order_response:
-# Response for preparing a cancel order message
-{
-  "blob": "XY2ddEdd2dpYzktYTU5OC00MmNmLTk4ZmMtOTA1NWY0MWUzMTBmQB ... mItZjA4NDllOTY1YzIy",
-}
-# Note: some fields have been shortened to improve readability
-### :example_prepare_cancel_order_response__
-
-
 ### __example_sign_tx_cancel_response:
 # Response for signing the prepared transaction
 {
-  "base64Bundle": "CtEBCqEBNGRjMzA3OWEtZjhhZi00O3NGMtODU4ZmN ... mWJBhIMdmVnYS9lZDI1NTE5GAE=",
-  "hexBundle": "0ad1010aa10134646333303739612d663861662d34 ... 658906120c7665676123432353531391801",
-  "signedTx": {
-    "sig": {
-      "algo": "vega/ed25519",
-      "sig": "qYYL3pTCZLY6sNzowTUwUx8d8iPGn9Vw4jz9nUrfChGAydFcF2aDG5gGZq+FYyExkPo9TcKJ9Uz2X/g0/mWJBg==",
-      "version": 1
+    "inputData": "CNjKor2IwsPm4wEQ94EMyj6NAQoQMDc2QkI4NkE1QUE0MU ... k3NjVmYTJlMDI1YzVjNTQxYmE2Nzg5NzAxMzM5ODcyMjBkY2JiOGU1ODJkMWI1YWQyLWNiNGZmZDI5LTdlNGEtNGE2OS04ODYyLThmMGM4NTAzZWJlYQ==",
+    "pubKey": "7c03c4965a46799765fa2e025c5c541bh342970133987220dcbb8e582d1b5ad2",
+    "signature": {
+        "algo": "vega/ed25519",
+        "value": "c8c62d125940875ff3675b3e2c6e86db24199f3e0b78fe ... b6772ef1dc04b9c401766015dfc151bb06b0029dff0e",
+        "version": 1
     },
-    "tx": "CqEBNGRjMzA3OWEtZjhhZi00OGQzLTg3NGMtODGNZwPb+dYK ... 3ZC37H7ck="
-  }
+    "version": 1
 }
 # Note: some fields have been shortened to improve readability
 ### :example_sign_tx_cancel_response__

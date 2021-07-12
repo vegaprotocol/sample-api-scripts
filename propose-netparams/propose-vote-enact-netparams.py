@@ -24,6 +24,7 @@ import requests
 import time
 import os
 import helpers
+import uuid
 
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
@@ -89,20 +90,15 @@ helpers.check_response(response)
 # print("Assets:\n{}".format(
 #    json.dumps(response.json(), indent=2, sort_keys=True)))
 
-# __find_asset:
-# Find settlement asset with name tDAI
-found_asset_id = "UNKNOWN"
-print(response)
-assets = response.json()["assets"]
-
 #####################################################################################
 #                   G O V E R N A N C E   T O K E N   C H E C K                     #
 #####################################################################################
 
 # Get the identifier of the governance asset on the Vega network
 vote_asset_id = "UNKNOWN"
+assets = response.json()["assets"]
 for asset in assets:
-    if asset["symbol"] == "tVOTE":
+    if asset["details"]["symbol"] == "tVOTE":
         vote_asset_id = asset["id"]
         break
 
@@ -152,50 +148,45 @@ print(f"Blockchain time: {blockchain_time} ({blockchain_time_seconds} seconds pa
 #                           UPDATE NETWORK PARAMETER                                #
 #####################################################################################
 
-# Step 1 propose a network paramtere update
+# Step 1 propose a network parameter update
 
 parameter = "market.liquidity.targetstake.triggering.ratio"
 value = "0.7"
 
 # __prepare_propose_updateNetworkParameter:
-# Prepare a proposal for a network parameter update
-market = {
-    "proposal": {
-        # Set validation timestamp to a valid time offset from the current Vega blockchain time
-        "validationTimestamp": blockchain_time_seconds + 1,
-        # Set closing timestamp to a valid time offset from the current Vega blockchain time
-        "closingTimestamp": blockchain_time_seconds + 3600 + 60,
-        # Set enactment timestamp to a valid time offset from the current Vega blockchain time
-        "enactmentTimestamp": blockchain_time_seconds + 3600 + 120,
-        # Note: the timestamps above are specified in seconds, and must meet minimums required by network
-        # This is the main part: "key" is any network parameter and "value" is its value
-        # As an example we vote to chage the parameter market.liquidity.targetstake.triggering.ratio.
-        "updateNetworkParameter": {
-            "changes": {
-                "key": "market.liquidity.targetstake.triggering.ratio",
-                "value": "0.7",
-            }
-        },
+# Compose a governance proposal for updating a network parameter
+proposal_ref = f"{pubkey}-{uuid.uuid4()}"
+
+# Set closing/enactment and validation timestamps to valid time offsets
+# from the current Vega blockchain time
+closing_time = blockchain_time_seconds + 3600 + 60
+enactment_time = blockchain_time_seconds + 3600 + 120
+validation_time = blockchain_time_seconds + 1
+
+networkParamUpdate = {
+    "proposalSubmission": {
+        "reference": proposal_ref,
+        "terms": {
+            "closingTimestamp": closing_time,
+            "enactmentTimestamp": enactment_time,
+            "validationTimestamp": validation_time,
+            "updateNetworkParameter": {
+                "changes": {
+                    "key": "market.liquidity.targetstake.triggering.ratio",
+                    "value": "0.7",
+                }
+            },
+        }
     },
+    "pubKey": pubkey,
+    "propagate": True
 }
 
-url = f"{node_url_rest}/governance/prepare/proposal"
-response = requests.post(url, json=market)
-helpers.check_response(response)
-prepared_proposal = response.json()
-# :prepare_propose_market__
-
-proposal_ref = prepared_proposal["pendingProposal"]["reference"]
-print(f"Prepared proposal, ref: {proposal_ref}")
-assert proposal_ref != ""
-
 # __sign_tx_proposal:
-# Sign the prepared proposal transaction
+# Sign the network param update proposal transaction
 # Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_proposal["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=networkParamUpdate)
 helpers.check_response(response)
 # :sign_tx_proposal__
 
@@ -244,28 +235,23 @@ assert proposal_id != ""
 # __prepare_vote:
 # Prepare a vote for the proposal
 vote = {
-    "vote": {
+    "voteSubmission": {
         "value": "VALUE_YES",  # Can be either VALUE_YES or VALUE_NO
         "proposalId": proposal_id,
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True
 }
-
-url = f"{node_url_rest}/governance/prepare/vote"
-response = requests.post(url, json=vote)
-helpers.check_response(response)
-prepared_vote = response.json()
 # :prepare_vote__
 
 # Debugging
 # print("Prepared vote:\n", prepared_vote, "\n")
 
 # __sign_tx_vote:
-# Sign the prepared vote transaction
+# Sign the vote transaction
 # Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_vote["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=vote)
 helpers.check_response(response)
 # :sign_tx_vote__
 

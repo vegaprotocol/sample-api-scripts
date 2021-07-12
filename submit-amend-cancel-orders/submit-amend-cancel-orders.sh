@@ -88,46 +88,50 @@ echo "Blockchain time: $expiresAt"
 #####################################################################################
 
 # __prepare_submit_order:
-# Prepare a submit order message
+# Compose your submit order command, with desired deal ticket information
+# Set your own user specific reference to find the order in next step and
+# as a foreign key to your local client/trading application
+
+# Set your own user specific reference to find the order in next step and
+# as a foreign key to your local client/trading application
+orderRef=$pubKey-$(shuf -i 11111111-99999999 -n 1)-$(shuf -i 1111-9999 -n 1)-$(shuf -i 111111111111-999999999999 -n 1)
+
 # Note: price is an integer. For example 123456 is a price of 1.23456,
 # assuming 5 decimal places.
-cat >req.json <<EOF
-{
-    "submission": {
-        "marketId": "$marketID",
-        "price": "1",
-        "size": "10",
-        "side": "SIDE_BUY",
-        "timeInForce": "TIME_IN_FORCE_GTT",
-        "expiresAt": "$expiresAt",
-        "type": "TYPE_LIMIT"
-    }
+submission=$(cat <<-END
+"orderSubmission": {
+    "marketId": "$marketID",
+    "price": "1",
+    "size": "10",
+    "side": "SIDE_BUY",
+    "timeInForce": "TIME_IN_FORCE_GTT",
+    "expiresAt": "$expiresAt",
+    "type": "TYPE_LIMIT",
+    "reference": "$orderRef"
 }
-EOF
-url="$NODE_URL_REST/orders/prepare/submit"
-response="$(curl -s -XPOST -d @req.json "$url")"
-orderRef="$(echo "$response" | jq -r '.submitId')"
+END
+)
 # :prepare_submit_order__
 
-echo "Prepared order, ref: $orderRef"
+echo "Order submission: $submission"
 
 # __sign_tx_order:
-# Sign the prepared transaction
+# Sign the transaction with an order submission command
 # Note: Setting propagate to true will also submit to a Vega node
-blob="$(echo "$response" | jq -r .blob)"
-test "$blob" == null && exit 1
 cat >req.json <<EOF
 {
-    "tx": "$blob",
+    $submission,
     "pubKey": "$pubKey",
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/command/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_order__
 
-signedTx="$(echo "$response" | jq .signedTx)"
+echo "$response"
+
+signedTx="$(echo "$response" | jq .signature)"
 test "$signedTx" == null && exit 1
 
 echo "Signed order and sent to Vega"
@@ -148,42 +152,41 @@ echo "Order processed, ID: $orderID, Status: $orderStatus, Version: $createVersi
 #####################################################################################
 
 # __prepare_amend_order:
-# Prepare the amend order message
-cat >req.json <<EOF
-{
-    "amendment": {
-        "partyId": "$pubKey",
-        "marketId": "$marketID",
-        "orderId": "$orderID",
-        "price": {
-            "value": "2"
-        },
-        "sizeDelta": "-25",
-        "timeInForce": "TIME_IN_FORCE_GTC"
-    }
+# Compose your amend order command, with changes to your existing order
+amendment=$(cat <<-END
+"orderAmendment": {
+    "marketId": "$marketID",
+    "orderId": "$orderID",
+    "price": {
+        "value": "2"
+    },
+    "sizeDelta": "-25",
+    "timeInForce": "TIME_IN_FORCE_GTC"
 }
-EOF
-url="$NODE_URL_REST/orders/prepare/amend"
-response="$(curl -s -XPOST -d @req.json "$url")"
+END
+)
 # :prepare_amend_order__
 
-echo "Amendment prepared for order ID: $orderID"
+echo "Order amendment: $amendment"
 
 # __sign_tx_amend:
-# Sign the prepared order transaction for amendment
+# Sign the transaction with an order amendment command
 # Note: Setting propagate to true will also submit to a Vega node
-blob="$(echo "$response" | jq -r .blob)"
-test "$blob" == null && exit 1
 cat >req.json <<EOF
 {
-    "tx": "$blob",
+    $amendment,
     "pubKey": "$pubKey",
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/command/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_amend__
+
+echo "$response"
+
+signedTx="$(echo "$response" | jq .signature)"
+test "$signedTx" == null && exit 1
 
 echo "Signed amendment and sent to Vega"
 
@@ -214,62 +217,53 @@ echo " Version(Old): $createVersion, Version(New): $orderVersion"
 # __prepare_cancel_order_req1:
 # 1 - Cancel single order for party (pubkey)
 #     *** Include market and order identifier fields to cancel single order.
-cat >req.json <<EOF
-{
-    "cancellation": {
-        "marketId": "$marketID",
-        "orderId": "$orderID"
-    }
+cancellation=$(cat <<-END
+"orderCancellation": {
+    "marketId": "$marketID",
+    "orderId": "$orderID"
 }
-EOF
+END
+)
 # :prepare_cancel_order_req1__
 
 # __prepare_cancel_order_req2:
 # 2 - Cancel all orders on market for party (pubkey)
 #     *** Only include market identifier field.
-cat >req.json <<EOF
-{
-    "cancellation": {
-        "marketId": "$marketID"
-    }
+cancellation=$(cat <<-END
+"orderCancellation": {
+    "marketId": "$marketID"
 }
-EOF
+END
+)
 # :prepare_cancel_order_req2__
 
 # __prepare_cancel_order_req3:
 # 3 - Cancel all orders on all markets for party (pubkey)
-cat >req.json <<EOF
-{
-    "cancellation": {}
-}
-EOF
+cancellation=$(cat <<-END
+"orderCancellation": {}
+END
+)
 # :prepare_cancel_order_req3__
 
-# __prepare_cancel_order:
-# Prepare the cancel order message
-url="$NODE_URL_REST/orders/prepare/cancel"
-response="$(curl -s -XPOST -d @req.json "$url")"
-# :prepare_cancel_order__
-
-echo "Cancellation prepared for order ID: $orderID"
+echo "Order cancellation: $cancellation"
 
 # __sign_tx_cancel:
-# Sign the prepared order transaction for cancellation
+# Sign the transaction for cancellation
 # Note: Setting propagate to true will also submit to a Vega node
-blob="$(echo "$response" | jq -r .blob)"
-test "$blob" == null && exit 1
 cat >req.json <<EOF
 {
-    "tx": "$blob",
+    $cancellation,
     "pubKey": "$pubKey",
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/command/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_cancel__
 
-signedTx="$(echo "$response" | jq .signedTx)"
+echo "$response"
+
+signedTx="$(echo "$response" | jq .signature)"
 test "$signedTx" == null && exit 1
 
 echo "Signed cancellation and sent to Vega"

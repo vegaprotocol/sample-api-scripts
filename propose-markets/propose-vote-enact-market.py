@@ -24,6 +24,7 @@ import requests
 import time
 import os
 import helpers
+import uuid
 
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
@@ -92,10 +93,9 @@ helpers.check_response(response)
 # __find_asset:
 # Find settlement asset with name tDAI
 found_asset_id = "UNKNOWN"
-print(response)
 assets = response.json()["assets"]
 for asset in assets:
-    if asset["symbol"] == "tDAI":
+    if asset["details"]["symbol"] == "tDAI":
         print("Found an asset with symbol tDAI")
         print(asset)
         found_asset_id = asset["id"]
@@ -116,7 +116,7 @@ if found_asset_id == "UNKNOWN":
 # Get the identifier of the governance asset on the Vega network
 vote_asset_id = "UNKNOWN"
 for asset in assets:
-    if asset["symbol"] == "tVOTE":
+    if asset["details"]["symbol"] == "tVOTE":
         vote_asset_id = asset["id"]
         break
 
@@ -178,132 +178,120 @@ print(
 # https://docs.testnet.vega.xyz/docs/api-howtos/create-market/
 
 # __prepare_propose_market:
-# Prepare a market proposal for a new market
-market = {
-    "proposal": {
-        # Set closing timestamp to a valid time offset from the current Vega
-        # blockchain time
-        "closingTimestamp": blockchain_time_seconds + 360,
-        # Set enactment timestamp to a valid time offset from the current Vega
-        # blockchain time
-        "enactmentTimestamp": blockchain_time_seconds + 480,
-        # Set validation timestamp to a valid time offset from the current Vega
-        # blockchain time
-        "validationTimestamp": blockchain_time_seconds + 1,
-        # Note: the timestamps above are specified in seconds, and must meet
-        # minimums required by network
-        "newMarket": {
-            "changes": {
-                "instrument": {
-                    "name": "BTC/DAI",
-                    "code": "CRYPTO:BTCDAI/JUN21",
-                    "future": {
-                        "maturity": "2021-06-30T23:59:59Z",
-                        # Settlement asset identifier (found above)
-                        "settlementAsset": found_asset_id,
-                        "quoteName": "DAI",
-                        "oracleSpec": {
-                            "pubKeys": ["0x0000"],
-                            "filters": [
-                                {
-                                    "key": {
-                                        "name": "price.DAI.value",
-                                        "type": "TYPE_STRING",
-                                    },
-                                    "conditions": [
-                                        {
-                                            "operator": "OPERATOR_EQUALS",
-                                            "value": "5797800153",
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                        "oracleSpecBinding": {
-                            "settlementPriceProperty": "price.DAI.value"
-                        },
-                    },
-                },
-                "decimalPlaces": "5",
-                "metadata": [
-                    "base:BTC",
-                    "quote:DAI",
-                ],
-                "priceMonitoringParameters": {
-                    "triggers": [
-                        {
-                            "horizon": "43200",
-                            "probability": 0.9999999,
-                            "auctionExtension": "300",
-                        }
-                    ],
-                    "updateFrequency": "120",
-                },
-                "liquidityMonitoringParameters": {
-                    "targetStakeParameters": {
-                        "timeWindow": 3600,
-                        "scalingFactor": 10,
-                    },
-                    "triggeringRatio": 0,
-                    "auctionExtension": 0,
-                },
-                "logNormal": {
-                    "riskAversionParameter": 0.01,
-                    "tau": 1.90128526884173e-06,
-                    "params": {"mu": 0, "r": 0.016, "sigma": 0.05},
-                },
-                "continuous": {"tickSize": "0.01"},
-            },
-            "liquidityCommitment": {
-                "commitmentAmount": 1,
-                "fee": "0.01",
-                "sells": [
-                    {
-                        "reference": "PEGGED_REFERENCE_BEST_ASK",
-                        "proportion": 10,
-                        "offset": 2000,
-                    },
-                    {
-                        "reference": "PEGGED_REFERENCE_BEST_ASK",
-                        "proportion": 10,
-                        "offset": 1000,
-                    },
-                ],
-                "buys": [
-                    {
-                        "reference": "PEGGED_REFERENCE_BEST_BID",
-                        "proportion": 10,
-                        "offset": -1000,
-                    },
-                    {
-                        "reference": "PEGGED_REFERENCE_BEST_BID",
-                        "proportion": 10,
-                        "offset": -2000,
-                    },
-                ],
-                "reference": "",
-            },
-        },
-    },
-}
+# Compose a governance proposal for a new market
+proposal_ref = f"{pubkey}-{uuid.uuid4()}"
 
-url = f"{node_url_rest}/governance/prepare/proposal"
-response = requests.post(url, json=market)
-helpers.check_response(response)
-prepared_proposal = response.json()
+# Set closing/enactment and validation timestamps to valid time offsets
+# from the current Vega blockchain time
+closing_time = blockchain_time_seconds + 360
+enactment_time = blockchain_time_seconds + 480
+validation_time = blockchain_time_seconds + 1,
+
+# The proposal command below contains the configuration for a new market
+proposal = {
+    "proposalSubmission": {
+        "reference": proposal_ref,
+        "terms": {
+            "closingTimestamp": closing_time,
+            "enactmentTimestamp": enactment_time,
+            "validationTimestamp": validation_time,
+            "newMarket": {
+                "changes": {
+                    "continuous": {
+                        "tickSize": "0.01"
+                    },
+                    "decimalPlaces": 5,
+                    "instrument": {
+                        "code": "CRYPTO:BTCDAI/DEC22",
+                        "future": {
+                            "maturity": "2022-12-31T23:59:59Z",
+                            "oracleSpec": {
+                                "pubKeys": ["0x0000"],
+                                "filters": [
+                                    {
+                                        "key": {
+                                            "name": "price.DAI.value",
+                                            "type": "TYPE_STRING",
+                                        },
+                                        "conditions": [
+                                            {
+                                                "operator": "OPERATOR_EQUALS",
+                                                "value": "5797800153",
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                            "oracleSpecBinding": {
+                                "settlementPriceProperty": "price.DAI.value"
+                            },
+                            "quoteName": "tDAI",
+                            "settlementAsset": found_asset_id,
+                        },
+                        "name": "BTC/DAI (2022, tDAI)"
+                    },
+                    "metadata": [
+                        "base:BTC",
+                        "quote:DAI",
+                    ],
+                    "liquidityMonitoringParameters": {
+                        "targetStakeParameters": {
+                            "timeWindow": 3600,
+                            "scalingFactor": 10,
+                        },
+                        "triggeringRatio": 0,
+                        "auctionExtension": 0,
+                    },
+                    "logNormal": {
+                        "riskAversionParameter": 0.01,
+                        "tau": 1.90128526884173e-06,
+                        "params": {"mu": 0, "r": 0.016, "sigma": 0.05},
+                    },
+                },
+                "liquidityCommitment": {
+                    "commitmentAmount": 1,
+                    "fee": "0.01",
+                    "sells": [
+                        {
+                            "reference": "PEGGED_REFERENCE_BEST_ASK",
+                            "proportion": 10,
+                            "offset": 2000,
+                        },
+                        {
+                            "reference": "PEGGED_REFERENCE_BEST_ASK",
+                            "proportion": 10,
+                            "offset": 1000,
+                        },
+                    ],
+                    "buys": [
+                        {
+                            "reference": "PEGGED_REFERENCE_BEST_BID",
+                            "proportion": 10,
+                            "offset": -1000,
+                        },
+                        {
+                            "reference": "PEGGED_REFERENCE_BEST_BID",
+                            "proportion": 10,
+                            "offset": -2000,
+                        },
+                    ],
+                    "reference": "",
+                },
+            }
+        }
+    },
+    "pubKey": pubkey,
+    "propagate": True
+}
 # :prepare_propose_market__
 
-proposal_ref = prepared_proposal["pendingProposal"]["reference"]
-print(f"Prepared proposal, ref: {proposal_ref}")
-assert proposal_ref != ""
+print("Market proposal: ", proposal)
 
 # __sign_tx_proposal:
-# Sign the prepared proposal transaction
+# Sign the new market proposal transaction
 # Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_proposal["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=proposal)
 helpers.check_response(response)
 # :sign_tx_proposal__
 
@@ -358,29 +346,23 @@ assert proposal_id != ""
 # __prepare_vote:
 # Prepare a vote for the proposal
 vote = {
-    "vote": {
-        "partyId": pubkey,
+    "voteSubmission": {
         "value": "VALUE_YES",  # Can be either VALUE_YES or VALUE_NO
         "proposalId": proposal_id,
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True
 }
-
-url = f"{node_url_rest}/governance/prepare/vote"
-response = requests.post(url, json=vote)
-helpers.check_response(response)
-prepared_vote = response.json()
 # :prepare_vote__
 
 # Debugging
-# print("Prepared vote:\n", prepared_vote, "\n")
+# print("Vote submission:\n", vote, "\n")
 
 # __sign_tx_vote:
-# Sign the prepared vote transaction
+# Sign the vote transaction
 # Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_vote["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=vote)
 helpers.check_response(response)
 # :sign_tx_vote__
 
