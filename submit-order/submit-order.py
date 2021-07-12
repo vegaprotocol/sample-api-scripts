@@ -125,15 +125,16 @@ submission = {
 # :prepare_order__
 
 # __sign_tx:
-# Wallet server: Sign the prepared transaction
+# Wallet server: Sign the order submission message
 # Sign the transaction with a pegged order submission command
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{walletserver_url}/api/v1/command/sync"
 response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
-signedTx = response.json()["signedTx"]
+print(response.json())
+signedTx = response.json()["signature"]
 # :sign_tx__
-print("Response from SignTx:")
+print("Response from SignTransaction:")
 print(json.dumps(signedTx, indent=2, sort_keys=True))
 
 # __submit_tx:
