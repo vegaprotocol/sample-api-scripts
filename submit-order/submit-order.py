@@ -133,13 +133,20 @@ response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
 print(response.json())
 signedTx = response.json()["signature"]
+inputData = response.json()["inputData"]
 # :sign_tx__
 print("Response from SignTransaction:")
 print(json.dumps(signedTx, indent=2, sort_keys=True))
 
 # __submit_tx:
 # Vega node: Submit the signed transaction
-req = {"tx": signedTx}
+req = {
+    "tx": {
+        "sig": signedTx,
+        "tx": inputData
+    },
+    "type": "TYPE_SYNC"
+}
 print("Request for SubmitTransaction:")
 print(json.dumps(req, indent=2, sort_keys=True))
 url = f"{node_url_rest}/transaction"
