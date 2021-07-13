@@ -1,12 +1,3 @@
-### __example_prepare_liquidity_order_response:
-# Response for preparing a liquidity submission message
-{
-  "blob": "YWQ5M2NmYzktYTU5OC00MmNmLTk4ZmMtOTA1NWY0MWUzMTBmQBI ... mItZjA4NDllOTY1YzIy",
-}
-# Note: some fields have been shortened to improve readability
-### :example_prepare_liquidity_order_response__
-
-
 ### __example_sign_tx_liquidity_response:
 # Response for signing the prepared transaction
 {

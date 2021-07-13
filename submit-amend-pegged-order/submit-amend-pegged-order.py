@@ -21,11 +21,11 @@ Apps/Libraries:
 # :something__
 #
 
-import json
 import os
 import requests
 import time
 import helpers
+import uuid
 
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
@@ -115,37 +115,36 @@ print(f"Blockchain time: {blockchain_time}")
 #####################################################################################
 
 # __prepare_submit_pegged_order:
-# Prepare a submit order message with a pegged BUY order
-req = {
-    "submission": {
+# Compose your submit pegged order command
+# Set your own user specific reference to find the order in next step and
+# as a foreign key to your local client/trading application
+order_ref = f"{pubkey}-{uuid.uuid4()}"
+submission = {
+    "orderSubmission": {
         "marketId": marketID,
         "size": "50",
         "side": "SIDE_BUY",
         "timeInForce": "TIME_IN_FORCE_GTT",
         "expiresAt": expiresAt,
         "type": "TYPE_LIMIT",
+        "reference": order_ref,
         "peggedOrder": {
             "offset": "-5",
             "reference": "PEGGED_REFERENCE_MID"
         }
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True
 }
-url = f"{node_url_rest}/orders/prepare/submit"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-prepared_order = response.json()
 # :prepare_submit_pegged_order__
 
-order_ref = prepared_order["submitId"]
-print(f"Prepared pegged order, ref: {order_ref}")
+print("Order submission: ", submission)
 
 # __sign_tx_pegged_order:
-# Sign the prepared pegged order transaction
+# Sign the transaction with a pegged order submission command
 # Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_order["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
 # :sign_tx_pegged_order__
 
@@ -177,32 +176,28 @@ else:
 #####################################################################################
 
 # __prepare_amend_pegged_order:
-# Prepare the amend order message
-req = {
-    "amendment": {
+# Compose your amend order command, with changes to existing order
+amendment = {
+    "orderAmendment": {
         "orderId": orderID,
         "marketId": marketID,
         "sizeDelta": "25",
         "timeInForce": "TIME_IN_FORCE_GTC",
         "peggedReference": "PEGGED_REFERENCE_BEST_BID",
         "peggedOffset": "-100",
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True
 }
-url = f"{node_url_rest}/orders/prepare/amend"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-prepared_amend = response.json()
-blob = prepared_amend["blob"]
 # :prepare_amend_pegged_order__
 
-print(f"Amendment prepared for order ID: {orderID}")
+print("Order amendment: ", amendment)
 
 # __sign_tx_pegged_amend:
-# Sign the prepared pegged order transaction for amendment
+# Sign the transaction with a pegged order amendment command
 # Note: Setting propagate to true will also submit to a Vega node
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=amendment)
 helpers.check_response(response)
 # :sign_tx_pegged_amend__
 

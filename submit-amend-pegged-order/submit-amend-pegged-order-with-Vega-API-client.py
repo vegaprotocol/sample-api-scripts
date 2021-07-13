@@ -21,12 +21,18 @@ Apps/Libraries:
 # :something__
 #
 
-import base64
-import helpers
-import time
-import os
+# Needed to convert protobuf message to string/json dict for wallet signing
+from google.protobuf.json_format import MessageToDict
 
 from google.protobuf.wrappers_pb2 import Int64Value
+
+import base64
+import helpers
+import requests
+import time
+import os
+import uuid
+
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 if not helpers.check_var(node_url_grpc):
@@ -57,7 +63,6 @@ import vegaapiclient as vac
 # Vega gRPC clients for reading/writing data
 data_client = vac.VegaTradingDataClient(node_url_grpc)
 trading_client = vac.VegaTradingClient(node_url_grpc)
-wallet_client = vac.WalletClient(wallet_server_url)
 # :import_client__
 
 #####################################################################################
@@ -68,16 +73,19 @@ print(f"Logging into wallet: {wallet_name}")
 
 # __login_wallet:
 # Log in to an existing wallet
-response = wallet_client.login(wallet_name, wallet_passphrase)
+req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
+response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
 helpers.check_response(response)
-# Note: secret wallet token is stored internally for duration of session
+token = response.json()["token"]
 # :login_wallet__
 
+assert token != ""
 print("Logged in to wallet successfully")
 
 # __get_pubkey:
 # List key pairs and select public key to use
-response = wallet_client.listkeys()
+headers = {"Authorization": f"Bearer {token}"}
+response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
 helpers.check_response(response)
 keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
@@ -117,34 +125,36 @@ print(f"Blockchain time: {blockchain_time}")
 #####################################################################################
 
 # __prepare_submit_pegged_order:
-# Prepare a submit order message with a pegged BUY order
-order = vac.api.trading.PrepareSubmitOrderRequest(
-    submission=vac.commands.v1.commands.OrderSubmission(
-        market_id=marketID,
-        side=vac.vega.Side.SIDE_BUY,
-        size=50,
-        expires_at=expiresAt,
-        time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTT,
-        type=vac.vega.Order.Type.TYPE_LIMIT,
-        pegged_order=vac.vega.PeggedOrder(
-            offset=-5,
-            reference=vac.vega.PEGGED_REFERENCE_MID
-        )
-    )
+# Compose your submit order command with a pegged BUY order
+# Set your own user specific reference to find the order in next step and
+# as a foreign key to your local client/trading application
+order_ref = f"{pubkey}-{uuid.uuid4()}"
+order_data = vac.commands.v1.commands.OrderSubmission(
+    market_id=marketID,
+    side=vac.vega.Side.SIDE_BUY,
+    size=50,
+    expires_at=expiresAt,
+    time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTT,
+    type=vac.vega.Order.Type.TYPE_LIMIT,
+    pegged_order=vac.vega.PeggedOrder(
+        offset=-5,
+        reference=vac.vega.PEGGED_REFERENCE_MID
+    ),
+    reference=order_ref
 )
-prepared_order = trading_client.PrepareSubmitOrder(order)
 # :prepare_submit_pegged_order__
 
-order_ref = prepared_order.submit_id
-print(f"Prepared pegged order, ref: {order_ref}")
-
 # __sign_tx_pegged_order:
-# Sign the prepared pegged order transaction
-# Note: Setting propagate to true will submit to a Vega node
-blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
-response = wallet_client.signtx(blob_base64, pubkey, True)
+# Sign the transaction with an order submission command
+# Note: Setting propagate to true will also submit to a Vega node
+submission = {
+    "orderSubmission": MessageToDict(order_data),
+    "pubKey": pubkey,
+    "propagate": True
+}
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
-signedTx = response.json()["signedTx"]
 # :sign_tx_pegged_order__
 
 print("Signed pegged order and sent to Vega")
@@ -171,8 +181,8 @@ else:
 #####################################################################################
 
 # __prepare_amend_pegged_order:
-# Prepare the amend pegged order message
-amend = vac.commands.v1.commands.OrderAmendment(
+# Compose your amend order command, with changes to your existing order
+amend_data = vac.commands.v1.commands.OrderAmendment(
     market_id=marketID,
     order_id=orderID,
     size_delta=-25,
@@ -180,17 +190,20 @@ amend = vac.commands.v1.commands.OrderAmendment(
     pegged_reference=vac.vega.PEGGED_REFERENCE_BEST_BID,
     pegged_offset=Int64Value(value=-100)
 )
-order = vac.api.trading.PrepareAmendOrderRequest(amendment=amend)
-prepared_order = trading_client.PrepareAmendOrder(order)
-blob_base64 = base64.b64encode(prepared_order.blob).decode("ascii")
 # :prepare_amend_pegged_order__
 
 print(f"Amendment prepared for order ID: {orderID}")
 
 # __sign_tx_pegged_amend:
-# Sign the prepared pegged order transaction for amendment
+# Sign the prepared order transaction with an order amendment command
 # Note: Setting propagate to true will also submit to a Vega node
-response = wallet_client.signtx(blob_base64, pubkey, True)
+amendment = {
+    "orderAmendment": MessageToDict(amend_data),
+    "pubKey": pubkey,
+    "propagate": True
+}
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=amendment)
 helpers.check_response(response)
 # :sign_tx_pegged_amend__
 

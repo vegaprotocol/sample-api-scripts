@@ -86,213 +86,166 @@ response="$(curl -s "$url")"
 echo "Liquidity provisions: $response"
 # :get_liquidity_provisions__
 
+
+
 ### Submit liquidity commitment for the selected market
 # Note: commitment_amount is an integer. For example 123456 is a price of 1.23456,
 # for a market which is configured to have a precision of 5 decimal places.
 
 # __prepare_liquidity_order:
-# Prepare a liquidity commitment order message
-url="$NODE_URL_REST/time"
-response="$(curl -s "$url")"
-cat >req.json <<EOF
-{
-    "submission": {
-        "market_id": "$marketID",
-        "commitment_amount": "100",
-        "fee": "0.01",
-        "buys": [
-          {
-            "offset": "-1",
-            "proportion": "1",
-            "reference": "PEGGED_REFERENCE_MID"
-          },
-          {
-            "offset": "-2",
-            "proportion": "2",
-            "reference": "PEGGED_REFERENCE_MID"
-          }
-        ],
-        "sells": [
-          {
-            "offset": "1",
-            "proportion": "1",
-            "reference": "PEGGED_REFERENCE_MID"
-          },
-          {
-            "offset": "2",
-            "proportion": "2",
-            "reference": "PEGGED_REFERENCE_MID"
-          },
-          {
-            "offset": "3",
-            "proportion": "5",
-            "reference": "PEGGED_REFERENCE_MID"
-          }
-        ]
-    }
+# Compose a submit liquidity provision command
+submission=$(cat <<-END
+"liquidityProvisionSubmission": {
+    "market_id": "$marketID",
+    "commitment_amount": "100",
+    "fee": "0.01",
+    "buys": [
+      {
+        "offset": "-1",
+        "proportion": "1",
+        "reference": "PEGGED_REFERENCE_MID"
+      },
+      {
+        "offset": "-2",
+        "proportion": "2",
+        "reference": "PEGGED_REFERENCE_MID"
+      }
+    ],
+    "sells": [
+      {
+        "offset": "1",
+        "proportion": "1",
+        "reference": "PEGGED_REFERENCE_MID"
+      },
+      {
+        "offset": "2",
+        "proportion": "2",
+        "reference": "PEGGED_REFERENCE_MID"
+      },
+      {
+        "offset": "3",
+        "proportion": "5",
+        "reference": "PEGGED_REFERENCE_MID"
+      }
+    ]
 }
-EOF
-echo "Request for PrepareLiquidityProvision: $(cat req.json)"
-url="$NODE_URL_REST/liquidity-provisions/prepare/submit"
-response="$(curl -s -XPOST -d @req.json "$url")"
+END
+)
 # :prepare_liquidity_order__
 
-echo "Response from PrepareLiquidityProvision: $response"
+echo "Liquidity provision submission: $submission"
 
 # __sign_tx_liquidity_order:
-# Sign the prepared liquidity order transaction
+# Sign the transaction with an LP submission
 # Note: Setting propagate to true will also submit to a Vega node
-blob="$(echo "$response" | jq -r .blob)"
-test "$blob" == null && exit 1
 cat >req.json <<EOF
 {
-    "tx": "$blob",
+    $submission,
     "pubKey": "$pubKey",
-    "propagate": false
+    "propagate": true
 }
 EOF
-echo "Request for SignTx: $(cat req.json)"
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/command/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
-signedTx="$(echo "$response" | jq .signedTx)"
-echo "Response from SignTx: $signedTx"
 # :sign_tx_liquidity_order__
+
+echo "$response"
+
+signedTx="$(echo "$response" | jq .signature)"
 test "$signedTx" == null && exit 1
 
-# __submit_tx_liquidity_order:
-# Submit the signed transaction to Vega network
-cat >req.json <<EOF
-{
-    "tx": $signedTx
-}
-EOF
-echo "Request for SubmitTransaction: $(cat req.json)"
-url="$NODE_URL_REST/transaction"
-response="$(curl -s -XPOST -d @req.json "$url")"
-# :submit_tx_liquidity_order__
+echo "Signed liquidity commitment and sent to Vega"
 
 ### Comment out the lines below to add a cancellation of the newly created LP commitment
-echo "To add cancellation step, uncomment line 176 of the script file"
+echo "To add amend/cancellation step, comment line 161 of the script file"
 exit 0
 
 ### Amend liquidity commitment for the selected market
 
 # __amend_liquidity_order:
-# Prepare a liquidity commitment order message (it will now serve as an amendment request): modify fields to be amended
-url="$NODE_URL_REST/time"
-response="$(curl -s "$url")"
-cat >req.json <<EOF
-{
-    "submission": {
-        "market_id": "$marketID",
-        "commitment_amount": "500",
-        "fee": "0.005",
-        "buys": [
-          {
-            "offset": "-1",
-            "proportion": "1",
-            "reference": "PEGGED_REFERENCE_MID"
-          }
-        ],
-        "sells": [
-          {
-            "offset": "1",
-            "proportion": "1",
-            "reference": "PEGGED_REFERENCE_MID"
-          }
-        ]
-    }
+# Compose a liquidity commitment order message
+# (it will now serve as an amendment request):
+# modify fields you want to be amended
+submission=$(cat <<-END
+"liquidityProvisionSubmission": {
+    "market_id": "$marketID",
+    "commitment_amount": "500",
+    "fee": "0.005",
+    "buys": [
+      {
+        "offset": "-1",
+        "proportion": "1",
+        "reference": "PEGGED_REFERENCE_MID"
+      }
+    ],
+    "sells": [
+      {
+        "offset": "1",
+        "proportion": "1",
+        "reference": "PEGGED_REFERENCE_MID"
+      }
+    ]
 }
-EOF
-echo "Request for PrepareLiquidityProvision (amendment): $(cat req.json)"
-url="$NODE_URL_REST/liquidity-provisions/prepare/submit"
-response="$(curl -s -XPOST -d @req.json "$url")"
+END
+)
 # :amend_liquidity_order__
 
-echo "Response from PrepareLiquidityProvision (amendment): $response"
+echo "Liquidity provision amendment: $submission"
 
-# Sign the prepared liquidity order transaction
+# Sign the transaction with an LP submission
 # Note: Setting propagate to true will also submit to a Vega node
-blob="$(echo "$response" | jq -r .blob)"
-test "$blob" == null && exit 1
 cat >req.json <<EOF
 {
-    "tx": "$blob",
+    $submission,
     "pubKey": "$pubKey",
-    "propagate": false
+    "propagate": true
 }
 EOF
-echo "Request for SignTx: $(cat req.json)"
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/command/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
-signedTx="$(echo "$response" | jq .signedTx)"
-echo "Response from SignTx: $signedTx"
+
+echo "$response"
+
+signedTx="$(echo "$response" | jq .signature)"
 test "$signedTx" == null && exit 1
 
-# Submit the signed transaction to Vega network
-cat >req.json <<EOF
-{
-    "tx": $signedTx
-}
-EOF
-echo "Request for SubmitTransaction: $(cat req.json)"
-url="$NODE_URL_REST/transaction"
-response="$(curl -s -XPOST -d @req.json "$url")"
+echo "Signed liquidity commitment (amendment) and sent to Vega"
 
 sleep 10s
 
 ### Cancel liquidity commitment for the selected market
 
 # __cancel_liquidity_order:
-# Prepare a liquidity commitment order message (it will now serve as a cancellation request): set commitmentAmount to 0, 
+# Compose a liquidity commitment order message
+# (it will now serve as a cancellation request): set commitmentAmount to 0,
 # note that transaction may get rejected if removing previously supplied liquidity 
 # will result in insufficient liquidity for the market
-url="$NODE_URL_REST/time"
-response="$(curl -s "$url")"
-cat >req.json <<EOF
-{
-    "submission": {
-        "market_id": "$marketID",
-        "commitment_amount": "0"
-    }
+submission=$(cat <<-END
+"liquidityProvisionSubmission": {
+    "market_id": "$marketID",
+    "commitment_amount": "0"
 }
-EOF
-echo "Request for PrepareLiquidityProvision (cancellation): $(cat req.json)"
-url="$NODE_URL_REST/liquidity-provisions/prepare/submit"
-response="$(curl -s -XPOST -d @req.json "$url")"
+END
+)
 # :cancel_liquidity_order__
 
-echo "Response from PrepareLiquidityProvision (cancellation): $response"
+echo "Liquidity provision cancellation: $submission"
 
-# Sign the prepared liquidity order transaction
+# Sign the transaction with an LP submission
 # Note: Setting propagate to true will also submit to a Vega node
-blob="$(echo "$response" | jq -r .blob)"
-test "$blob" == null && exit 1
 cat >req.json <<EOF
 {
-    "tx": "$blob",
+    $submission,
     "pubKey": "$pubKey",
-    "propagate": false
+    "propagate": true
 }
 EOF
-echo "Request for SignTx: $(cat req.json)"
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/command/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
-signedTx="$(echo "$response" | jq .signedTx)"
-echo "Response from SignTx: $signedTx"
+
+echo "$response"
+
+signedTx="$(echo "$response" | jq .signature)"
 test "$signedTx" == null && exit 1
 
-# Submit the signed transaction to Vega network
-cat >req.json <<EOF
-{
-    "tx": $signedTx
-}
-EOF
-echo "Request for SubmitTransaction: $(cat req.json)"
-url="$NODE_URL_REST/transaction"
-response="$(curl -s -XPOST -d @req.json "$url")"
-if ! echo "$response" | jq -r .success | grep -q '^true$' ; then
-	echo "Failed"
-	exit 1
-fi
-echo "All is well."
+echo "Signed liquidity commitment (cancellation) and sent to Vega"

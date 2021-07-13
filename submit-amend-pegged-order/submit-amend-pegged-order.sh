@@ -88,50 +88,50 @@ echo "Blockchain time: $expiresAt"
 #####################################################################################
 
 # __prepare_submit_pegged_order:
-# Prepare a submit pegged order message
-cat >req.json <<EOF
-{
-    "submission": {
-        "marketId": "$marketID",
-        "size": "50",
-        "side": "SIDE_BUY",
-        "timeInForce": "TIME_IN_FORCE_GTT",
-        "expiresAt": "$expiresAt",
-        "type": "TYPE_LIMIT",
-        "peggedOrder": {
-            "offset": "-5",
-            "reference": "PEGGED_REFERENCE_MID"
-        }
+# Compose your submit pegged order command
+
+# Set your own user specific reference to find the order in next step and
+# as a foreign key to your local client/trading application
+orderRef=$pubKey-$(shuf -i 11111111-99999999 -n 1)-$(shuf -i 1111-9999 -n 1)-$(shuf -i 111111111111-999999999999 -n 1)
+submission=$(cat <<-END
+"orderSubmission": {
+    "marketId": "$marketID",
+    "size": "50",
+    "side": "SIDE_BUY",
+    "timeInForce": "TIME_IN_FORCE_GTT",
+    "expiresAt": "$expiresAt",
+    "type": "TYPE_LIMIT",
+    "peggedOrder": {
+        "offset": "-5",
+        "reference": "PEGGED_REFERENCE_MID"
     }
 }
-EOF
-url="$NODE_URL_REST/orders/prepare/submit"
-response="$(curl -s -XPOST -d @req.json "$url")"
-orderRef="$(echo "$response" | jq -r '.submitId')"
+END
+)
 # :prepare_submit_pegged_order__
 
-echo "Prepared pegged order, ref: $orderRef"
+echo "Order submission: $submission"
 
 # __sign_tx_pegged_order:
-# Sign the prepared transaction
+# Sign the transaction with an order submission command
 # Note: Setting propagate to true will also submit to a Vega node
-blob="$(echo "$response" | jq -r .blob)"
-test "$blob" == null && exit 1
 cat >req.json <<EOF
 {
-    "tx": "$blob",
+    $submission,
     "pubKey": "$pubKey",
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/command/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_pegged_order__
 
-signedTx="$(echo "$response" | jq .signedTx)"
+echo "$response"
+
+signedTx="$(echo "$response" | jq .signature)"
 test "$signedTx" == null && exit 1
 
-echo "Signed pegged order and sent to Vega"
+echo "Signed order and sent to Vega"
 
 # Wait for order submission to be included in a block
 echo "Waiting for blockchain..."
@@ -153,40 +153,40 @@ echo "Pegged at: $orderPegged"
 #####################################################################################
 
 # __prepare_amend_pegged_order:
-# Prepare the amend pegged order message
-cat >req.json <<EOF
-{
-    "amendment": {
-        "marketId": "$marketID",
-        "orderId": "$orderID",
-        "sizeDelta": "-25",
-        "timeInForce": "TIME_IN_FORCE_GTC",
-        "peggedReference": "PEGGED_REFERENCE_BEST_BID",
-        "peggedOffset": "-100"
-    }
+# Compose your amend order command, with changes to your existing order
+amendment=$(cat <<-END
+"orderAmendment": {
+    "marketId": "$marketID",
+    "orderId": "$orderID",
+    "sizeDelta": "-25",
+    "timeInForce": "TIME_IN_FORCE_GTC",
+    "peggedReference": "PEGGED_REFERENCE_BEST_BID",
+    "peggedOffset": "-100"
 }
-EOF
-url="$NODE_URL_REST/orders/prepare/amend"
-response="$(curl -s -XPOST -d @req.json "$url")"
+END
+)
 # :prepare_amend_pegged_order__
 
-echo "Pegged order amendment prepared for order ID: $orderID"
+echo "Order amendment: $amendment"
 
 # __sign_tx_pegged_amend:
-# Sign the prepared pegged order transaction for amendment
+# Sign the transaction with an order amendment command
 # Note: Setting propagate to true will also submit to a Vega node
-blob="$(echo "$response" | jq -r .blob)"
-test "$blob" == null && exit 1
 cat >req.json <<EOF
 {
-    "tx": "$blob",
+    $amendment,
     "pubKey": "$pubKey",
     "propagate": true
 }
 EOF
-url="$WALLETSERVER_URL/api/v1/messages"
+url="$WALLETSERVER_URL/api/v1/command/sync"
 response="$(curl -s -XPOST -H "$hdr" -d @req.json "$url")"
 # :sign_tx_pegged_amend__
+
+echo "$response"
+
+signedTx="$(echo "$response" | jq .signature)"
+test "$signedTx" == null && exit 1
 
 echo "Signed pegged order amendment and sent to Vega"
 
@@ -195,6 +195,9 @@ echo "Waiting for blockchain..."
 sleep 4s
 url="$NODE_URL_REST/orders/$orderRef"
 response="$(curl -s "$url")"
+
+echo "$response"
+
 orderID="$(echo "$response" | jq -r '.order.id')"
 orderSize="$(echo "$response" | jq -r '.order.size')"
 orderTif="$(echo "$response" | jq -r '.order.timeInForce')"

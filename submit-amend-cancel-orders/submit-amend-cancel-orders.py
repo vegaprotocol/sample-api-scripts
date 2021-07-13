@@ -21,11 +21,12 @@ Apps/Libraries:
 # :something__
 #
 
-import json
 import os
 import requests
 import time
 import helpers
+import uuid
+import json
 
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
@@ -115,9 +116,12 @@ print(f"Blockchain time: {blockchain_time}")
 #####################################################################################
 
 # __prepare_submit_order:
-# Prepare a submit order message
-req = {
-    "submission": {
+# Compose your submit order command, with desired deal ticket information
+# Set your own user specific reference to find the order in next step and
+# as a foreign key to your local client/trading application
+order_ref = f"{pubkey}-{uuid.uuid4()}"
+submission = {
+    "orderSubmission": {
         "marketId": marketID,
         "price": "1",  # Note: price is an integer. For example 123456
         "size": "100",  # is a price of 1.23456, assuming 5 decimal places.
@@ -125,26 +129,24 @@ req = {
         "timeInForce": "TIME_IN_FORCE_GTT",
         "expiresAt": expiresAt,
         "type": "TYPE_LIMIT",
-    }
+        "reference": order_ref
+    },
+    "pubKey": pubkey,
+    "propagate": True
 }
-url = f"{node_url_rest}/orders/prepare/submit"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-prepared_order = response.json()
 # :prepare_submit_order__
 
-order_ref = prepared_order["submitId"]
-print(f"Prepared order, ref: {order_ref}")
+print("Order submission: ", submission)
 
 # __sign_tx_order:
-# Sign the prepared order transaction
+# Sign the transaction with an order submission command
 # Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_order["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
 # :sign_tx_order__
+
+print(json.dumps(response.json(), indent=4, sort_keys=True))
 
 print("Signed order and sent to Vega")
 
@@ -172,9 +174,9 @@ if orderStatus == "STATUS_REJECTED":
 #####################################################################################
 
 # __prepare_amend_order:
-# Prepare the amend order message
-req = {
-    "amendment": {
+# Compose your amend order command, with changes to existing order
+amendment = {
+    "orderAmendment": {
         "orderId": orderID,
         "marketId": marketID,
         "price": {
@@ -182,23 +184,19 @@ req = {
         },
         "sizeDelta": "-25",
         "timeInForce": "TIME_IN_FORCE_GTC",
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True
 }
-url = f"{node_url_rest}/orders/prepare/amend"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-prepared_amend = response.json()
-blob = prepared_amend["blob"]
 # :prepare_amend_order__
 
-print(f"Amendment prepared for order ID: {orderID}")
+print("Order amendment: ", amendment)
 
 # __sign_tx_amend:
-# Sign the prepared order transaction for amendment
+# Sign the transaction with an order amendment command
 # Note: Setting propagate to true will also submit to a Vega node
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=amendment)
 helpers.check_response(response)
 # :sign_tx_amend__
 
@@ -234,49 +232,45 @@ if orderStatus == "STATUS_REJECTED":
 
 # __prepare_cancel_order_req1:
 # 1 - Cancel single order for party (pubkey)
-req = {
-    "cancellation": {
+cancellation = {
+    "orderCancellation": {
         # Include market and order identifier fields to cancel single order.
         "marketId": marketID,
         "orderId": orderID,
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True,
 }
 # :prepare_cancel_order_req1__
 
 # __prepare_cancel_order_req2:
 # 2 - Cancel all orders on market for party (pubkey)
-req = {
-    "cancellation": {
+cancellation = {
+    "orderCancellation": {
         # Only include market identifier field.
         "marketId": marketID,
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True,
 }
 # :prepare_cancel_order_req2__
 
 # __prepare_cancel_order_req3:
 # 3 - Cancel all orders on all markets for party (pubkey)
-req = {
-    "cancellation": {}
+cancellation = {
+    "orderCancellation": {},
+    "pubKey": pubkey,
+    "propagate": True,
 }
 # :prepare_cancel_order_req3__
 
-# __prepare_cancel_order:
-# Prepare the cancel order message
-url = f"{node_url_rest}/orders/prepare/cancel"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-prepared_cancel = response.json()
-blob = prepared_cancel["blob"]
-# :prepare_cancel_order__
-
-print(f"Cancellation prepared for order ID: {orderID}")
+print("Order cancellation: ", cancellation)
 
 # __sign_tx_cancel:
-# Sign the prepared order transaction for cancellation
+# Sign the transaction for cancellation
 # Note: Setting propagate to true will also submit to a Vega node
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=cancellation)
 helpers.check_response(response)
 # :sign_tx_cancel__
 

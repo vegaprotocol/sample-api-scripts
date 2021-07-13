@@ -23,8 +23,6 @@ check_url "NODE_URL_GRAPHQL" || exit 1
 
 # __stream_orders_by_ref:
 # Stream orders by reference on a Vega network
-# Note: This is an example and order reference will be provided in the response
-# from a prepareSubmitOrder request in the field named `submitID` or similar.
 reference="4617844f-6fab-4cf6-8852-e29dbd96e5f1"
 pubkey="94c21a5bfc212c0b4ee6e3593e8481559972ad31f1fb453491f255e72bdb6fdb"
 gq $NODE_URL_GRAPHQL -q 'subscription { orders(partyId: "'$pubkey'") { id, reference } }'

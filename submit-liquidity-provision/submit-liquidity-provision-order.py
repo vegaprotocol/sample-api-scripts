@@ -118,9 +118,9 @@ print("Liquidity provisions:\n{}".format(json.dumps(response_json, indent=2, sor
 # for a market which is configured to have a precision of 5 decimal places.
 
 # __prepare_liquidity_order:
-# Prepare a liquidity commitment transaction message
-req = {
-    "submission": {
+# Compose your submit liquidity provision command
+submission = {
+    "liquidityProvisionSubmission": {
         "marketId": marketID,
         "commitmentAmount": "100",
         "fee": "0.01",
@@ -153,30 +153,26 @@ req = {
                 "reference": "PEGGED_REFERENCE_MID"
             }
         ]
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True
 }
-url = f"{node_url_rest}/liquidity-provisions/prepare/submit"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-prepared_order = response.json()
 # :prepare_liquidity_order__
 
-print(f"Prepared liquidity commitment for market: {marketID} {marketName}")
+print("Liquidity provision submission: ", submission)
 
 # __sign_tx_liquidity_order:
-# Sign the prepared liquidity commitment transaction
+# Sign the transaction with a liquidity provision submission
 # Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_order["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
 # :sign_tx_liquidity_order__
 
 print("Signed liquidity commitment and sent to Vega")
 
 # Comment out the lines below to add a cancellation of the newly created LP commitment
-print("To add cancellation step, uncomment line 180 of the script file")
+print("To add amend/cancellation step, comment line 176 of the script file")
 exit(0)
 
 #####################################################################################
@@ -184,10 +180,11 @@ exit(0)
 #####################################################################################
 
 # __amend_liquidity_order:
-# Prepare a liquidity commitment order message (it will now serve as an amendment request): modify fields to be amended
-
-req = {
-    "submission": {
+# Compose a liquidity commitment order message
+# (it will now serve as an amendment request):
+# modify fields you want to be amended
+submission = {
+    "liquidityProvisionSubmission": {
         "marketId": marketID,
         "commitmentAmount": "500",
         "fee": "0.005",
@@ -205,22 +202,18 @@ req = {
                 "reference": "PEGGED_REFERENCE_MID"
             }
         ]
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True
 }
-url = f"{node_url_rest}/liquidity-provisions/prepare/submit"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-prepared_order = response.json()
 # :amend_liquidity_order__
 
-print(f"Prepared liquidity commitment (amendment) for market: {marketID} {marketName}")
+print("Liquidity provision amendment: ", submission)
 
-# Sign the prepared liquidity commitment transaction
+# Sign the transaction with a liquidity provision submission command
 # Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_order["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
 
 print("Signed liquidity commitment (amendment) and sent to Vega")
@@ -234,31 +227,26 @@ time.sleep(10)
 #####################################################################################
 
 # __cancel_liquidity_order:
-
-# Prepare a liquidity commitment order message (it will now serve as a cancellation request): set commitmentAmount to 0, 
+# Compose a liquidity commitment order message
+# (it will now serve as a cancellation request): set commitmentAmount to 0,
 # note that transaction may get rejected if removing previously supplied liquidity 
 # will result in insufficient liquidity for the market
-
-req = {
-    "submission": {
+submission = {
+    "liquidityProvisionSubmission": {
         "marketId": marketID,
         "commitmentAmount": "0"
-    }
+    },
+    "pubKey": pubkey,
+    "propagate": True
 }
-url = f"{node_url_rest}/liquidity-provisions/prepare/submit"
-response = requests.post(url, json=req)
-helpers.check_response(response)
-prepared_order = response.json()
 # :cancel_liquidity_order__
 
-print(f"Prepared liquidity commitment (cancellation) for market: {marketID} {marketName}")
+print("Liquidity provision cancellation: ", submission)
 
-# Sign the prepared liquidity commitment transaction
+# Sign the transaction with a liquidity provision submission command
 # Note: Setting propagate to true will also submit to a Vega node
-blob = prepared_order["blob"]
-req = {"tx": blob, "pubKey": pubkey, "propagate": True}
-url = f"{wallet_server_url}/api/v1/messages"
-response = requests.post(url, headers=headers, json=req)
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
 
 print("Signed liquidity commitment (cancellation) and sent to Vega")
