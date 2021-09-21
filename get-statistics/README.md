@@ -29,6 +29,18 @@ Get the latest statistics using python3 and the [Vega-API-client](https://pypi.o
 python3 get-statistics/get-statistics-with-Vega-API-client.py
 ```
 
+## GraphQL
+Get the latest statistics using GraphQL:
+[![Graphql - Get-Statistics](https://img.shields.io/badge/Graphql-Get--Statistics-2ea44f?logo=GraphQL)](https://www.graphqlbin.com/v2/g8LlIm)
+
+```bash
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '@./get-statistics.graphql' \
+    https://lb.testnet.vega.xyz/query
+```
+
+
 ---
 
 **[Home](../README.md)**
