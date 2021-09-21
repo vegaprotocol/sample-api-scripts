@@ -37,6 +37,9 @@ Get the latest time on the blockchain using go [gRPC API]:
 go run vega-time/get-time.go
 ```
 
+## GraphQL
+
+
 ---
 
 **[Home](../README.md)**

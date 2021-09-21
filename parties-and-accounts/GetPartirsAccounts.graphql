@@ -1,0 +1,18 @@
+query getParties {
+  parties{
+    id
+    accounts{
+      balance
+      asset {
+        id
+        name
+        symbol
+      }
+      type
+      market {
+        id
+        name
+      }
+    }
+  }
+}

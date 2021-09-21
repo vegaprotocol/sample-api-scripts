@@ -1,0 +1,18 @@
+query GetOrderTradesForMarket (
+  $marketId: ID! = ""
+){
+  market(id:$marketId){
+    name
+    orders{
+      id
+      price
+      side
+      status
+      trades {
+        id
+        price
+        size
+      }
+    }
+  }
+}

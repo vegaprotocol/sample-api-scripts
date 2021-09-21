@@ -1,0 +1,11 @@
+query GetTradesForOrder(
+  $orderId: ID! = ""
+) {
+  order(id: $orderId) {
+    trades {
+      id
+      price
+      size
+    }
+  }
+}
