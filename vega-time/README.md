@@ -39,6 +39,7 @@ go run vega-time/get-time.go
 
 ## GraphQL
 [![Graphql - Get-VegaTime](https://img.shields.io/badge/Graphql-Get--VegaTime-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/JzNMUQ)
+
 Get the latest time on the blockchain using shell scripts and [graphqurl](https://github.com/hasura/graphqurl) only [GraphQL API]:
 
 ```bash

@@ -13,6 +13,7 @@ python3 stream-marketdata/stream-marketdata.py
 
 ## Shell + graphqurl
 [![Graphql - Stream-MarketData](https://img.shields.io/badge/Graphql-Stream--MarketData-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/L0vEHk)
+
 Stream using shell scripts and [graphqurl](https://github.com/hasura/graphqurl) only [GraphQL API]:
 
 ```bash

@@ -18,6 +18,7 @@ Note: Streaming is available on the Vega gRPC API (highest performance) and Vega
 ## Shell + graphqurl
 [![Graphql - Stream-Orders](https://img.shields.io/badge/Graphql-Stream--Orders-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/MNJztz)
 [![Graphql - Stream-Trades](https://img.shields.io/badge/Graphql-Stream--Trades-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/KzLqhD)
+
 Stream using shell scripts and [graphqurl](https://github.com/hasura/graphqurl) only [GraphQL API]:
 
 ```bash
