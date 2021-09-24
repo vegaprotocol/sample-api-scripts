@@ -15,6 +15,17 @@ These example scripts connect to a Vega Node API, and:
 Note: Streaming is available on the Vega gRPC API (highest performance) and Vega GraphQL API **only**.  
 *The GraphQL streaming protocol uses websockets under the hood, we recommend using a GraphQL client with support for streaming.*
 
+## Shell + graphqurl
+[![Graphql - Stream-Orders](https://img.shields.io/badge/Graphql-Stream--Orders-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/MNJztz)
+[![Graphql - Stream-Trades](https://img.shields.io/badge/Graphql-Stream--Trades-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/KzLqhD)
+Stream using shell scripts and [graphqurl](https://github.com/hasura/graphqurl) only [GraphQL API]:
+
+```bash
+bash stream-orders-and-trades/stream-orders.sh
+bash stream-orders-and-trades/stream-trades.sh
+```
+
+
 ---
 
 **[Home](../README.md)**

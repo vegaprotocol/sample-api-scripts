@@ -29,6 +29,14 @@ Get an order by reference using python3 and the [Vega-API-client](https://pypi.o
 python3 get-order-by-reference/get-order-by-reference-with-Vega-API-client.py
 ```
 
+## Shell + graphqurl
+[![Graphql - Get-OrderByReference](https://img.shields.io/badge/Graphql-Get--OrderByReference-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/GzMVIO)
+Get an order by reference using shell scripts and [graphqurl](https://github.com/hasura/graphqurl) only [GraphQL API]:
+
+```bash
+bash get-order-by-reference/get-order-by-reference-gql.sh
+```
+
 ---
 
 **[Home](../README.md)**
