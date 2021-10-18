@@ -1,0 +1,14 @@
+subscription StreamOrdersByReference(
+  $partyId:ID!="ed20dab0d670b22a6bfb9d0eb21580289ac67ae5e10ebbca1b6dface9dfa6b22"
+){
+  orders(partyId:$partyId){
+    id
+    price
+    timeInForce
+    side
+    market{
+      name
+    }
+    size
+  }
+}

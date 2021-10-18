@@ -1,0 +1,15 @@
+query GetOrderByID(
+  $orderID: ID! = "V0000021536-0000000059"
+){
+  orderByID(orderId:$orderID){
+    id
+    price
+    timeInForce
+    side
+    size
+    market{
+      name
+    }
+    updatedAt
+  }
+}

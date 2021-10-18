@@ -6,6 +6,7 @@ These scripts talk to a Vega node and stream a list of orders with the aim of fi
 Please see the documentation on Vega for further information.
 
 ## Shell + graphqurl
+[![Graphql - Stream-OrdersByReference](https://img.shields.io/badge/Graphql-Stream--OrdersByReference-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/L0vkuQ)
 
 Stream using shell scripts and [graphqurl](https://github.com/hasura/graphqurl) only [GraphQL API]:
 

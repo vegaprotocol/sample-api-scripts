@@ -1,0 +1,6 @@
+query GetNetworkParameters{
+  networkParameters{
+    key
+    value
+  }
+}

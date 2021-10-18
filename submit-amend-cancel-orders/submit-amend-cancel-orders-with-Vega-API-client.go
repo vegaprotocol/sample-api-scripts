@@ -9,11 +9,11 @@ import (
 	"os"
 	"time"
 
+	"code.vegaprotocol.io/go-wallet/wallet"
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto"
 	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"code.vegaprotocol.io/go-wallet/wallet"
 )
 
 func main() {
@@ -92,7 +92,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	marketId := markets.Markets[0].Id
+	marketId := markets.Markets[5].Id
+	fmt.Printf("Market: %+v\n", markets.Markets[5])
 
 	// Get Blockchain time
 	// __get_expiry_time:
@@ -108,7 +109,7 @@ func main() {
 	// Submit order
 	// __prepare_submit_order:
 	// Prepare a submit order message
-	orderSubmission := proto.commands.v1.OrderSubmission{
+	orderSubmission := proto.OrderSubmission{
 		Size:        10,
 		Price:       1,
 		MarketId:    marketId,
@@ -122,11 +123,14 @@ func main() {
 
 	fmt.Printf("Request for PrepareSubmitOrder: %v\n", order)
 	orderRequest, err := tradingClient.PrepareSubmitOrder(context.Background(), &order)
+	if err != nil {
+		panic(err)
+	}
+
 	// :prepare_submit_order__
 
-	fmt.Printf("%v\n", err)
-	fmt.Printf("%v\n", orderRequest)
-
+	fmt.Printf("%+v\n", orderRequest)
+	fmt.Println("test")
 	// Sign the prepared transaction
 	data := orderRequest.Blob
 	sEnc := base64.StdEncoding.EncodeToString([]byte(data))
@@ -156,7 +160,7 @@ func main() {
 	// __prepare_amend_order:
 	// Prepare the amend order message
 	price := proto.Price{Value: 2}
-	amend := proto.commands.v1.OrderAmendment{
+	amend := proto.OrderAmendment{
 		MarketId:    marketId,
 		OrderId:     orderID,
 		Price:       &price,
@@ -203,7 +207,7 @@ func main() {
 	// Cancel order
 	// __prepare_cancel_order_req1:
 	// 1 - Cancel single order for this party (pubkey)
-	cancel := proto.commands.v1.OrderCancellation{
+	cancel := proto.OrderCancellation{
 		OrderId:  orderID,
 		MarketId: marketId,
 	}
@@ -211,14 +215,14 @@ func main() {
 
 	// __prepare_cancel_order_req2:
 	// 2 - Cancel all orders on market for this party (pubkey)
-	cancel = proto.commands.v1.OrderCancellation{
+	cancel = proto.OrderCancellation{
 		MarketId: marketId,
 	}
 	// :prepare_cancel_order_req2__
 
 	// __prepare_cancel_order_req3:
 	// 3 - Cancel all orders on all markets for this party (pubkey)
-	cancel = proto.commands.v1.OrderCancellation{ }
+	cancel = proto.OrderCancellation{}
 	// :prepare_cancel_order_req3__
 
 	// __prepare_cancel_order:

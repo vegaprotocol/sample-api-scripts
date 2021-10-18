@@ -1,0 +1,15 @@
+query getStatistics {
+    statistics {
+        chainVersion
+        appVersion
+        status
+        totalTrades
+        totalOrders
+        totalPeers
+        totalMarkets
+        ordersPerSecond
+        tradesPerSecond
+        averageOrdersPerBlock
+        averageTxBytes
+    }
+}

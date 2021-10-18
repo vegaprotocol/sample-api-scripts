@@ -33,6 +33,16 @@ Get market details and market data using python3 and the [Vega-API-client](https
 python3 get-markets-and-market-data/get-markets-and-marketdata-with-Vega-API-client.py
 ```
 
+## Shell + graphqurl
+[![Graphql - Get-Markets](https://img.shields.io/badge/Graphql-Get--Markets-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/E10gU1)
+[![Graphql - Get-Market](https://img.shields.io/badge/Graphql-Get--Market-2ea44f?logo=GraphQL)](https://graphqlbin.com/v2/JzNkSA)
+
+Get market details and market data using shell scripts and [graphqurl](https://github.com/hasura/graphqurl) only [GraphQL API]:
+
+```bash
+bash get-markets-and-market-data/get-markets-and-market-data-gql.sh
+```
+
 ---
 
 **[Home](../README.md)**

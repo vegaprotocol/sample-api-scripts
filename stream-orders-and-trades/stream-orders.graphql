@@ -1,0 +1,13 @@
+subscription StreamOrders{
+  orders{
+    id
+    price
+    timeInForce
+    side
+    market{
+      name
+    }
+    size
+  }
+}
+}

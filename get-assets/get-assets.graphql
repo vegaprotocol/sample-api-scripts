@@ -1,0 +1,11 @@
+query getAsset {
+  assets{
+    name
+    symbol
+    totalSupply
+    decimals
+		source{
+      __typename
+    }
+  }
+}
