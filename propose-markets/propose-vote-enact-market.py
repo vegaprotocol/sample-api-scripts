@@ -185,7 +185,7 @@ proposal_ref = f"{pubkey}-{uuid.uuid4()}"
 # from the current Vega blockchain time
 closing_time = blockchain_time_seconds + 360
 enactment_time = blockchain_time_seconds + 480
-validation_time = blockchain_time_seconds + 1,
+validation_time = blockchain_time_seconds + 1
 
 # The proposal command below contains the configuration for a new market
 proposal = {
