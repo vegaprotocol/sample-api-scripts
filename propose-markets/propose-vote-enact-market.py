@@ -23,28 +23,68 @@ Apps/Libraries:
 import requests
 import time
 import os
-import helpers
 import uuid
+import random
+import requests
+import string
+from typing import Any
+
+
+def check_response(r: requests.Response) -> None:
+    assert (
+        r.status_code == 200
+    ), f"{r.url} returned HTTP {r.status_code} {r.text}"
+
+
+def check_var(val: str) -> bool:
+    return val != "" and "example" not in val
+
+
+def check_url(url: str) -> bool:
+    return check_var(url) and (
+        url.startswith("https://") or url.startswith("http://")
+    )
+
+
+def random_string(length: int = 20) -> str:
+    choices = string.ascii_letters + string.digits
+    return "".join(random.choice(choices) for i in range(length))
+
+
+def check_wallet_url(url: str) -> str:
+    for suffix in ["/api/v1/", "/api/v1", "/"]:
+        if url.endswith(suffix):
+            print(
+                f'There\'s no need to add "{suffix}" to WALLETSERVER_URL. '
+                "Removing it."
+            )
+            url = url[: -len(suffix)]
+    return url
+
+
+def enum_to_str(e: Any, val: int) -> str:
+    return e.keys()[e.values().index(val)]
+
 
 node_url_rest = os.getenv("NODE_URL_REST")
-if not helpers.check_url(node_url_rest):
+if not check_url(node_url_rest):
     print("Error: Invalid or missing NODE_URL_REST environment variable.")
     exit(1)
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
 
 wallet_name = os.getenv("WALLET_NAME")
-if not helpers.check_var(wallet_name):
+if not check_var(wallet_name):
     print("Error: Invalid or missing WALLET_NAME environment variable.")
     exit(1)
 
 wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
-if not helpers.check_var(wallet_passphrase):
+if not check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
 # Help guide users against including api version suffix on url
-wallet_server_url = helpers.check_wallet_url(wallet_server_url)
+wallet_server_url = check_wallet_url(wallet_server_url)
 
 ###############################################################################
 #                           W A L L E T   S E R V I C E                       #
@@ -56,7 +96,7 @@ print(f"Logging into wallet: {wallet_name}")
 # Log in to an existing wallet
 req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
 response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
-helpers.check_response(response)
+check_response(response)
 token = response.json()["token"]
 # :login_wallet__
 
@@ -67,7 +107,7 @@ print("Logged in to wallet successfully")
 # List key pairs and select public key to use
 headers = {"Authorization": f"Bearer {token}"}
 response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
-helpers.check_response(response)
+check_response(response)
 keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
 # :get_pubkey__
@@ -83,7 +123,7 @@ print("Selected pubkey for signing")
 # Request a list of assets available on a Vega network
 url = f"{node_url_rest}/assets"
 response = requests.get(url)
-helpers.check_response(response)
+check_response(response)
 # :get_assets__
 
 # Debugging
@@ -130,7 +170,7 @@ if vote_asset_id == "UNKNOWN":
 # Request accounts for party and check governance asset balance
 url = f"{node_url_rest}/parties/{pubkey}/accounts"
 response = requests.get(url)
-helpers.check_response(response)
+check_response(response)
 
 # Debugging
 # print("Accounts:\n{}".format(
@@ -156,7 +196,7 @@ if voting_balance == 0:
 # __get_time:
 # Request the current blockchain time, and convert to time in seconds
 response = requests.get(f"{node_url_rest}/time")
-helpers.check_response(response)
+check_response(response)
 blockchain_time = int(response.json()["timestamp"])
 blockchain_time_seconds = int(blockchain_time / 1e9)  # Seconds precision
 # :get_time__
@@ -185,7 +225,7 @@ proposal_ref = f"{pubkey}-{uuid.uuid4()}"
 # from the current Vega blockchain time
 closing_time = blockchain_time_seconds + 360
 enactment_time = blockchain_time_seconds + 480
-validation_time = blockchain_time_seconds + 1,
+validation_time = blockchain_time_seconds + 1
 
 # The proposal command below contains the configuration for a new market
 proposal = {
@@ -205,7 +245,24 @@ proposal = {
                         "code": "CRYPTO:BTCDAI/DEC22",
                         "future": {
                             "maturity": "2022-12-31T23:59:59Z",
-                            "oracleSpec": {
+                            "oracleSpecForSettlementPrice": {
+                                "pubKeys": ["0x0000"],
+                                "filters": [
+                                    {
+                                        "key": {
+                                            "name": "price.DAI.value",
+                                            "type": "TYPE_STRING",
+                                        },
+                                        "conditions": [
+                                            {
+                                                "operator": "OPERATOR_EQUALS",
+                                                "value": "5797800153",
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                            "oracleSpecForTradingTermination": {
                                 "pubKeys": ["0x0000"],
                                 "filters": [
                                     {
@@ -223,7 +280,8 @@ proposal = {
                                 ],
                             },
                             "oracleSpecBinding": {
-                                "settlementPriceProperty": "price.DAI.value"
+                                "settlementPriceProperty": "price.DAI.value",
+                                "tradingTerminationProperty": "price.DAI.value"
                             },
                             "quoteName": "tDAI",
                             "settlementAsset": found_asset_id,
@@ -292,7 +350,7 @@ print("Market proposal: ", proposal)
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
 response = requests.post(url, headers=headers, json=proposal)
-helpers.check_response(response)
+check_response(response)
 # :sign_tx_proposal__
 
 print("Signed market proposal and sent to Vega")
@@ -363,7 +421,7 @@ vote = {
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
 response = requests.post(url, headers=headers, json=vote)
-helpers.check_response(response)
+check_response(response)
 # :sign_tx_vote__
 
 print("Signed vote on proposal and sent to Vega")
