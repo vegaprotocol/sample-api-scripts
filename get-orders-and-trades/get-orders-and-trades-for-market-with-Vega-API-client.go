@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
+	api "code.vegaprotocol.io/protos/data-node/api/v1"
 	"google.golang.org/grpc"
 )
 
@@ -44,7 +44,7 @@ func main() {
 	// :get_orders_for_market__
 
 	// __get_trades_for_market:
-	//Request a list of trades by market on a Vega network
+	// Request a list of trades by market on a Vega network
 	tradesByMarketReq := api.TradesByMarketRequest{MarketId: marketID}
 	tradesByMarketResp, err := dataClient.TradesByMarket(context.Background(), &tradesByMarketReq)
 	if err != nil {
@@ -52,5 +52,4 @@ func main() {
 	}
 	fmt.Printf("TradesByMarket: %v\n", tradesByMarketResp)
 	// :get_trades_for_market__
-
 }

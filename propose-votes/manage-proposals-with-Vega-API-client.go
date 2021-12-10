@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
+	"code.vegaprotocol.io/go-wallet/wallet"
+	api "code.vegaprotocol.io/protos/data-node/api/v1"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"code.vegaprotocol.io/go-wallet/wallet"
 )
 
 func main() {
@@ -117,5 +117,4 @@ func main() {
 
 	fmt.Printf("ProposalByPartyId: %+v\n", proposalsByPartyIDResponse)
 	// :get_proposals_by_party__
-
 }

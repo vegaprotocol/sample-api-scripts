@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
 	"code.vegaprotocol.io/go-wallet/wallet"
+	api "code.vegaprotocol.io/protos/data-node/api/v1"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -83,7 +83,7 @@ func main() {
 	}
 
 	// Make request to create new wallet or log in to existing wallet
-	creationReq :=  &wallet.CreateLoginWalletRequest{Wallet: walletName, Passphrase: walletPassword}
+	creationReq := &wallet.CreateLoginWalletRequest{Wallet: walletName, Passphrase: walletPassword}
 	payload, err := json.Marshal(creationReq)
 	if err != nil {
 		panic(err)

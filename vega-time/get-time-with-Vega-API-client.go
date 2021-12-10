@@ -2,14 +2,16 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"time"
 
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
+	api "code.vegaprotocol.io/protos/data-node/api/v1"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
 
 func main() {
-    nodeURLGrpc := os.Getenv("NODE_URL_GRPC")
+	nodeURLGrpc := os.Getenv("NODE_URL_GRPC")
 	if len(nodeURLGrpc) == 0 {
 		panic("NODE_URL_GRPC is null or empty")
 	}
@@ -25,8 +27,12 @@ func main() {
 	dataClient := api.NewTradingDataServiceClient(conn)
 	request := api.GetVegaTimeRequest{}
 	vegaTime, err := dataClient.GetVegaTime(context.Background(), &request)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	// The "timestamp" field contains the resulting data we need.
-	fmt.Printf("Vega time: %s", vegaTime.Timestamp)
+	fmt.Printf("Vega time: %s", time.Unix(0, vegaTime.Timestamp))
 	// :get_time__
 }

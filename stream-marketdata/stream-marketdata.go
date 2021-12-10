@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto"
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
+	api "code.vegaprotocol.io/protos/data-node/api/v1"
+	proto "code.vegaprotocol.io/protos/vega"
 	"google.golang.org/grpc"
 )
 
@@ -61,7 +61,6 @@ func main() {
 	event.Send(&observerEvent)
 	event.CloseSend()
 
-	<-done //we will wait until all response is received
+	<-done // we will wait until all response is received
 	fmt.Printf("finished")
-
 }

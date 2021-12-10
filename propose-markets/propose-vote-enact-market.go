@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"code.vegaprotocol.io/go-wallet/wallet"
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto"
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
+	api "code.vegaprotocol.io/protos/data-node/api/v1"
+	proto "code.vegaprotocol.io/protos/vega"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -223,7 +223,7 @@ func main() {
 
 	// Propose Market
 	// STEP 1 - Propose a BTC/DAI futures market
-	//Further documentation on creating markets: https://docs.testnet.vega.xyz/docs/api-howtos/create-market/
+	// Further documentation on creating markets: https://docs.testnet.vega.xyz/docs/api-howtos/create-market/
 
 	// __prepare_propose_market:
 	// Prepare a market proposal for a new market

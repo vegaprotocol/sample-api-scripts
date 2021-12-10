@@ -9,8 +9,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto"
-	"github.com/vegaprotocol/api-clients/go/generated/code.vegaprotocol.io/vega/proto/api"
+	proto "code.vegaprotocol.io/protos/vega"
+	api "code.vegaprotocol.io/protos/data-node/api/v1"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/wrapperspb"
