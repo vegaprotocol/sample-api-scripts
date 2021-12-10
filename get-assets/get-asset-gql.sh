@@ -43,3 +43,4 @@ query getAsset (\$assetId: ID! = "6d9d35f657589e40ddfb448b7ad4a7463b66efb307527f
 EOF
 gq $NODE_URL_GRAPHQL --queryFile=query
 # :get_asset__
+rm query

@@ -33,8 +33,9 @@ url = "{base}/markets".format(base=node_url_rest)
 response = requests.get(url)
 helpers.check_response(response)
 responseJson = response.json()
+
+assert len(responseJson["markets"]) != 0, "At least one market is needed to run this example"
 marketID = responseJson["markets"][0]["id"]
-assert marketID != ""
 
 # __get_orders_for_market:
 # Request a list of orders by market on a Vega network

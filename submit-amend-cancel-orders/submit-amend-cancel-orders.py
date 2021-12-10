@@ -21,6 +21,7 @@ Apps/Libraries:
 # :something__
 #
 
+import sys
 import os
 import requests
 import time
@@ -31,22 +32,22 @@ import json
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
     print("Error: Invalid or missing NODE_URL_REST environment variable.")
-    exit(1)
+    sys.exit(1)
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
 if not helpers.check_url(wallet_server_url):
     print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
-    exit(1)
+    sys.exit(1)
 
 wallet_name = os.getenv("WALLET_NAME")
 if not helpers.check_var(wallet_name):
     print("Error: Invalid or missing WALLET_NAME environment variable.")
-    exit(1)
+    sys.exit(1)
 
 wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
 if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
-    exit(1)
+    sys.exit(1)
 
 # Help guide users against including api version suffix on url
 wallet_server_url = helpers.check_wallet_url(wallet_server_url)
@@ -65,7 +66,7 @@ helpers.check_response(response)
 token = response.json()["token"]
 # :login_wallet__
 
-assert token != ""
+assert token
 print("Logged in to wallet successfully")
 
 # __get_pubkey:
@@ -77,7 +78,7 @@ keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
 # :get_pubkey__
 
-assert pubkey != ""
+assert pubkey
 print("Selected pubkey for signing")
 
 #####################################################################################
@@ -89,10 +90,11 @@ print("Selected pubkey for signing")
 url = f"{node_url_rest}/markets"
 response = requests.get(url)
 helpers.check_response(response)
-marketID = response.json()["markets"][0]["id"]
-# :get_market__
 
-assert marketID != ""
+assert len(response.json()["markets"]) != 0, "Expected at least one market"
+marketID = response.json()["markets"][0]["id"]
+
+# :get_market__
 marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["name"]
 print(f"Market found: {marketID} {marketName}")
 

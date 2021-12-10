@@ -47,3 +47,4 @@ query getStatistics {
 EOF
 gq $NODE_URL_GRAPHQL --queryFile=query
 # :get_statistics__
+rm query

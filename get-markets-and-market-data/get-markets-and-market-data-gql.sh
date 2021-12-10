@@ -99,3 +99,4 @@ query GetMarkets{
 EOF
 gq $NODE_URL_GRAPHQL --queryFile=query
 # :get_market_data__
+rm query

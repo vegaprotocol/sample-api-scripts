@@ -22,7 +22,6 @@ Apps/Libraries:
 
 import json
 import requests
-import time
 import os
 import helpers
 
@@ -63,7 +62,7 @@ helpers.check_response(response)
 token = response.json()["token"]
 # :login_wallet__
 
-assert token != ""
+assert token
 print("Logged in to wallet successfully")
 
 # __get_pubkey:
@@ -75,7 +74,7 @@ keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
 # :get_pubkey__
 
-assert pubkey != ""
+assert pubkey
 print("Selected pubkey for signing")
 
 #####################################################################################
@@ -95,8 +94,8 @@ proposals = response.json()
 print("Proposals:\n{}".format(json.dumps(proposals, indent=2, sort_keys=True)))
 # :get_proposals__
 
+assert len(proposals["data"]) != 0, "Sample requires at least one proposal"
 proposalID = proposals["data"][0]["proposal"]["id"]
-assert proposalID != ""
 print(f"Proposal found: {proposalID}")
 
 #####################################################################################

@@ -49,3 +49,4 @@ query GetOrderByID(
 EOF
 gq $NODE_URL_GRAPHQL --queryFile=query
 # :get_order_by_ref__
+rm query

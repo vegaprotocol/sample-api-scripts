@@ -2,17 +2,16 @@
 
 # Sample API scripts - Propose Markets
 
-These scripts talk to a Vega node as well as a Vega wallet to propose/create a new market:
+These scripts talk to a Vega node as well as a Vega wallet to propose a freeform proposal:
 
 - Login to existing wallet
 - Select key-pair
 - Find an existing asset with a specific name
 - Get current time on Vega blockchain
-- Prepare and submit a new market proposal
-- Wait for market proposal to be accepted and processed
+- Prepare and submit a freeform proposal
+- Wait for proposal to be accepted and processed
 - Vote on the proposal
-- Wait for voting to succeed
-- Wait for market to become available on Vega
+- Wait for voting to be enacted
 
 Please see the documentation on Vega for further information.
 
@@ -21,15 +20,7 @@ Please see the documentation on Vega for further information.
 Interact with wallet and node API operations using python3 and the [requests](https://pypi.org/project/requests/) library [REST API]:
 
 ```bash
-python3 propose-markets/propose-vote-enact-markets.py
-```
-
-## Go
-
-Interact with wallet and node API operations using python3 and the [requests](https://pypi.org/project/requests/) library [REST API]:
-
-```bash
-go run propose-markets/propose-vote-enact-markets.go
+python3 propose-markets/propose-vote-enact-freeform.py
 ```
 
 ---

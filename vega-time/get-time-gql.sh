@@ -37,3 +37,4 @@ query GetVegaTime {
 EOF
 gq $NODE_URL_GRAPHQL --queryFile=query
 # :get_time__
+rm query
