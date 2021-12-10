@@ -29,61 +29,25 @@ import helpers
 from typing import Any
 
 
-def check_response(r: requests.Response) -> None:
-    assert (
-        r.status_code == 200
-    ), f"{r.url} returned HTTP {r.status_code} {r.text}"
-
-
-def check_var(val: str) -> bool:
-    return val != "" and "example" not in val
-
-
-def check_url(url: str) -> bool:
-    return check_var(url) and (
-        url.startswith("https://") or url.startswith("http://")
-    )
-
-
-def random_string(length: int = 20) -> str:
-    choices = string.ascii_letters + string.digits
-    return "".join(random.choice(choices) for i in range(length))
-
-
-def check_wallet_url(url: str) -> str:
-    for suffix in ["/api/v1/", "/api/v1", "/"]:
-        if url.endswith(suffix):
-            print(
-                f'There\'s no need to add "{suffix}" to WALLETSERVER_URL. '
-                "Removing it."
-            )
-            url = url[: -len(suffix)]
-    return url
-
-
-def enum_to_str(e: Any, val: int) -> str:
-    return e.keys()[e.values().index(val)]
-
-
 node_url_rest = os.getenv("NODE_URL_REST")
-if not check_url(node_url_rest):
+if not helpers.check_url(node_url_rest):
     print("Error: Invalid or missing NODE_URL_REST environment variable.")
     exit(1)
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
 
 wallet_name = os.getenv("WALLET_NAME")
-if not check_var(wallet_name):
+if not helpers.check_var(wallet_name):
     print("Error: Invalid or missing WALLET_NAME environment variable.")
     exit(1)
 
 wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
-if not check_var(wallet_passphrase):
+if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
 # Help guide users against including api version suffix on url
-wallet_server_url = check_wallet_url(wallet_server_url)
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
 ###############################################################################
 #                           W A L L E T   S E R V I C E                       #
@@ -95,7 +59,7 @@ print(f"Logging into wallet: {wallet_name}")
 # Log in to an existing wallet
 req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
 response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
-check_response(response)
+helpers.check_response(response)
 token = response.json()["token"]
 # :login_wallet__
 
@@ -106,7 +70,7 @@ print("Logged in to wallet successfully")
 # List key pairs and select public key to use
 headers = {"Authorization": f"Bearer {token}"}
 response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
-check_response(response)
+helpers.check_response(response)
 keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
 # :get_pubkey__
@@ -122,7 +86,7 @@ print("Selected pubkey for signing")
 # Request a list of assets available on a Vega network
 url = f"{node_url_rest}/assets"
 response = requests.get(url)
-check_response(response)
+helpers.check_response(response)
 # :get_assets__
 
 # Debugging
@@ -153,13 +117,13 @@ if found_asset_id == "UNKNOWN":
 ###############################################################################
 
 # Get the identifier of the governance asset on the Vega network
-vote_asset_id = "UNKNOWN"
+vote_asset_id = None
 for asset in assets:
     if asset["details"]["symbol"] == "tVOTE":
         vote_asset_id = asset["id"]
         break
 
-if vote_asset_id == "UNKNOWN":
+if vote_asset_id is None:
     print(
         "tVOTE asset not found on specified Vega network, please symbol name "
         "check and try again"
@@ -169,7 +133,7 @@ if vote_asset_id == "UNKNOWN":
 # Request accounts for party and check governance asset balance
 url = f"{node_url_rest}/parties/{pubkey}/accounts"
 response = requests.get(url)
-check_response(response)
+helpers.check_response(response)
 
 # Debugging
 # print("Accounts:\n{}".format(
@@ -195,7 +159,7 @@ if voting_balance == 0:
 # __get_time:
 # Request the current blockchain time, and convert to time in seconds
 response = requests.get(f"{node_url_rest}/time")
-check_response(response)
+helpers.check_response(response)
 blockchain_time = int(response.json()["timestamp"])
 blockchain_time_seconds = int(blockchain_time / 1e9)  # Seconds precision
 # :get_time__
@@ -306,7 +270,7 @@ proposal = {
                     },
                 },
                 "liquidityCommitment": {
-                    "commitmentAmount": 1,
+                    "commitmentAmount": "1",
                     "fee": "0.01",
                     "sells": [
                         {
@@ -349,7 +313,7 @@ print("Market proposal: ", proposal)
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
 response = requests.post(url, headers=headers, json=proposal)
-check_response(response)
+helpers.check_response(response)
 # :sign_tx_proposal__
 
 print("Signed market proposal and sent to Vega")
@@ -420,7 +384,7 @@ vote = {
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
 response = requests.post(url, headers=headers, json=vote)
-check_response(response)
+helpers.check_response(response)
 # :sign_tx_vote__
 
 print("Signed vote on proposal and sent to Vega")
