@@ -11,7 +11,7 @@ def check_response(r: requests.Response) -> None:
 
 
 def check_var(val: str) -> bool:
-    return val != "" and "example" not in val
+    return val is not None and val != "" and "example" not in val
 
 
 def check_url(url: str) -> bool:

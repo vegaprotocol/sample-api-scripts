@@ -29,19 +29,19 @@ import helpers
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
     print("Error: Invalid or missing NODE_URL_REST environment variable.")
-    exit(1)
+    sys.exit(1)
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
 
 wallet_name = os.getenv("WALLET_NAME")
 if not helpers.check_var(wallet_name):
     print("Error: Invalid or missing WALLET_NAME environment variable.")
-    exit(1)
+    sys.exit(1)
 
 wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
 if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
-    exit(1)
+    sys.exit(1)
 
 # Help guide users against including api version suffix on url
 wallet_server_url = helpers.check_wallet_url(wallet_server_url)
@@ -60,7 +60,7 @@ helpers.check_response(response)
 token = response.json()["token"]
 # :login_wallet__
 
-assert token
+assert token != ""
 print("Logged in to wallet successfully")
 
 # __get_pubkey:
@@ -140,7 +140,7 @@ assert blockchain_time_seconds > 0
 print(f"Blockchain time: {blockchain_time} ({blockchain_time_seconds} seconds past epoch)")
 
 #####################################################################################
-#                           UPDATE NETWORK PARAMETER                                #
+#                               F R E E F O R M                                     #
 #####################################################################################
 
 # Step 1 propose a network parameter update
@@ -154,22 +154,20 @@ proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time
-closing_time = blockchain_time_seconds + 3600 + 60
-enactment_time = blockchain_time_seconds + 3600 + 120
+closing_time = blockchain_time_seconds + 60
+enactment_time = blockchain_time_seconds + 120
 validation_time = blockchain_time_seconds + 1
 
-network_param_update = {
+new_freeform = {
     "proposalSubmission": {
         "reference": proposal_ref,
         "terms": {
             "closingTimestamp": closing_time,
-            "enactmentTimestamp": enactment_time,
             "validationTimestamp": validation_time,
-            "updateNetworkParameter": {
-                "changes": {
-                    "key": parameter,
-                    "value": value,
-                }
+            "newFreeform": {
+                "url": "www.example.com/full-proposal.md",
+                "description": "A short description of the propsals",
+                "hash": "1869c3081c5a294269070aa496a4d80d1b0824c239af02625b2e304f011bb190"
             },
         }
     },
@@ -181,7 +179,7 @@ network_param_update = {
 # Sign the network param update proposal transaction
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
-response = requests.post(url, headers=headers, json=network_param_update)
+response = requests.post(url, headers=headers, json=new_freeform)
 helpers.check_response(response)
 # :sign_tx_proposal__
 
@@ -192,7 +190,7 @@ print("Signed market proposal and sent to Vega")
 
 # Wait for proposal to be included in a block and to be accepted by Vega network
 print("Waiting for blockchain...", end="", flush=True)
-proposal_id = None
+proposal_id = ""
 done = False
 while not done:
     time.sleep(0.5)
@@ -210,7 +208,7 @@ while not done:
             done = True
             break
 
-assert proposal_id
+assert proposal_id != ""
 
 #####################################################################################
 #                         V O T E   O N   P A R A M E T E R                         #
@@ -265,13 +263,15 @@ while not done:
 
     for n in my_proposals.json()["data"]:
         if n["proposal"]["reference"] == proposal_ref:
-            if n["proposal"]["state"] != "STATE_OPEN":
-                print(n["proposal"]["state"])
-                if n["proposal"]["state"] == "STATE_ENACTED":
-                    done = True
-                    break
-                elif n["proposal"]["state"] == "STATE_PASSED":
-                    print("proposal vote has succeeded, waiting for enactment")
-                else:
-                    print(n)
-                    sys.exit(1)
+            if n["proposal"]["state"] == "STATE_OPEN":
+                continue
+
+            print(n["proposal"]["state"])
+            if n["proposal"]["state"] == "STATE_ENACTED":
+                done = True
+                break
+            elif n["proposal"]["state"] == "STATE_PASSED":
+                print("proposal vote has succeeded, waiting for enactment")
+            else:
+                print(n)
+                sys.exit(1)
