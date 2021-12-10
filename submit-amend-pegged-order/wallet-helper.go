@@ -3,14 +3,17 @@ package main
 import (
 	"bytes"
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"math/big"
 	"net/http"
 	"strings"
-	"code.vegaprotocol.io/go-wallet/wallet"
-	"encoding/json"
+
+	"code.vegaprotocol.io/vegawallet/wallet"
 	"github.com/pkg/errors"
+
+	service "code.vegaprotocol.io/vegawallet/service"
 )
 
 type WalletConfig struct {
@@ -51,7 +54,7 @@ func CheckWalletUrl(url string) string {
 func CreateWallet(config WalletConfig) ([]byte, error) {
 	// __create_wallet:
 	// Create a new wallet:
-	creationReq :=  &wallet.CreateLoginWalletRequest{Wallet: config.Name, Passphrase: config.Passphrase}
+	creationReq := &service.LoginWalletRequest{Wallet: config.Name, Passphrase: config.Passphrase}
 	payload, err := json.Marshal(creationReq)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to marshal waller login request")
@@ -79,7 +82,7 @@ func CreateWallet(config WalletConfig) ([]byte, error) {
 func LoginWallet(config WalletConfig) ([]byte, error) {
 	// __login_wallet:
 	// Log in to an existing wallet
-	creationReq :=  &wallet.CreateLoginWalletRequest{Wallet: config.Name, Passphrase: config.Passphrase}
+	creationReq := &service.LoginWalletRequest{Wallet: config.Name, Passphrase: config.Passphrase}
 	payload, err := json.Marshal(creationReq)
 	if err != nil {
 		return nil, err
@@ -108,7 +111,8 @@ func GenerateKeyPairs(config WalletConfig, token string) ([]byte, error) {
 	// Generate a new key pair
 	meta := &wallet.Meta{Key: "alias", Value: "my_key_alias"}
 	metaArray := []wallet.Meta{*meta}
-	creationReq :=  &wallet.PassphraseMetaRequest{Meta: metaArray, Passphrase: config.Passphrase}
+
+	creationReq := &service.GenKeyPairRequest{Meta: metaArray, Passphrase: config.Passphrase}
 	payload, err := json.Marshal(creationReq)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to marshal metadata object")

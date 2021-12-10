@@ -8,11 +8,13 @@ import (
 	"net/http"
 	"os"
 
-	proto "code.vegaprotocol.io/protos/vega"
 	api "code.vegaprotocol.io/protos/data-node/api/v1"
+	proto "code.vegaprotocol.io/protos/vega"
+	vega "code.vegaprotocol.io/protos/vega/api/v1"
+	v1 "code.vegaprotocol.io/protos/vega/commands/v1"
+	service "code.vegaprotocol.io/vegawallet/service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"code.vegaprotocol.io/go-wallet/wallet"
 )
 
 func main() {
@@ -48,9 +50,9 @@ func main() {
 	defer conn.Close()
 
 	dataClient := api.NewTradingDataServiceClient(conn)
-	tradingClient := api.NewTradingServiceClient(conn)
+	tradingClient := vega.NewCoreServiceClient(conn)
 
-	var token wallet.TokenResponse
+	var token service.TokenResponse
 	body, err := LoginWallet(walletConfig)
 	if err != nil {
 		panic(err)
@@ -76,14 +78,14 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("response Body:", string(body))
-	var keypair wallet.KeysResponse
+	var keypair service.KeysResponse
 	json.Unmarshal([]byte(body), &keypair)
 
 	if len(keypair.Keys) == 0 {
 		panic("No keys!")
 	}
 
-	pubkey := keypair.Keys[0].Pub
+	pubkey := keypair.Keys[0].Key()
 	fmt.Println("pubkey: ", pubkey)
 
 	// __get_market:
@@ -98,9 +100,9 @@ func main() {
 
 	// __prepare_order:
 	// Vega node: Prepare the SubmitOrder
-	orderSubmission := proto.commands.v1.OrderSubmission{
+	orderSubmission := v1.OrderSubmission{
 		Size:        1,
-		Price:       100000,
+		Price:       "100000",
 		MarketId:    marketId,
 		Side:        proto.Side_SIDE_BUY,
 		TimeInForce: proto.Order_TIME_IN_FORCE_GTC,
@@ -121,5 +123,4 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 }

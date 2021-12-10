@@ -15,6 +15,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"code.vegaprotocol.io/go-wallet/wallet"
+	service "code.vegaprotocol.io/vegawallet/service"
 )
 
 func main() {
@@ -52,7 +53,7 @@ func main() {
 	dataClient := api.NewTradingDataServiceClient(conn)
 	tradingClient := api.NewTradingServiceClient(conn)
 
-	var token wallet.TokenResponse
+	var token service.TokenResponse
 	body, err := LoginWallet(walletConfig)
 	if err != nil {
 		panic(err)
@@ -77,7 +78,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("response Body:", string(body))
-	var keypair wallet.KeysResponse
+	var keypair service.KeysResponse
 	json.Unmarshal([]byte(body), &keypair)
 
 	if len(keypair.Keys) == 0 {

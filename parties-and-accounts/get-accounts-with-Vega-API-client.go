@@ -11,6 +11,7 @@ import (
 
 	"code.vegaprotocol.io/go-wallet/wallet"
 	api "code.vegaprotocol.io/protos/data-node/api/v1"
+	service "code.vegaprotocol.io/vegawallet/service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -105,7 +106,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("response Body:", string(body))
-	var token wallet.TokenResponse
+	var token service.TokenResponse
 	json.Unmarshal([]byte(body), &token)
 
 	fmt.Println(token.Token)

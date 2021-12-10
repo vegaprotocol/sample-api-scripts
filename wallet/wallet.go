@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"code.vegaprotocol.io/go-wallet/wallet"
+
+	service "code.vegaprotocol.io/vegawallet/service"
 )
 
 func main() {
-
 	walletName, err := randSeq(8)
 	if err != nil {
 		panic(err)
@@ -40,8 +40,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
- 
-	var token wallet.TokenResponse
+
+	var token service.TokenResponse
 	json.Unmarshal([]byte(reps), &token)
 	fmt.Println("Token : ", token.Token)
 
@@ -76,11 +76,11 @@ func main() {
 		panic(err)
 	}
 
-	var keys wallet.KeysResponse
+	var keys service.KeysResponse
 	json.Unmarshal([]byte(keysBody), &keys)
 	fmt.Printf("%+v\n", keys)
 
-	pubkey := keys.Keys[0].Pub
+	pubkey := keys.Keys[0].Key()
 	// Request a single key pair
 	fmt.Printf("Get a single keypair, wallet on %s:\n", walletConfig.URL)
 
@@ -106,5 +106,4 @@ func main() {
 	// Log out of a wallet
 	fmt.Printf("Log out of a wallet\n")
 	_, err = LogoutWallet(walletConfig, token.Token)
-
 }
