@@ -23,10 +23,9 @@ Apps/Libraries:
 import requests
 import time
 import os
-import uuid
 import random
-import requests
 import string
+import helpers
 from typing import Any
 
 
@@ -219,7 +218,7 @@ print(
 
 # __prepare_propose_market:
 # Compose a governance proposal for a new market
-proposal_ref = f"{pubkey}-{uuid.uuid4()}"
+proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time

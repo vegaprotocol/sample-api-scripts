@@ -24,7 +24,6 @@ import requests
 import time
 import os
 import helpers
-import uuid
 
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
@@ -155,7 +154,7 @@ value = "0.7"
 
 # __prepare_propose_updateNetworkParameter:
 # Compose a governance proposal for updating a network parameter
-proposal_ref = f"{pubkey}-{uuid.uuid4()}"
+proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time

@@ -38,3 +38,7 @@ def check_wallet_url(url: str) -> str:
 
 def enum_to_str(e: Any, val: int) -> str:
     return e.keys()[e.values().index(val)]
+
+
+def generate_id(n :int) -> str:
+    return ''.join(random.choices(string.ascii_lowercase + (2 * string.digits), k=n))
