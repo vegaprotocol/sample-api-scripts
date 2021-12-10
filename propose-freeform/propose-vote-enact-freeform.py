@@ -143,10 +143,7 @@ print(f"Blockchain time: {blockchain_time} ({blockchain_time_seconds} seconds pa
 #                               F R E E F O R M                                     #
 #####################################################################################
 
-# Step 1 propose a network parameter update
-
-parameter = "market.liquidity.targetstake.triggering.ratio"
-value = "0.7"
+# Step 1 propose a freeform proposal
 
 # __prepare_propose_updateNetworkParameter:
 # Compose a governance proposal for updating a network parameter
