@@ -168,13 +168,13 @@ func main() {
 	var assetID string
 	assetID = ""
 	for _, asset := range assets.Assets {
-		fmt.Printf("Assets: %s \n", asset.Name)
-		fmt.Printf("Assets: %s \n", asset.Symbol)
-		if asset.Symbol == "tDAI" {
+		fmt.Printf("Assets: %s \n", asset.Details.Name)
+		fmt.Printf("Assets: %s \n", asset.Details.Symbol)
+		if asset.Details.Symbol == "tDAI" {
 			fmt.Println("Found an asset with name tDAI:")
 			assetFound = true
 		}
-		if asset.Symbol == "tVOTE" {
+		if asset.Details.Symbol == "tVOTE" {
 			fmt.Println("Found an asset with name tDAI:")
 			assetID = asset.Id
 		}
@@ -194,8 +194,7 @@ func main() {
 	}
 	fmt.Printf("Party accounts: %v\n", partyResp)
 
-	var votingBalance uint64
-	votingBalance = 0
+	var votingBalance string
 
 	fmt.Printf("Looking for assetID %s\n", assetID)
 	for _, account := range partyResp.Accounts {
@@ -206,7 +205,7 @@ func main() {
 		}
 	}
 
-	if votingBalance == 0 {
+	if len(votingBalance) == 0 {
 		panic("Please deposit tVOTE asset to public key " + pubkey + " and try again")
 	}
 

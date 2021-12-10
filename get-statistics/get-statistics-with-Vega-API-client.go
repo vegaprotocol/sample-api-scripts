@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	api "code.vegaprotocol.io/protos/data-node/api/v1"
+	api "code.vegaprotocol.io/protos/vega/api/v1"
 	"google.golang.org/grpc"
 )
 
@@ -21,7 +21,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	dataClient := api.NewTradingDataServiceClient(conn)
+	dataClient := api.NewCoreServiceClient(conn)
 	// __get_statistics:
 	// Request the statistics for a node on Vega
 	request := api.StatisticsRequest{}

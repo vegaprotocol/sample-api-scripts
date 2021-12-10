@@ -35,9 +35,9 @@ func main() {
 	assetFound := false
 	var assetId string
 	for _, asset := range assets.Assets {
-		fmt.Printf("Assets: %s \n", asset.Name)
-		fmt.Printf("Assets: %s \n", asset.Symbol)
-		if asset.Symbol == "tDAI" {
+		fmt.Printf("Assets: %s \n", asset.Details.Name)
+		fmt.Printf("Assets: %s \n", asset.Details.Symbol)
+		if asset.Details.Symbol == "tDAI" {
 			fmt.Println("Found an asset with name tDAI:")
 			assetId = asset.Id
 			assetFound = true

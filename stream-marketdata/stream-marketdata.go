@@ -8,6 +8,7 @@ import (
 
 	api "code.vegaprotocol.io/protos/data-node/api/v1"
 	proto "code.vegaprotocol.io/protos/vega"
+	eventspb "code.vegaprotocol.io/protos/vega/events/v1"
 	"google.golang.org/grpc"
 )
 
@@ -37,7 +38,7 @@ func main() {
 
 	fmt.Println("Connecting to stream...")
 
-	eventType := proto.BusEventType_BUS_EVENT_TYPE_MARKET_TICK
+	eventType := eventspb.BusEventType_BUS_EVENT_TYPE_MARKET_TICK
 	event, err := dataClient.ObserveEventBus(context.Background())
 
 	done := make(chan bool)
@@ -57,7 +58,7 @@ func main() {
 		}
 	}()
 
-	observerEvent := api.ObserveEventBusRequest{Type: []proto.BusEventType{eventType}, MarketId: marketID}
+	observerEvent := api.ObserveEventBusRequest{Type: []eventspb.BusEventType.BusEventType{eventType}, MarketId: marketID}
 	event.Send(&observerEvent)
 	event.CloseSend()
 
