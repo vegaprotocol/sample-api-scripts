@@ -103,7 +103,7 @@ func main() {
 	order := proto.Order{
 		MarketId:    marketID,
 		PartyId:     pubkey,
-		Price:       100000,
+		Price:       "100000",
 		Size:        100,
 		Side:        proto.Side_SIDE_BUY,
 		TimeInForce: proto.Order_TIME_IN_FORCE_GTC,
@@ -123,7 +123,7 @@ func main() {
 	order = proto.Order{
 		MarketId:    marketID,
 		PartyId:     pubkey,
-		Price:       600000,
+		Price:       "600000",
 		Size:        100,
 		Side:        proto.Side_SIDE_BUY,
 		TimeInForce: proto.Order_TIME_IN_FORCE_GTC,
