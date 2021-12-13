@@ -154,8 +154,8 @@ proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time
-closing_time = blockchain_time_seconds + 3600 + 60
-enactment_time = blockchain_time_seconds + 3600 + 120
+closing_time = blockchain_time_seconds + 360
+enactment_time = blockchain_time_seconds + 480
 validation_time = blockchain_time_seconds + 1
 
 network_param_update = {
@@ -272,9 +272,9 @@ while True:
     if proposal["state"] == "STATE_PASSED":
         print("proposal vote has succeeded, waiting for enactment")
         continue
-
+    
+    print(proposal)
     if proposal["state"] == "STATE_ENACTED":
         break
     
-    print(proposal)
     sys.exit(1)

@@ -10,7 +10,7 @@ def check_response(r: requests.Response) -> None:
     ), f"{r.url} returned HTTP {r.status_code} {r.text}"
 
 
-def check_var(val: Union(str, None)) -> bool:
+def check_var(val: Union[str, None]) -> bool:
     return val is not None and val != "" and "example" not in val
 
 

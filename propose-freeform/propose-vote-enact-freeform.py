@@ -153,7 +153,6 @@ def main():
     # Set closing/enactment and validation timestamps to valid time offsets
     # from the current Vega blockchain time
     closing_time = blockchain_time_seconds + 60
-    enactment_time = blockchain_time_seconds + 120
     validation_time = blockchain_time_seconds + 1
 
     new_freeform = {
@@ -269,10 +268,10 @@ def main():
             print("proposal vote has succeeded, waiting for enactment")
             continue
 
+        print(proposal)
         if proposal["state"] == "STATE_ENACTED":
             break
         
-        print(proposal)
         sys.exit(1)
 
 
