@@ -116,7 +116,7 @@ if found_asset_id is None:
 
 # Get the identifier of the governance asset on the Vega network
 assets = response.json()["assets"]
-vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "VOTE"), None)
+vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "tVOTE"), None)
 if vote_asset_id is None:
     print("tVOTE asset not found on specified Vega network, please symbol name check and try again")
     sys.exit(1)
