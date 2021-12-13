@@ -32,9 +32,9 @@ check_url "NODE_URL_GRAPHQL" || exit 1
 # from a prepareSubmitOrder request in the field named `submitID` or similar.
 cat >query <<EOF
 query GetOrderByID(
-  $orderID: ID! = "V0000021536-0000000059"
+  \$orderID: ID! = "V0000021536-0000000059"
 ){
-  orderByID(orderId:$orderID){
+  orderByID(orderId:\$orderID){
     id
     price
     timeInForce

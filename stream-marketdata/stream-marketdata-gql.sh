@@ -30,9 +30,9 @@ check_url "NODE_URL_GRAPHQL" || exit 1
 # Subscribe to the Market Data stream for the marketID specified
 cat >query <<EOF
 subscription StreamMarketData (
-  $marketID: ID! = "9b358cb36b63001ae74b9f815c30a58f1db258fa11b17ba082a66abebed75951",
+  \$marketID: ID! = "9b358cb36b63001ae74b9f815c30a58f1db258fa11b17ba082a66abebed75951",
 ){
-  marketData(marketId:$marketID){
+  marketData(marketId:\$marketID){
     bestBidPrice
     bestBidVolume
     bestOfferPrice
