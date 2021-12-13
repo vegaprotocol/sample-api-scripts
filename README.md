@@ -40,7 +40,9 @@ And you're good to go. Now choose a sample program to run from the following (se
 | Vega/blockchain time  | bash, python3, go | Vega node [GraphQL, REST, gRPC] | / [vega-time](vega-time) |
 | Streaming events | bash, python3, go | Vega node [GraphQL, gRPC] | / [stream-events](stream-events) |
 | Fees and margins estimation | bash, python3, go | Vega node [REST, gRPC] | / [fees-margins-estimation](fees-margins-estimation) |
-| Propose, vote and enact new markets | bash, python3 | Vega node [REST] | / [propose-markets](propose-markets) |
+| Propose, vote and enact new markets | python3 | Vega node [REST] | / [propose-markets](propose-markets) |
+| Propose, vote and enact an update to netparams | python3 | Vega node [REST] | / [propose-netparams](propose-netparams) |
+| Propose and vote a freeform proposal | python3 | Vega node [REST] | / [propose-freeform](propose-freeform) |
 | List proposals | bash, python3, go | Vega node [GraphQL, gRPC] | / [propose-votes](propose-votes) |
 
 # Troubleshooting
