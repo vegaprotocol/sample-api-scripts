@@ -16,6 +16,8 @@ import (
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"code.vegaprotocol.io/go-wallet/wallet"
 	service "code.vegaprotocol.io/vegawallet/service"
+
+	wallethelper "code.vegaprotocol.io/sample/api/scripts/wallet-helper"
 )
 
 func main() {
@@ -36,7 +38,7 @@ func main() {
 		panic("WALLET_PASSPHRASE is null or empty")
 	}
 
-	walletserverURL = CheckWalletUrl(walletserverURL)
+	walletserverURL = wallethelper.CheckWalletUrl(walletserverURL)
 
 	walletConfig := WalletConfig{
 		URL:        walletserverURL,

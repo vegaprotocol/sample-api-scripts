@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,8 +10,9 @@ import (
 
 	api "code.vegaprotocol.io/protos/data-node/api/v1"
 	proto "code.vegaprotocol.io/protos/vega"
-	core "code.vegaprotocol.io/protos/vega/api/v1"
 	v1 "code.vegaprotocol.io/protos/vega/commands/v1"
+	walletpb "code.vegaprotocol.io/protos/vega/wallet/v1"
+	wallethelper "code.vegaprotocol.io/sample/api/scripts/wallet-helper"
 	service "code.vegaprotocol.io/vegawallet/service"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -36,9 +36,9 @@ func main() {
 		panic("WALLET_PASSPHRASE is null or empty")
 	}
 
-	walletserverURL = CheckWalletUrl(walletserverURL)
+	walletserverURL = wallethelper.CheckWalletUrl(walletserverURL)
 
-	walletConfig := WalletConfig{
+	walletConfig := wallethelper.WalletConfig{
 		URL:        walletserverURL,
 		Name:       walletName,
 		Passphrase: walletPassphrase,
@@ -51,10 +51,10 @@ func main() {
 	defer conn.Close()
 
 	dataClient := api.NewTradingDataServiceClient(conn)
-	tradingClient := core.NewCoreServiceClient(conn)
+	// tradingClient := core.NewCoreServiceClient(conn)
 
 	var token service.TokenResponse
-	body, err := LoginWallet(walletConfig)
+	body, err := wallethelper.LoginWallet(walletConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -78,30 +78,37 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("response Body:", string(body))
-	var keypair service.KeysResponse
-	json.Unmarshal([]byte(body), &keypair)
+	keypair := struct {
+		Keys []struct {
+			Pubkey string `json:"pub"`
+		} `json:"Keys"`
+	}{}
+
+	json.Unmarshal(body, &keypair)
 
 	if len(keypair.Keys) == 0 {
 		panic("No keys!")
 	}
 
-	pubkey := keypair.Keys[0].Key()
+	fmt.Println(keypair.Keys)
+	pubkey := keypair.Keys[0].Pubkey
 	fmt.Println("pubkey: ", pubkey)
 
 	// Get market
-	marketRequest := api.MarketsRequest{}
-	markets, err := dataClient.Markets(context.Background(), &marketRequest)
+	// marketRequest := api.MarketsRequest{}
+	// markets, err := dataClient.Markets(context.Background(), &marketRequest)
 	if err != nil {
 		panic(err)
 	}
-	marketId := markets.Markets[5].Id
-	fmt.Printf("Market: %+v\n", markets.Markets[5])
+	// marketId := markets.Markets[5].Id
+	marketId := "blah"
+	// fmt.Printf("Market: %+v\n", markets.Markets[5])
 
 	// Get Blockchain time
 	// __get_expiry_time:
 	// Request the current blockchain time, calculate an expiry time
 	request := api.GetVegaTimeRequest{}
-	vegaTime, err := dataClient.GetVegaTime(context.Background(), &request)
+	vegaTime, _ := dataClient.GetVegaTime(context.Background(), &request)
 
 	expireAt := vegaTime.Timestamp + (120 * 1e9)
 	// :get_expiry_time__
@@ -111,6 +118,7 @@ func main() {
 	// Submit order
 	// __prepare_submit_order:
 	// Prepare a submit order message
+
 	orderSubmission := v1.OrderSubmission{
 		Size:        10,
 		Price:       "1",
@@ -121,27 +129,21 @@ func main() {
 		ExpiresAt:   expireAt,
 	}
 
-	order := api.PrepareSubmitOrderRequest{Submission: &orderSubmission}
-
-	fmt.Printf("Request for PrepareSubmitOrder: %v\n", order)
-	orderRequest, err := tradingClient.PrepareSubmitOrder(context.Background(), &order)
-	if err != nil {
-		panic(err)
+	order := walletpb.SubmitTransactionRequest{
+		PubKey:    pubkey,
+		Propagate: true,
+		Command: &walletpb.SubmitTransactionRequest_OrderSubmission{
+			OrderSubmission: &orderSubmission,
+		},
 	}
 
-	// :prepare_submit_order__
-
-	fmt.Printf("%+v\n", orderRequest)
-	fmt.Println("test")
-	// Sign the prepared transaction
-	data := orderRequest.Blob
-	sEnc := base64.StdEncoding.EncodeToString([]byte(data))
-	_, err = SignTransaction(walletConfig, token.Token, pubkey, string(sEnc))
+	_, err = wallethelper.SendTransaction(walletConfig, token.Token, order)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 
-	orderRef := orderRequest.SubmitId
+	orderRef := "" // orderRequest.SubmitId
 
 	fmt.Printf("Signed order and sent to Vega\n")
 
@@ -169,17 +171,19 @@ func main() {
 		TimeInForce: proto.Order_TIME_IN_FORCE_GTC,
 	}
 
-	amendObj := api.PrepareAmendOrderRequest{Amendment: &amend}
-	amendResp, err := tradingClient.PrepareAmendOrder(context.Background(), &amendObj)
-	if err != nil {
-		panic(err)
+	order = walletpb.SubmitTransactionRequest{
+		PubKey:    pubkey,
+		Propagate: true,
+		Command: &walletpb.SubmitTransactionRequest_OrderAmendment{
+			OrderAmendment: &amend,
+		},
 	}
+
 	// :prepare_amend_order__
 
 	// Sign the prepared transaction
-	data = amendResp.Blob
-	sEnc = base64.StdEncoding.EncodeToString([]byte(data))
-	_, err = SignTransaction(walletConfig, token.Token, pubkey, string(sEnc))
+
+	_, err = wallethelper.SendTransaction(walletConfig, token.Token, order)
 	if err != nil {
 		panic(err)
 	}
@@ -229,21 +233,15 @@ func main() {
 
 	// __prepare_cancel_order:
 	// Prepare the cancel order message
-	orderCancelReq := api.PrepareCancelOrderRequest{
-		Cancellation: &cancel,
+	order = walletpb.SubmitTransactionRequest{
+		PubKey:    pubkey,
+		Propagate: true,
+		Command: &walletpb.SubmitTransactionRequest_OrderCancellation{
+			OrderCancellation: &cancel,
+		},
 	}
-	orderCancelResp, err := tradingClient.PrepareCancelOrder(context.Background(), &orderCancelReq)
-	if err != nil {
-		panic(err)
-	}
-	// :prepare_cancel_order__
-	fmt.Printf("%v\n", err)
-	fmt.Printf("%v\n", orderCancelResp)
 
-	// Sign the prepared transaction
-	data = orderCancelResp.Blob
-	sEnc = base64.StdEncoding.EncodeToString([]byte(data))
-	_, err = SignTransaction(walletConfig, token.Token, pubkey, string(sEnc))
+	_, err = wallethelper.SendTransaction(walletConfig, token.Token, order)
 	if err != nil {
 		panic(err)
 	}

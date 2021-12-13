@@ -6,37 +6,38 @@ import (
 	"fmt"
 	"os"
 
+	wallethelper "code.vegaprotocol.io/sample/api/scripts/wallet-helper"
 	service "code.vegaprotocol.io/vegawallet/service"
 )
 
 func main() {
-	walletName, err := randSeq(8)
+	walletName, err := wallethelper.RandSeq(8)
 	if err != nil {
 		panic(err)
 	}
-	walletPassphrase, err := randSeq(12)
+	walletPassphrase, err := wallethelper.RandSeq(12)
 	if err != nil {
 		panic(err)
 	}
 
 	walletServerURL := os.Getenv("WALLETSERVER_URL")
-	if !CheckUrl(walletServerURL) {
+	if !wallethelper.CheckUrl(walletServerURL) {
 		panic("Error: Invalid or missing WALLETSERVER_URL environment variable.")
 	}
 
 	// Help guide users against including api version suffix on url
-	walletServerURL = CheckWalletUrl(walletServerURL)
+	walletServerURL = wallethelper.CheckWalletUrl(walletServerURL)
 
 	fmt.Printf("Creating a new wallet on %s:\n", walletServerURL)
 	fmt.Printf("- name:       %s\n", walletName)
 	fmt.Printf("- passphrase: %s\n", walletPassphrase)
 
-	walletConfig := WalletConfig{
+	walletConfig := wallethelper.WalletConfig{
 		URL:        walletServerURL,
 		Name:       walletName,
 		Passphrase: walletPassphrase,
 	}
-	reps, err := CreateWallet(walletConfig)
+	reps, err := wallethelper.CreateWallet(walletConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -52,7 +53,7 @@ func main() {
 
 	// Log in to an existing wallet
 	fmt.Printf("Log in to an existing wallet, wallet on %s:\n", walletConfig.URL)
-	loginResp, err := LoginWallet(walletConfig)
+	loginResp, err := wallethelper.LoginWallet(walletConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -62,7 +63,7 @@ func main() {
 
 	// Generate a new key pair
 	fmt.Printf("Generate key pair on an existing wallet, wallet on %s:\n", walletConfig.URL)
-	key, err := GenerateKeyPairs(walletConfig, token.Token)
+	key, err := wallethelper.GenerateKeyPairs(walletConfig, token.Token)
 	if err != nil {
 		panic(err)
 	}
@@ -71,20 +72,25 @@ func main() {
 	// Request all key pairs
 	fmt.Printf("Request all key pairs from an existing wallet, wallet on %s:\n", walletConfig.URL)
 
-	keysBody, err := GetKeyPairs(walletConfig, token.Token)
+	keysBody, err := wallethelper.GetKeyPairs(walletConfig, token.Token)
 	if err != nil {
 		panic(err)
 	}
 
-	var keys service.KeysResponse
+	keys := struct {
+		Keys []struct {
+			Pubkey string `json:"pub"`
+		} `json:"Keys"`
+	}{}
+
 	json.Unmarshal([]byte(keysBody), &keys)
 	fmt.Printf("%+v\n", keys)
 
-	pubkey := keys.Keys[0].Key()
+	pubkey := keys.Keys[0].Pubkey
 	// Request a single key pair
 	fmt.Printf("Get a single keypair, wallet on %s:\n", walletConfig.URL)
 
-	keyBody, err := GetKeyPair(walletConfig, token.Token, pubkey)
+	keyBody, err := wallethelper.GetKeyPair(walletConfig, token.Token, pubkey)
 	if err != nil {
 		panic(err)
 	}
@@ -96,7 +102,7 @@ func main() {
 	fmt.Printf("Sign a transaction\n")
 	data := "data returned from a Vega node 'Prepare<operation>' call"
 	sEnc := base64.StdEncoding.EncodeToString([]byte(data))
-	sign, err := SignTransaction(walletConfig, token.Token, pubkey, string(sEnc))
+	sign, err := wallethelper.SignAny(walletConfig, token.Token, pubkey, string(sEnc))
 	if err != nil {
 		panic(err)
 	}
@@ -105,5 +111,5 @@ func main() {
 
 	// Log out of a wallet
 	fmt.Printf("Log out of a wallet\n")
-	_, err = LogoutWallet(walletConfig, token.Token)
+	_, err = wallethelper.LogoutWallet(walletConfig, token.Token)
 }

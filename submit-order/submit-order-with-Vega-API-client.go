@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,9 +9,12 @@ import (
 
 	api "code.vegaprotocol.io/protos/data-node/api/v1"
 	proto "code.vegaprotocol.io/protos/vega"
-	vega "code.vegaprotocol.io/protos/vega/api/v1"
 	v1 "code.vegaprotocol.io/protos/vega/commands/v1"
+	walletpb "code.vegaprotocol.io/protos/vega/wallet/v1"
 	service "code.vegaprotocol.io/vegawallet/service"
+
+	wallethelper "code.vegaprotocol.io/sample/api/scripts/wallet-helper"
+
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -35,9 +37,9 @@ func main() {
 		panic("WALLET_PASSPHRASE is null or empty")
 	}
 
-	walletserverURL = CheckWalletUrl(walletserverURL)
+	walletserverURL = wallethelper.CheckWalletUrl(walletserverURL)
 
-	walletConfig := WalletConfig{
+	walletConfig := wallethelper.WalletConfig{
 		URL:        walletserverURL,
 		Name:       walletName,
 		Passphrase: walletPassphrase,
@@ -50,10 +52,9 @@ func main() {
 	defer conn.Close()
 
 	dataClient := api.NewTradingDataServiceClient(conn)
-	tradingClient := vega.NewCoreServiceClient(conn)
 
 	var token service.TokenResponse
-	body, err := LoginWallet(walletConfig)
+	body, err := wallethelper.LoginWallet(walletConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -109,17 +110,15 @@ func main() {
 		Type:        proto.Order_TYPE_LIMIT,
 	}
 
-	order := api.PrepareSubmitOrderRequest{Submission: &orderSubmission}
+	order := walletpb.SubmitTransactionRequest{
+		PubKey:    pubkey,
+		Propagate: true,
+		Command: &walletpb.SubmitTransactionRequest_OrderSubmission{
+			OrderSubmission: &orderSubmission,
+		},
+	}
 
-	fmt.Printf("Request for PrepareSubmitOrder: %s", order)
-	orderRequest, err := tradingClient.PrepareSubmitOrder(context.Background(), &order)
-	// :prepare_order__
-
-	// Sign the prepared transaction
-	data := orderRequest.Blob
-	sEnc := base64.StdEncoding.EncodeToString([]byte(data))
-
-	_, err = SignTransaction(walletConfig, token.Token, pubkey, string(sEnc))
+	_, err = wallethelper.SendTransaction(walletConfig, token.Token, order)
 	if err != nil {
 		panic(err)
 	}

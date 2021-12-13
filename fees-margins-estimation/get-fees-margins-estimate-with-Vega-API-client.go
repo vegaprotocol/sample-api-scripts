@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	wallet "code.vegaprotocol.io/sample/api/scripts/wallet-helper"
+
 	api "code.vegaprotocol.io/protos/data-node/api/v1"
 	proto "code.vegaprotocol.io/protos/vega"
 	service "code.vegaprotocol.io/vegawallet/service"
@@ -32,9 +34,9 @@ func main() {
 		panic("WALLET_PASSPHRASE is null or empty")
 	}
 
-	walletserverURL = CheckWalletUrl(walletserverURL)
+	walletserverURL = wallet.CheckWalletUrl(walletserverURL)
 
-	walletConfig := WalletConfig{
+	walletConfig := wallet.WalletConfig{
 		URL:        walletserverURL,
 		Name:       walletName,
 		Passphrase: walletPassphrase,
@@ -49,7 +51,7 @@ func main() {
 	dataClient := api.NewTradingDataServiceClient(conn)
 
 	var token service.TokenResponse
-	body, err := LoginWallet(walletConfig)
+	body, err := wallet.LoginWallet(walletConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -74,8 +76,11 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("response Body:", string(body))
-	var keypair service.KeysResponse
-	json.Unmarshal([]byte(body), &keypair)
+	var keypair wallet.ListKeysResponse
+	err = json.Unmarshal([]byte(body), &keypair)
+	if err != nil {
+		panic("BLAH")
+	}
 
 	if len(keypair.Keys) == 0 {
 		panic("No keys!")
