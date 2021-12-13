@@ -273,8 +273,39 @@ while True:
         print("proposal vote has succeeded, waiting for enactment")
         continue
     
-    print(proposal)
     if proposal["state"] == "STATE_ENACTED":
         break
     
     sys.exit(1)
+
+###############################################################################
+#                           CHECK THE CHANGE                                  #
+###############################################################################
+
+# STEP 3 - Wait for netparameter change to be enacted
+
+# IMPORTANT: When voting for a proposal on the Vega Testnet, typically a single
+# YES vote from the proposer will not be enough to vote the market into
+# existence. As described above in STEP 2, a netparam change will need community voting
+# support to be passed and then enacted.
+
+# __wait_for_market:
+print("Waiting for netparam update to be enacted or failed...", end="", flush=True)
+done = False
+while not done:
+    time.sleep(0.5)
+    print(".", end="", flush=True)
+    netparams = requests.get(node_url_rest + "/network/parameters")
+    if netparams.status_code != 200:
+        continue
+    
+    print(netparams.json())
+    for n in netparams.json()["networkParameters"]:
+        if n["key"] == parameter:
+            print()
+            print(n)
+            done = True
+            break
+# :wait_for_market__
+
+# Completed.
