@@ -115,17 +115,10 @@ if found_asset_id is None:
 ###############################################################################
 
 # Get the identifier of the governance asset on the Vega network
-vote_asset_id = None
-for asset in assets:
-    if asset["details"]["symbol"] == "tVOTE":
-        vote_asset_id = asset["id"]
-        break
-
+assets = response.json()["assets"]
+vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "tVOTE"), None)
 if vote_asset_id is None:
-    print(
-        "tVOTE asset not found on specified Vega network, please symbol name "
-        "check and try again"
-    )
+    print("tVOTE asset not found on specified Vega network, please symbol name check and try again")
     sys.exit(1)
 
 # Request accounts for party and check governance asset balance
@@ -392,6 +385,7 @@ print("Signed vote on proposal and sent to Vega")
 
 print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
 
+print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
 while True:
     time.sleep(0.5)
     my_proposals = requests.get(
@@ -402,19 +396,15 @@ while True:
 
     proposal = next((n["proposal"] for n in my_proposals.json()["data"] if n["proposal"]["reference"] == proposal_ref), None)
 
-    if proposal is None:
+    if proposal is None or proposal["state"] == "STATE_OPEN":
         continue
 
-    if proposal["state"] == "STATE_OPEN":
-        continue
-
-    print(proposal["state"])
-    if proposal["state"] == "STATE_ENACTED":
-        break
-    
     if proposal["state"] == "STATE_PASSED":
         print("proposal vote has succeeded, waiting for enactment")
         continue
+
+    if proposal["state"] == "STATE_ENACTED":
+        break
     
     print(proposal)
     sys.exit(1)
