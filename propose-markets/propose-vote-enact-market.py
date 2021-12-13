@@ -384,8 +384,6 @@ print("Signed vote on proposal and sent to Vega")
 # print("Signed transaction:\n", response.json(), "\n")
 
 print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
-
-print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
 while True:
     time.sleep(0.5)
     my_proposals = requests.get(
