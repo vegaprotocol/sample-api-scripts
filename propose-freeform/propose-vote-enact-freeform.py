@@ -163,7 +163,7 @@ def main():
                 "validationTimestamp": validation_time,
                 "newFreeform": {
                     "url": "www.example.com/full-proposal.md",
-                    "description": "A short description of the propsals",
+                    "description": "A short description of the proposals",
                     "hash": "1869c3081c5a294269070aa496a4d80d1b0824c239af02625b2e304f011bb190"
                 },
             }
