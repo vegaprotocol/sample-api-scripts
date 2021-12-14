@@ -180,7 +180,7 @@ def main():
     helpers.check_response(response)
     # :sign_tx_proposal__
 
-    print("Signed market proposal and sent to Vega")
+    print("Signed proposal and sent to Vega")
 
     # Debugging
     # print("Signed transaction:\n", response.json(), "\n")
