@@ -211,7 +211,7 @@ def main():
     #                         V O T E   O N   P A R A M E T E R                         #
     #####################################################################################
 
-    # STEP 2 - Let's vote on the market proposal
+    # STEP 2 - Let's vote on the proposal
 
     # IMPORTANT: When voting for a proposal on the Vega Testnet, typically a single
     # YES vote from the proposer will not be enough to vote the market into existence.
