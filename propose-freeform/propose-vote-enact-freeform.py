@@ -216,7 +216,6 @@ def main():
     # IMPORTANT: When voting for a proposal on the Vega Testnet, typically a single
     # YES vote from the proposer will not be enough to vote the market into existence.
     # This is because of the network minimum threshold for voting on proposals.
-    # threshold for market proposals this is currently a 66% majority vote either YES or NO.
     # A proposer should enlist the help/YES votes from other community members, ideally on the
     # Community forums (https://community.vega.xyz/c/testnet) or Discord (https://vega.xyz/discord)
 
