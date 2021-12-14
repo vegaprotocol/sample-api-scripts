@@ -147,7 +147,7 @@ def main():
     # Step 1 propose a freeform proposal
 
     # __prepare_propose_updateNetworkParameter:
-    # Compose a governance proposal for updating a network parameter
+    # Compose a freeform governance proposal 
     proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
     # Set closing/enactment and validation timestamps to valid time offsets
