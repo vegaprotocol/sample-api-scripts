@@ -116,9 +116,9 @@ if found_asset_id is None:
 
 # Get the identifier of the governance asset on the Vega network
 assets = response.json()["assets"]
-vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "tVOTE"), None)
+vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "VEGA"), None)
 if vote_asset_id is None:
-    print("tVOTE asset not found on specified Vega network, please symbol name check and try again")
+    print("VEGA asset not found on specified Vega network, please symbol name check and try again")
     sys.exit(1)
 
 # Request accounts for party and check governance asset balance
@@ -140,7 +140,7 @@ for account in accounts:
         break
 
 if voting_balance == 0:
-    print(f"Please deposit tVOTE asset to public key {pubkey} and try again")
+    print(f"Please deposit VEGA asset to public key {pubkey} and try again")
     sys.exit(1)
 
 ###############################################################################
