@@ -76,20 +76,6 @@ def main():
     assert pubkey
     print("Selected pubkey for signing")
 
-    #####################################################################################
-    #                              F I N D   A S S E T S                                #
-    #####################################################################################
-
-    # __get_assets:
-    # Request a list of assets available on a Vega network
-    url = f"{node_url_rest}/assets"
-    response = requests.get(url)
-    helpers.check_response(response)
-    # :get_assets__
-
-    # Debugging
-    # print("Assets:\n{}".format(
-    #    json.dumps(response.json(), indent=2, sort_keys=True)))
 
     #####################################################################################
     #                   G O V E R N A N C E   T O K E N   C H E C K                     #
@@ -146,7 +132,7 @@ def main():
 
     # Step 1 propose a freeform proposal
 
-    # __prepare_propose_updateNetworkParameter:
+    # __prepare_propose_newFreeform:
     # Compose a freeform governance proposal 
     proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
