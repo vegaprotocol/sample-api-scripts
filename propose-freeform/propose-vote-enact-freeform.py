@@ -173,7 +173,7 @@ def main():
     }
 
     # __sign_tx_proposal:
-    # Sign the network param update proposal transaction
+    # Sign the proposal transaction
     # Note: Setting propagate to true will also submit to a Vega node
     url = f"{wallet_server_url}/api/v1/command/sync"
     response = requests.post(url, headers=headers, json=new_freeform)
