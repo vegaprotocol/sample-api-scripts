@@ -285,7 +285,7 @@ while True:
 # STEP 3 - Wait for netparameter change to be enacted
 
 # IMPORTANT: When voting for a proposal on the Vega Testnet, typically a single
-# YES vote from the proposer will not be enough to vote the market into
+# YES vote from the proposer will not be enough to vote the proposal in.
 # existence. As described above in STEP 2, a netparam change will need community voting
 # support to be passed and then enacted.
 
