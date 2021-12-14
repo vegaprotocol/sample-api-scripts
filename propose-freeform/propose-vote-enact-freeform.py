@@ -121,7 +121,7 @@ def main():
             break
 
     if voting_balance == 0:
-        print(f"Please deposit tVOTE asset to public key {pubkey} and try again")
+        print(f"Please deposit VEGA asset to public key {pubkey} and try again")
         sys.exit(1)
 
     #####################################################################################
