@@ -1,7 +1,7 @@
 import random
 import requests
 import string
-from typing import Any
+from typing import Any, Union
 
 
 def check_response(r: requests.Response) -> None:
@@ -10,8 +10,8 @@ def check_response(r: requests.Response) -> None:
     ), f"{r.url} returned HTTP {r.status_code} {r.text}"
 
 
-def check_var(val: str) -> bool:
-    return val != "" and "example" not in val
+def check_var(val: Union[str, None]) -> bool:
+    return val is not None and val != "" and "example" not in val
 
 
 def check_url(url: str) -> bool:
@@ -38,3 +38,7 @@ def check_wallet_url(url: str) -> str:
 
 def enum_to_str(e: Any, val: int) -> str:
     return e.keys()[e.values().index(val)]
+
+
+def generate_id(n :int) -> str:
+    return ''.join(random.choices(string.ascii_lowercase + (2 * string.digits), k=n))

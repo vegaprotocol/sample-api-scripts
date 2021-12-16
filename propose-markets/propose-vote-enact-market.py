@@ -20,71 +20,32 @@ Apps/Libraries:
 # some code here
 # :something__
 
+import os
+import sys
 import requests
 import time
-import os
-import uuid
-import random
-import requests
-import string
-from typing import Any
-
-
-def check_response(r: requests.Response) -> None:
-    assert (
-        r.status_code == 200
-    ), f"{r.url} returned HTTP {r.status_code} {r.text}"
-
-
-def check_var(val: str) -> bool:
-    return val != "" and "example" not in val
-
-
-def check_url(url: str) -> bool:
-    return check_var(url) and (
-        url.startswith("https://") or url.startswith("http://")
-    )
-
-
-def random_string(length: int = 20) -> str:
-    choices = string.ascii_letters + string.digits
-    return "".join(random.choice(choices) for i in range(length))
-
-
-def check_wallet_url(url: str) -> str:
-    for suffix in ["/api/v1/", "/api/v1", "/"]:
-        if url.endswith(suffix):
-            print(
-                f'There\'s no need to add "{suffix}" to WALLETSERVER_URL. '
-                "Removing it."
-            )
-            url = url[: -len(suffix)]
-    return url
-
-
-def enum_to_str(e: Any, val: int) -> str:
-    return e.keys()[e.values().index(val)]
+import helpers
 
 
 node_url_rest = os.getenv("NODE_URL_REST")
-if not check_url(node_url_rest):
+if not helpers.check_url(node_url_rest):
     print("Error: Invalid or missing NODE_URL_REST environment variable.")
-    exit(1)
+    sys.exit(1)
 
 wallet_server_url = os.getenv("WALLETSERVER_URL")
 
 wallet_name = os.getenv("WALLET_NAME")
-if not check_var(wallet_name):
+if not helpers.check_var(wallet_name):
     print("Error: Invalid or missing WALLET_NAME environment variable.")
-    exit(1)
+    sys.exit(1)
 
 wallet_passphrase = os.getenv("WALLET_PASSPHRASE")
-if not check_var(wallet_passphrase):
+if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
-    exit(1)
+    sys.exit(1)
 
 # Help guide users against including api version suffix on url
-wallet_server_url = check_wallet_url(wallet_server_url)
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
 ###############################################################################
 #                           W A L L E T   S E R V I C E                       #
@@ -96,7 +57,7 @@ print(f"Logging into wallet: {wallet_name}")
 # Log in to an existing wallet
 req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
 response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
-check_response(response)
+helpers.check_response(response)
 token = response.json()["token"]
 # :login_wallet__
 
@@ -107,7 +68,7 @@ print("Logged in to wallet successfully")
 # List key pairs and select public key to use
 headers = {"Authorization": f"Bearer {token}"}
 response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
-check_response(response)
+helpers.check_response(response)
 keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
 # :get_pubkey__
@@ -123,7 +84,7 @@ print("Selected pubkey for signing")
 # Request a list of assets available on a Vega network
 url = f"{node_url_rest}/assets"
 response = requests.get(url)
-check_response(response)
+helpers.check_response(response)
 # :get_assets__
 
 # Debugging
@@ -132,7 +93,7 @@ check_response(response)
 
 # __find_asset:
 # Find settlement asset with name tDAI
-found_asset_id = "UNKNOWN"
+found_asset_id = None
 assets = response.json()["assets"]
 for asset in assets:
     if asset["details"]["symbol"] == "tDAI":
@@ -142,35 +103,28 @@ for asset in assets:
         break
 # :find_asset__
 
-if found_asset_id == "UNKNOWN":
+if found_asset_id is None:
     print(
         "tDAI asset not found on specified Vega network, please propose and "
         "create this asset first"
     )
-    exit(1)
+    sys.exit(1)
 
 ###############################################################################
 #                   G O V E R N A N C E   T O K E N   C H E C K               #
 ###############################################################################
 
 # Get the identifier of the governance asset on the Vega network
-vote_asset_id = "UNKNOWN"
-for asset in assets:
-    if asset["details"]["symbol"] == "tVOTE":
-        vote_asset_id = asset["id"]
-        break
-
-if vote_asset_id == "UNKNOWN":
-    print(
-        "tVOTE asset not found on specified Vega network, please symbol name "
-        "check and try again"
-    )
-    exit(1)
+assets = response.json()["assets"]
+vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "VEGA"), None)
+if vote_asset_id is None:
+    print("VEGA asset not found on specified Vega network, please symbol name check and try again")
+    sys.exit(1)
 
 # Request accounts for party and check governance asset balance
 url = f"{node_url_rest}/parties/{pubkey}/accounts"
 response = requests.get(url)
-check_response(response)
+helpers.check_response(response)
 
 # Debugging
 # print("Accounts:\n{}".format(
@@ -186,8 +140,8 @@ for account in accounts:
         break
 
 if voting_balance == 0:
-    print(f"Please deposit tVOTE asset to public key {pubkey} and try again")
-    exit(1)
+    print(f"Please deposit VEGA asset to public key {pubkey} and try again")
+    sys.exit(1)
 
 ###############################################################################
 #                          B L O C K C H A I N   T I M E                      #
@@ -196,7 +150,7 @@ if voting_balance == 0:
 # __get_time:
 # Request the current blockchain time, and convert to time in seconds
 response = requests.get(f"{node_url_rest}/time")
-check_response(response)
+helpers.check_response(response)
 blockchain_time = int(response.json()["timestamp"])
 blockchain_time_seconds = int(blockchain_time / 1e9)  # Seconds precision
 # :get_time__
@@ -219,7 +173,7 @@ print(
 
 # __prepare_propose_market:
 # Compose a governance proposal for a new market
-proposal_ref = f"{pubkey}-{uuid.uuid4()}"
+proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time
@@ -307,7 +261,7 @@ proposal = {
                     },
                 },
                 "liquidityCommitment": {
-                    "commitmentAmount": 1,
+                    "commitmentAmount": "1",
                     "fee": "0.01",
                     "sells": [
                         {
@@ -350,7 +304,7 @@ print("Market proposal: ", proposal)
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
 response = requests.post(url, headers=headers, json=proposal)
-check_response(response)
+helpers.check_response(response)
 # :sign_tx_proposal__
 
 print("Signed market proposal and sent to Vega")
@@ -421,7 +375,7 @@ vote = {
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
 response = requests.post(url, headers=headers, json=vote)
-check_response(response)
+helpers.check_response(response)
 # :sign_tx_vote__
 
 print("Signed vote on proposal and sent to Vega")
@@ -430,8 +384,7 @@ print("Signed vote on proposal and sent to Vega")
 # print("Signed transaction:\n", response.json(), "\n")
 
 print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
-done = False
-while not done:
+while True:
     time.sleep(0.5)
     my_proposals = requests.get(
         node_url_rest + "/parties/" + pubkey + "/proposals"
@@ -439,18 +392,21 @@ while not done:
     if my_proposals.status_code != 200:
         continue
 
-    for n in my_proposals.json()["data"]:
-        if n["proposal"]["reference"] == proposal_ref:
-            if n["proposal"]["state"] != "STATE_OPEN":
-                print(n["proposal"]["state"])
-                if n["proposal"]["state"] == "STATE_ENACTED":
-                    done = True
-                    break
-                elif n["proposal"]["state"] == "STATE_PASSED":
-                    print("proposal vote has succeeded, waiting for enactment")
-                else:
-                    print(n)
-                    exit(1)
+    proposal = next((n["proposal"] for n in my_proposals.json()["data"] if n["proposal"]["reference"] == proposal_ref), None)
+
+    if proposal is None or proposal["state"] == "STATE_OPEN":
+        continue
+
+    if proposal["state"] == "STATE_PASSED":
+        print("proposal vote has succeeded, waiting for enactment")
+        continue
+
+    if proposal["state"] == "STATE_ENACTED":
+        break
+    
+    print(proposal)
+    sys.exit(1)
+
 
 ###############################################################################
 #                           W A I T   F O R   M A R K E T                     #

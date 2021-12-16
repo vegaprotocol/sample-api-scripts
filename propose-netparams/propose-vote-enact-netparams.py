@@ -20,11 +20,11 @@ Apps/Libraries:
 # some code here
 # :something__
 
+import sys
 import requests
 import time
 import os
 import helpers
-import uuid
 
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
@@ -60,7 +60,7 @@ helpers.check_response(response)
 token = response.json()["token"]
 # :login_wallet__
 
-assert token != ""
+assert token
 print("Logged in to wallet successfully")
 
 # __get_pubkey:
@@ -72,7 +72,7 @@ keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
 # :get_pubkey__
 
-assert pubkey != ""
+assert pubkey
 print("Selected pubkey for signing")
 
 #####################################################################################
@@ -95,16 +95,11 @@ helpers.check_response(response)
 #####################################################################################
 
 # Get the identifier of the governance asset on the Vega network
-vote_asset_id = "UNKNOWN"
 assets = response.json()["assets"]
-for asset in assets:
-    if asset["details"]["symbol"] == "tVOTE":
-        vote_asset_id = asset["id"]
-        break
-
-if vote_asset_id == "UNKNOWN":
-    print("tVOTE asset not found on specified Vega network, please symbol name check and try again")
-    exit(1)
+vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "VEGA"), None)
+if vote_asset_id is None:
+    print("VEGA asset not found on specified Vega network, please symbol name check and try again")
+    sys.exit(1)
 
 # Request accounts for party and check governance asset balance
 url = f"{node_url_rest}/parties/{pubkey}/accounts"
@@ -125,8 +120,8 @@ for account in accounts:
         break
 
 if voting_balance == 0:
-    print(f"Please deposit tVOTE asset to public key {pubkey} and try again")
-    exit(1)
+    print(f"Please deposit VEGA asset to public key {pubkey} and try again")
+    sys.exit(1)
 
 #####################################################################################
 #                          B L O C K C H A I N   T I M E                            #
@@ -155,15 +150,15 @@ value = "0.7"
 
 # __prepare_propose_updateNetworkParameter:
 # Compose a governance proposal for updating a network parameter
-proposal_ref = f"{pubkey}-{uuid.uuid4()}"
+proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time
-closing_time = blockchain_time_seconds + 3600 + 60
-enactment_time = blockchain_time_seconds + 3600 + 120
+closing_time = blockchain_time_seconds + 360
+enactment_time = blockchain_time_seconds + 480
 validation_time = blockchain_time_seconds + 1
 
-networkParamUpdate = {
+network_param_update = {
     "proposalSubmission": {
         "reference": proposal_ref,
         "terms": {
@@ -172,8 +167,8 @@ networkParamUpdate = {
             "validationTimestamp": validation_time,
             "updateNetworkParameter": {
                 "changes": {
-                    "key": "market.liquidity.targetstake.triggering.ratio",
-                    "value": "0.7",
+                    "key": parameter,
+                    "value": value,
                 }
             },
         }
@@ -186,7 +181,7 @@ networkParamUpdate = {
 # Sign the network param update proposal transaction
 # Note: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
-response = requests.post(url, headers=headers, json=networkParamUpdate)
+response = requests.post(url, headers=headers, json=network_param_update)
 helpers.check_response(response)
 # :sign_tx_proposal__
 
@@ -197,7 +192,7 @@ print("Signed market proposal and sent to Vega")
 
 # Wait for proposal to be included in a block and to be accepted by Vega network
 print("Waiting for blockchain...", end="", flush=True)
-proposal_id = ""
+proposal_id = None
 done = False
 while not done:
     time.sleep(0.5)
@@ -215,7 +210,7 @@ while not done:
             done = True
             break
 
-assert proposal_id != ""
+assert proposal_id
 
 #####################################################################################
 #                         V O T E   O N   P A R A M E T E R                         #
@@ -261,22 +256,56 @@ print("Signed vote on proposal and sent to Vega")
 # print("Signed transaction:\n", response.json(), "\n")
 
 print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
-done = False
-while not done:
+while True:
     time.sleep(0.5)
-    my_proposals = requests.get(node_url_rest + "/parties/" + pubkey + "/proposals")
+    my_proposals = requests.get(
+        node_url_rest + "/parties/" + pubkey + "/proposals"
+    )
     if my_proposals.status_code != 200:
         continue
 
-    for n in my_proposals.json()["data"]:
-        if n["proposal"]["reference"] == proposal_ref:
-            if n["proposal"]["state"] != "STATE_OPEN":
-                print(n["proposal"]["state"])
-                if n["proposal"]["state"] == "STATE_ENACTED":
-                    done = True
-                    break
-                elif n["proposal"]["state"] == "STATE_PASSED":
-                    print("proposal vote has succeeded, waiting for enactment")
-                else:
-                    print(n)
-                    exit(1)
+    proposal = next((n["proposal"] for n in my_proposals.json()["data"] if n["proposal"]["reference"] == proposal_ref), None)
+
+    if proposal is None or proposal["state"] == "STATE_OPEN":
+        continue
+
+    if proposal["state"] == "STATE_PASSED":
+        print("proposal vote has succeeded, waiting for enactment")
+        continue
+    
+    if proposal["state"] == "STATE_ENACTED":
+        break
+    
+    sys.exit(1)
+
+###############################################################################
+#                           CHECK THE CHANGE                                  #
+###############################################################################
+
+# STEP 3 - Wait for netparameter change to be enacted
+
+# IMPORTANT: When voting for a proposal on the Vega Testnet, typically a single
+# YES vote from the proposer will not be enough to vote the proposal in.
+# As described above in STEP 2, a network parameter change will need community voting
+# support to be passed and then enacted.
+
+# __wait_for_market:
+print("Waiting for netparam update to be enacted or failed...", end="", flush=True)
+done = False
+while not done:
+    time.sleep(0.5)
+    print(".", end="", flush=True)
+    netparams = requests.get(node_url_rest + "/network/parameters")
+    if netparams.status_code != 200:
+        continue
+    
+    print(netparams.json())
+    for n in netparams.json()["networkParameters"]:
+        if n["key"] == parameter:
+            print()
+            print(n)
+            done = True
+            break
+# :wait_for_market__
+
+# Completed.
