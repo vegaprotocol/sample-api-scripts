@@ -56,7 +56,7 @@ print("Connecting to stream...")
 #           Party identifier - filter by party
 # By default, all events on all markets for all parties will be returned on the stream.
 # e.g. all_types = vac.events.BUS_EVENT_TYPE_ALL
-event_types = vac.events.BUS_EVENT_TYPE_MARKET_TICK
+event_types = vac.vega.events.v1.events.BUS_EVENT_TYPE_MARKET_TICK
 subscribe_events_request = vac.data_node.api.v1.trading_data.ObserveEventBusRequest(batch_size=0, type=[event_types], market_id=market_id)
 send_queue = queue.SimpleQueue()
 stream = data_client.ObserveEventBus(iter(send_queue.get, None))
