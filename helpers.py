@@ -16,7 +16,7 @@ def check_var(val: Union[str, None]) -> bool:
 
 def check_url(url: str) -> bool:
     return check_var(url) and (
-        url.startswith("https://") or url.startswith("http://")
+        url.startswith("localhost:") or url.startswith("https://") or url.startswith("http://")
     )
 
 

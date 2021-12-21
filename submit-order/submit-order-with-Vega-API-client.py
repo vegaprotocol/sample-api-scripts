@@ -22,6 +22,7 @@ Apps/Libraries:
 # :something__
 
 
+import requests
 import base64
 import grpc
 import json
@@ -39,8 +40,8 @@ if node_url_grpc is None or not helpers.check_var(node_url_grpc):
     print("Error: Invalid or missing NODE_URL_GRPC environment variable.")
     exit(1)
 
-walletserver_url = os.getenv("WALLETSERVER_URL")
-if walletserver_url is None or not helpers.check_url(walletserver_url):
+wallet_server_url = os.getenv("WALLETSERVER_URL")
+if wallet_server_url is None or not helpers.check_url(wallet_server_url):
     print("Error: Invalid or missing WALLETSERVER_URL environment variable.")
     exit(1)
 
@@ -55,42 +56,45 @@ if wallet_passphrase is None or not helpers.check_var(wallet_passphrase):
     exit(1)
 
 # Help guide users against including api version suffix on url
-walletserver_url = helpers.check_wallet_url(walletserver_url)
+wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
-# __create_wallet:
 # Vega node: Create client for accessing public data
 datacli = vac.VegaTradingDataClient(node_url_grpc)
 
-# Vega node: Create client for trading (e.g. submitting orders)
-tradingcli = vac.VegaTradingClient(node_url_grpc)
+#####################################################################################
+#                           W A L L E T   S E R V I C E                             #
+#####################################################################################
 
-# Wallet server: Create a walletclient (see above for details)
-walletclient = vac.WalletClient(walletserver_url)
-login_response = walletclient.login(wallet_name, wallet_passphrase)
-# :create_wallet__
-helpers.check_response(login_response)
+print(f"Logging into wallet: {wallet_name}")
+
+# __login_wallet:
+# Log in to an existing wallet
+req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
+response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
+helpers.check_response(response)
+token = response.json()["token"]
+# :login_wallet__
+
+assert token != ""
+print("Logged in to wallet successfully")
+
+# __get_pubkey:
+# List key pairs and select public key to use
+headers = {"Authorization": f"Bearer {token}"}
+response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
+helpers.check_response(response)
+keys = response.json()["keys"]
+pubkey = keys[0]["pub"]
+# :get_pubkey__
+
+assert pubkey != ""
+print("Selected pubkey for signing")
 
 # __get_market:
 # Get a list of markets
 markets = datacli.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
-
-# __generate_keypair:
-GENERATE_NEW_KEYPAIR = False
-if GENERATE_NEW_KEYPAIR:
-    # If you don't already have a keypair, generate one.
-    response = walletclient.generatekey(wallet_passphrase, [])
-    helpers.check_response(response)
-    pubKey = response.json()["key"]["pub"]
-else:
-    # List keypairs
-    response = walletclient.listkeys()
-    helpers.check_response(response)
-    keys = response.json()["keys"]
-    assert len(keys) > 0
-    pubKey = keys[0]["pub"]
-# :generate_keypair__
 
 # __prepare_order:
 # Vega node: Prepare the SubmitOrder

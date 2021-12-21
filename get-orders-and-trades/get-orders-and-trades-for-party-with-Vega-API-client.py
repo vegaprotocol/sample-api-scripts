@@ -20,9 +20,10 @@ Apps/Libraries:
 # some code here
 # :something__
 
+import os
+import requests
 import helpers
 
-import os
 node_url_grpc = os.getenv("NODE_URL_GRPC")
 
 # __import_client:
@@ -48,22 +49,32 @@ if not helpers.check_var(wallet_passphrase):
 # Help guide users against including api version suffix on url
 wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
+#####################################################################################
+#                           W A L L E T   S E R V I C E                             #
+#####################################################################################
+
+print(f"Logging into wallet: {wallet_name}")
+
 # __existing_wallet:
 # Make request to log in to existing wallet
-wallet_client = vac.WalletClient(wallet_server_url)
-wallet_client.login(wallet_name, wallet_passphrase)
-# :existing_wallet__
+req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
+response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
+helpers.check_response(response)
+token = response.json()["token"]
 
-# __find_keypair:
-# Find an existing keypair for wallet
-response = wallet_client.listkeys()
+assert token != ""
+print("Logged in to wallet successfully")
+
+# List key pairs and select public key to use
+headers = {"Authorization": f"Bearer {token}"}
+response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
 helpers.check_response(response)
 keys = response.json()["keys"]
-assert len(keys) > 0
 pubKey = keys[0]["pub"]
-# :find_keypair__
 
 assert pubKey != ""
+print("Selected pubkey for signing")
+# :existing_wallet__
 
 # __get_orders_for_party:
 # Request a list of orders by party (pubKey)
