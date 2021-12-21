@@ -85,7 +85,7 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
+markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 
@@ -98,7 +98,7 @@ print(f"Market found: {marketID}")
 
 # __get_fees_estimate:
 # Request to estimate trading fees on a Vega network
-estimate = vac.api.trading.EstimateFeeRequest(
+estimate = vac.data_node.api.v1.trading_data.EstimateFeeRequest(
     order=vac.vega.Order(
         market_id=marketID,
         party_id=pubkey,
@@ -119,7 +119,7 @@ print("FeeEstimates:\n{}".format(estimated_fees))
 
 # __get_margins_estimate:
 # Request to estimate trading margin on a Vega network
-estimate = vac.api.trading.EstimateMarginRequest(
+estimate = vac.data_node.api.v1.trading_data.EstimateMarginRequest(
     order=vac.vega.Order(
         market_id=marketID,
         party_id=pubkey,

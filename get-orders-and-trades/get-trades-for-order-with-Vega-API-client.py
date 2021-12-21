@@ -31,7 +31,7 @@ data_client = vac.VegaTradingDataClient(node_url_grpc)
 # __get_trades_for_order:
 # Request a list of trades for a specific order on a Vega network
 orderID = "V0000929211-0046318720"
-trades_by_order_request = vac.api.trading.TradesByOrderRequest(
+trades_by_order_request = vac.data_node.api.v1.trading_data.TradesByOrderRequest(
     # Note: orderID has capitalised ID in TradesByOrderRequest
     orderID=orderID
 )

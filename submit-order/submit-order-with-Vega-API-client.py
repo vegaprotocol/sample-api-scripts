@@ -72,7 +72,7 @@ helpers.check_response(login_response)
 
 # __get_market:
 # Get a list of markets
-markets = datacli.Markets(vac.api.trading.MarketsRequest()).markets
+markets = datacli.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 
@@ -94,7 +94,7 @@ else:
 
 # __prepare_order:
 # Vega node: Prepare the SubmitOrder
-order = vac.api.trading.PrepareSubmitOrderRequest(
+order = vac.data_node.api.v1.trading_data.PrepareSubmitOrderRequest(
     submission=vac.commands.v1.commands.OrderSubmission(
         market_id=marketID,
         # price is an integer. For example 123456 is a price of 1.23456,
@@ -129,7 +129,7 @@ signedTx = responsejson["signedTx"]
 
 # __submit_tx:
 # Vega node: Submit the signed transaction
-request = vac.api.trading.SubmitTransactionRequest(
+request = vac.data_node.api.v1.trading_data.SubmitTransactionRequest(
     tx=vac.vega.SignedBundle(
         tx=base64.b64decode(signedTx["tx"]),
         sig=vac.vega.Signature(

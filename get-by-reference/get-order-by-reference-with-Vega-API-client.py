@@ -33,7 +33,7 @@ node_url_grpc = os.getenv("NODE_URL_GRPC")
 # from a prepareSubmitOrder request in the field named `submitID` or similar.
 reference = "4617844f-6fab-4cf6-8852-e29dbd96e5f1"
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-order_by_ref_request = vac.api.trading.OrderByReferenceRequest(
+order_by_ref_request = vac.data_node.api.v1.trading_data.OrderByReferenceRequest(
     reference=reference
 )
 response = data_client.OrderByReference(order_by_ref_request)

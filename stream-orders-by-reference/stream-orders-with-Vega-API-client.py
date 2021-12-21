@@ -44,7 +44,7 @@ data_client = vac.VegaTradingDataClient(node_url_grpc)
 # Stream orders by reference on a Vega network
 reference = "4617844f-6fab-4cf6-8852-e29dbd96e5f1"
 pubkey = "94c21a5bfc212c0b4ee6e3593e8481559972ad31f1fb453491f255e72bdb6fdb"
-subscribe_request = vac.api.trading.OrdersSubscribeRequest(party_id=pubkey)
+subscribe_request = vac.data_node.api.v1.trading_data.OrdersSubscribeRequest(party_id=pubkey)
 for stream_resp in data_client.OrdersSubscribe(subscribe_request):
     for order in stream_resp.orders:
         # Check orders arriving over the channel/stream for reference

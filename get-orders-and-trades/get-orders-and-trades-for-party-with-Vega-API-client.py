@@ -67,7 +67,7 @@ assert pubKey != ""
 
 # __get_orders_for_party:
 # Request a list of orders by party (pubKey)
-orders_by_party_request = vac.api.trading.OrdersByPartyRequest(
+orders_by_party_request = vac.data_node.api.v1.trading_data.OrdersByPartyRequest(
     party_id=pubKey
 )
 orders_response = data_client.OrdersByParty(orders_by_party_request)
@@ -76,7 +76,7 @@ print("OrdersByParty:\n{}".format(orders_response))
 
 # __get_trades_for_party:
 # Request a list of trades by party (pubKey)
-trades_by_party_request = vac.api.trading.TradesByPartyRequest(
+trades_by_party_request = vac.data_node.api.v1.trading_data.TradesByPartyRequest(
     party_id=pubKey
 )
 trades_response = data_client.TradesByParty(trades_by_party_request)

@@ -100,7 +100,7 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
+markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 
@@ -113,7 +113,7 @@ print(f"Market found: {marketID}")
 
 # __get_expiry_time:
 # Request the current blockchain time, calculate an expiry time
-blockchain_time = data_client.GetVegaTime(vac.api.trading.GetVegaTimeRequest()).timestamp
+blockchain_time = data_client.GetVegaTime(vac.data_node.api.v1.trading_data.GetVegaTimeRequest()).timestamp
 expiresAt = int(blockchain_time + 120 * 1e9)  # expire in 2 minutes
 # :get_expiry_time__
 
@@ -162,7 +162,7 @@ print("Signed pegged order and sent to Vega")
 # Wait for order submission to be included in a block
 print("Waiting for blockchain...")
 time.sleep(4)
-order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
+order_ref_request = vac.data_node.api.v1.trading_data.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
 orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
@@ -212,7 +212,7 @@ print("Signed pegged order amendment and sent to Vega")
 # Wait for amendment to be included in a block
 print("Waiting for blockchain...")
 time.sleep(4)
-order_id_request = vac.api.trading.OrderByIDRequest(order_id=orderID)
+order_id_request = vac.data_node.api.v1.trading_data.OrderByIDRequest(order_id=orderID)
 response = data_client.OrderByID(order_id_request)
 orderID = response.order.id
 orderPrice = response.order.status

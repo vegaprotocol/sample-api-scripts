@@ -97,7 +97,7 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
+markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 
@@ -112,7 +112,7 @@ print(f"Market found: {marketID} {marketName}")
 # __get_liquidity_provisions:
 # Request liquidity provisions for the market
 partyID="" # specify party ID if needed, otherwise all liquidity provisions for the market get returned 
-liquidityProvisions = data_client.LiquidityProvisions(vac.api.trading.LiquidityProvisionsRequest(
+liquidityProvisions = data_client.LiquidityProvisions(vac.data_node.api.v1.trading_data.LiquidityProvisionsRequest(
     party=partyID,
     market=marketID
 ))

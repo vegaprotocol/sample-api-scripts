@@ -32,6 +32,6 @@ node_url_grpc = os.getenv("NODE_URL_GRPC")
 data_client = vac.VegaTradingDataClient(node_url_grpc)
 
 # The "timestamp" field contains the resulting data we need.
-vega_time = data_client.GetVegaTime(vac.api.trading.GetVegaTimeRequest())
+vega_time = data_client.GetVegaTime(vac.data_node.api.v1.trading_data.GetVegaTimeRequest())
 print("Vega time:\n{}".format(vega_time))
 # :get_time__

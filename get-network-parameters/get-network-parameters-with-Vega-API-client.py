@@ -40,7 +40,7 @@ data_client = vac.VegaTradingDataClient(node_url_grpc)
 
 # __get_network_params:
 # Request a list of network parameters configured on a Vega network
-request = vac.api.trading.NetworkParametersRequest()
+request = vac.data_node.api.v1.trading_data.NetworkParametersRequest()
 network_params = data_client.NetworkParameters(request)
 print("Network Parameter:\n{}".format(network_params))
 # :get_network_params__

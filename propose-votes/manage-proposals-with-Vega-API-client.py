@@ -88,7 +88,7 @@ print("Selected pubkey for signing")
 
 # __get_proposals:
 # Request a list of proposals on a Vega network
-request = vac.api.trading.GetProposalsRequest()
+request = vac.data_node.api.v1.trading_data.GetProposalsRequest()
 proposals = data_client.GetProposals(request)
 print("Proposals:\n{}".format(proposals))
 # :get_proposals__
@@ -103,7 +103,7 @@ print(f"Proposal found: {proposalID}")
 
 # __get_proposal_detail:
 # Request results of a specific proposal on a Vega network
-request = vac.api.trading.GetProposalByIDRequest(proposal_id=proposalID)
+request = vac.data_node.api.v1.trading_data.GetProposalByIDRequest(proposal_id=proposalID)
 proposal = data_client.GetProposalByID(request)
 print("Proposal:\n{}".format(proposal))
 # :get_proposal_detail__
@@ -114,7 +114,7 @@ print("Proposal:\n{}".format(proposal))
 
 # __get_proposals_by_party:
 # Request a list of proposals for a party (pubkey) on a Vega network
-request = vac.api.trading.GetProposalsByPartyRequest(party_id=pubkey)
+request = vac.data_node.api.v1.trading_data.GetProposalsByPartyRequest(party_id=pubkey)
 party_proposals = data_client.GetProposalsByParty(request)
 print("Party proposals:\n{}".format(party_proposals))
 # :get_proposals_by_party__
