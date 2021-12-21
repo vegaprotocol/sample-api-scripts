@@ -62,7 +62,6 @@ import vegaapiclient as vac
 
 # Vega gRPC clients for reading/writing data
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-trading_client = vac.VegaTradingClient(node_url_grpc)
 # :import_client__
 
 #####################################################################################
@@ -129,16 +128,16 @@ print(f"Blockchain time: {blockchain_time}")
 # Set your own user specific reference to find the order in next step and
 # as a foreign key to your local client/trading application
 order_ref = f"{pubkey}-{uuid.uuid4()}"
-order_data = vac.commands.v1.commands.OrderSubmission(
+order_data = vac.vega.commands.v1.commands.OrderSubmission(
     market_id=marketID,
-    side=vac.vega.Side.SIDE_BUY,
+    side=vac.vega.vega.Side.SIDE_BUY,
     size=50,
     expires_at=expiresAt,
-    time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTT,
-    type=vac.vega.Order.Type.TYPE_LIMIT,
-    pegged_order=vac.vega.PeggedOrder(
+    time_in_force=vac.vega.vega.Order.TimeInForce.TIME_IN_FORCE_GTT,
+    type=vac.vega.vega.Order.Type.TYPE_LIMIT,
+    pegged_order=vac.vega.vega.PeggedOrder(
         offset=-5,
-        reference=vac.vega.PEGGED_REFERENCE_MID
+        reference=vac.vega.vega.PEGGED_REFERENCE_MID
     ),
     reference=order_ref
 )
@@ -165,7 +164,7 @@ time.sleep(4)
 order_ref_request = vac.data_node.api.v1.trading_data.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
-orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+orderStatus = helpers.enum_to_str(vac.vega.vega.Order.Status, response.order.status)
 createVersion = response.order.version
 orderReason = response.order.reason
 
@@ -182,12 +181,12 @@ else:
 
 # __prepare_amend_pegged_order:
 # Compose your amend order command, with changes to your existing order
-amend_data = vac.commands.v1.commands.OrderAmendment(
+amend_data = vac.vega.commands.v1.commands.OrderAmendment(
     market_id=marketID,
     order_id=orderID,
     size_delta=-25,
-    time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
-    pegged_reference=vac.vega.PEGGED_REFERENCE_BEST_BID,
+    time_in_force=vac.vega.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
+    pegged_reference=vac.vega.vega.PEGGED_REFERENCE_BEST_BID,
     pegged_offset=Int64Value(value=-100)
 )
 # :prepare_amend_pegged_order__
@@ -217,8 +216,8 @@ response = data_client.OrderByID(order_id_request)
 orderID = response.order.id
 orderPrice = response.order.status
 orderSize = response.order.size
-orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.order.time_in_force)
-orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+orderTif = helpers.enum_to_str(vac.vega.vega.Order.TimeInForce, response.order.time_in_force)
+orderStatus = helpers.enum_to_str(vac.vega.vega.Order.Status, response.order.status)
 orderVersion = response.order.version
 orderReason = response.order.reason
 

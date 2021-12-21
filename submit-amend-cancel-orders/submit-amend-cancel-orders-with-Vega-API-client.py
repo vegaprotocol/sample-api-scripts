@@ -176,7 +176,7 @@ if orderStatus == "STATUS_REJECTED":
 amend_data = vac.vega.commands.v1.commands.OrderAmendment(
     market_id=marketID,
     order_id=orderID,
-    price=vac.vega.vega.Price(value="2"),
+    price=vac.vega.vega.Price(value=2),
     time_in_force=vac.vega.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
 )
 # :prepare_amend_order__
@@ -205,7 +205,7 @@ response = data_client.OrderByID(order_id_request)
 orderID = response.order.id
 orderPrice = response.order.price
 orderSize = response.order.size
-orderTif = helpers.enum_to_str(vac.vega.vega.Order.TimeInForce, response.order.time_in_force)
+orderTif = helpers.enum_to_str(vac.vega.veag.Order.TimeInForce, response.order.time_in_force)
 orderStatus = helpers.enum_to_str(vac.vega.vega.Order.Status, response.order.status)
 orderVersion = response.order.version
 orderReason = response.order.reason

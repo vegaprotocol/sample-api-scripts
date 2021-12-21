@@ -23,10 +23,10 @@ Apps/Libraries:
 
 
 import requests
-import base64
-import grpc
-import json
 import os
+
+# Needed to convert protobuf message to string/json dict for wallet signing
+from google.protobuf.json_format import MessageToDict
 
 # __import_client:
 import vegaapiclient as vac
@@ -96,55 +96,26 @@ markets = datacli.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).ma
 marketID = markets[0].id
 # :get_market__
 
-# __prepare_order:
 # Vega node: Prepare the SubmitOrder
-order = vac.data_node.api.v1.trading_data.PrepareSubmitOrderRequest(
-    submission=vac.commands.v1.commands.OrderSubmission(
-        market_id=marketID,
-        # price is an integer. For example 123456 is a price of 1.23456,
-        # assuming 5 decimal places.
-        price=100000,
-        side=vac.vega.Side.SIDE_BUY,
-        size=1,
-        time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
-        type=vac.vega.Order.Type.TYPE_LIMIT,
-    )
+order_data=vac.vega.commands.v1.commands.OrderSubmission(
+    market_id=marketID,
+    # price is an integer. For example 123456 is a price of 1.23456,
+    # assuming 5 decimal places.
+    price="100000",
+    side=vac.vega.vega.Side.SIDE_BUY,
+    size=1,
+    time_in_force=vac.vega.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
+    type=vac.vega.vega.Order.Type.TYPE_LIMIT,
 )
-print(f"Request for PrepareSubmitOrder: {order}")
-try:
-    prepare_response = tradingcli.PrepareSubmitOrder(order)
-except grpc.RpcError as exc:
-    print(json.dumps(vac.grpc_error_detail(exc), indent=2, sort_keys=True))
-    exit(1)
-print(f"Response from PrepareSubmitOrder: {prepare_response}")
-# :prepare_order__
 
-# __sign_tx:
-# Wallet server: Sign the prepared transaction
-blob_base64 = base64.b64encode(prepare_response.blob).decode("ascii")
-print(f"Request for SignTx: blob={blob_base64}, pubKey={pubKey}")
-response = walletclient.signtx(blob_base64, pubKey, False)
+submission = {
+    "orderSubmission": MessageToDict(order_data),
+    "pubKey": pubkey,
+    "propagate": True
+}
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
-responsejson = response.json()
-print("Response from SignTx:")
-print(json.dumps(responsejson, indent=2, sort_keys=True))
-signedTx = responsejson["signedTx"]
-# :sign_tx__
 
-# __submit_tx:
-# Vega node: Submit the signed transaction
-request = vac.data_node.api.v1.trading_data.SubmitTransactionRequest(
-    tx=vac.vega.SignedBundle(
-        tx=base64.b64decode(signedTx["tx"]),
-        sig=vac.vega.Signature(
-            sig=base64.b64decode(signedTx["sig"]["sig"]),
-            algo="vega/ed25519",
-            version=1,
-        ),
-    ),
-)
-print(f"Request for SubmitTransaction: {request}")
-submittx_response = tradingcli.SubmitTransaction(request)
-# :submit_tx__
-assert submittx_response.success
-print("All is well.")
+print("Signed pegged order and sent to Vega")
+
