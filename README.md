@@ -41,7 +41,7 @@ And you're good to go. Now choose a sample program to run from the following (se
 | Streaming events | bash, python3 | Vega node [GraphQL, gRPC] | / [stream-events](stream-events) |
 | Fees and margins estimation | bash, python3 | Vega node [REST, gRPC] | / [fees-margins-estimation](fees-margins-estimation) |
 | Propose, vote and enact new markets | python3 | Vega node [REST] | / [propose-markets](propose-markets) |
-| Propose, vote and enact netparam update | python3 | Vega node [REST] | / [propose-markets](propose-netparam) |
+| Propose, vote and enact network parameters update | python3 | Vega node [REST] | / [propose-markets](propose-netparam) |
 | Propose, vote and enact new freeform proposal | python3 | Vega node [REST] | / [propose-markets](propose-freeform) |
 | List proposals | bash, python3 | Vega node [GraphQL, gRPC] | / [propose-votes](propose-votes) |
 
