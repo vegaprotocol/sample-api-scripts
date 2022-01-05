@@ -7,7 +7,7 @@ name = "pypi"
 googleapis-common-protos = "==1.52.0"
 grpcio = "==1.33.2"
 requests = "==2.27.1"
-Vega-API-client = "==0.34.0"
+Vega-API-client = "==0.47.0"
 websocket-client = "==1.2.3"
 
 [dev-packages]

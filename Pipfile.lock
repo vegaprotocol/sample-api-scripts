@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "19f66049dbf32627039dbe5eafefe64a7f7edb386b73d10688207174aa06b39b"
+            "sha256": "45451c796755d2c30d088a24e177de0a2d27bd8e93e94fe4713277080a34f368"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -155,11 +155,11 @@
         },
         "vega-api-client": {
             "hashes": [
-                "sha256:3b54eb134641a7e8e89d4ceaaca1691ea9c107035f4aa6638f8b590936e8715a",
-                "sha256:608fb72ab922ed646969fb26b9c377a16aed9da8ef3d77a34cae39fa56680b68"
+                "sha256:02489c4ede6211792725a6a1415621b7d194a0da70e0d14ab71c3c2d4f8c7057",
+                "sha256:1f273f8d792f38ae0eeecedda5374e92089203e2b121e3ada5e809de0bb9596f"
             ],
             "index": "pypi",
-            "version": "==0.34.0"
+            "version": "==0.47.0"
         },
         "websocket-client": {
             "hashes": [
