@@ -28,13 +28,13 @@ import vegaapiclient as vac
 data_client = vac.VegaTradingDataClient(node_url_grpc)
 # :import_client__
 
-markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
+markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 market_id = markets[0].id
 assert market_id != ""
 
 # __get_orders_for_market:
 # Request a list of orders by market on a Vega network
-orders_by_market_request = vac.api.trading.OrdersByMarketRequest(
+orders_by_market_request = vac.data_node.api.v1.trading_data.OrdersByMarketRequest(
     market_id=market_id
 )
 orders_response = data_client.OrdersByMarket(orders_by_market_request)
@@ -43,7 +43,7 @@ print("OrdersByMarket:\n{}".format(orders_response))
 
 # __get_trades_for_market:
 # Request a list of trades by market on a Vega network
-trades_by_market_request = vac.api.trading.TradesByMarketRequest(
+trades_by_market_request = vac.data_node.api.v1.trading_data.TradesByMarketRequest(
     market_id=market_id
 )
 trades_response = data_client.TradesByMarket(trades_by_market_request)

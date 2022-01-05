@@ -39,7 +39,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 # __get_market:
 # Request the identifier for a market
-markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
+markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 market_id = markets[0].id
 # :get_market__
 
@@ -56,8 +56,8 @@ print("Connecting to stream...")
 #           Party identifier - filter by party
 # By default, all events on all markets for all parties will be returned on the stream.
 # e.g. all_types = vac.events.BUS_EVENT_TYPE_ALL
-event_types = vac.events.BUS_EVENT_TYPE_MARKET_TICK
-subscribe_events_request = vac.api.trading.ObserveEventBusRequest(batch_size=0, type=[event_types], market_id=market_id)
+event_types = vac.vega.events.v1.events.BUS_EVENT_TYPE_MARKET_TICK
+subscribe_events_request = vac.data_node.api.v1.trading_data.ObserveEventBusRequest(batch_size=0, type=[event_types], market_id=market_id)
 send_queue = queue.SimpleQueue()
 stream = data_client.ObserveEventBus(iter(send_queue.get, None))
 send_queue.put_nowait(subscribe_events_request)

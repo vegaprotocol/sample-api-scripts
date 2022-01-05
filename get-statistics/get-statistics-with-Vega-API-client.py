@@ -29,7 +29,7 @@ node_url_grpc = os.getenv("NODE_URL_GRPC")
 
 # __get_statistics:
 # Request the statistics for a node on Vega
-data_client = vac.VegaTradingDataClient(node_url_grpc)
-response = data_client.Statistics(vac.api.trading.StatisticsRequest())
+core_client = vac.VegaCoreClient(node_url_grpc)
+response = core_client.Statistics(vac.vega.api.v1.core.StatisticsRequest())
 print("Statistics:\n{}".format(response))
 # :get_statistics__

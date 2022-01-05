@@ -24,7 +24,6 @@ Apps/Libraries:
 # Needed to convert protobuf message to string/json dict for wallet signing
 from google.protobuf.json_format import MessageToDict
 
-import base64
 import helpers
 import requests
 import time
@@ -59,7 +58,6 @@ import vegaapiclient as vac
 
 # Vega gRPC clients for reading/writing data
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-trading_client = vac.VegaTradingClient(node_url_grpc)
 # :import_client__
 
 #####################################################################################
@@ -97,7 +95,7 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
+markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 
@@ -112,7 +110,7 @@ print(f"Market found: {marketID} {marketName}")
 # __get_liquidity_provisions:
 # Request liquidity provisions for the market
 partyID="" # specify party ID if needed, otherwise all liquidity provisions for the market get returned 
-liquidityProvisions = data_client.LiquidityProvisions(vac.api.trading.LiquidityProvisionsRequest(
+liquidityProvisions = data_client.LiquidityProvisions(vac.data_node.api.v1.trading_data.LiquidityProvisionsRequest(
     party=partyID,
     market=marketID
 ))
@@ -130,36 +128,36 @@ print("Liquidity provisions:\n{}".format(liquidityProvisions))
 # __prepare_liquidity_order:
 # Prepare a liquidity commitment transaction message
 lp_ref = f"{pubkey}-{uuid.uuid4()}"
-lp_data=vac.commands.v1.commands.LiquidityProvisionSubmission(
+lp_data=vac.vega.commands.v1.commands.LiquidityProvisionSubmission(
     market_id=marketID,
-    commitment_amount=100,
+    commitment_amount="100",
     fee="0.01",
     reference=lp_ref,
     buys=[
-        vac.vega.LiquidityOrder(
-            reference=vac.vega.PEGGED_REFERENCE_MID,
+        vac.vega.vega.LiquidityOrder(
+            reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=1,
             offset=-1
         ),
-        vac.vega.LiquidityOrder(
-            reference=vac.vega.PEGGED_REFERENCE_MID,
+        vac.vega.vega.LiquidityOrder(
+            reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=2,
             offset=-2
         )
     ],
     sells=[
-        vac.vega.LiquidityOrder(
-            reference=vac.vega.PEGGED_REFERENCE_MID,
+        vac.vega.vega.LiquidityOrder(
+            reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=1,
             offset=1
         ),
-        vac.vega.LiquidityOrder(
-            reference=vac.vega.PEGGED_REFERENCE_MID,
+        vac.vega.vega.LiquidityOrder(
+            reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=2,
             offset=2
         ),
-        vac.vega.LiquidityOrder(
-            reference=vac.vega.PEGGED_REFERENCE_MID,
+        vac.vega.vega.LiquidityOrder(
+            reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=5,
             offset=3
         )
@@ -196,20 +194,20 @@ exit(0)
 # Compose a liquidity commitment order message
 # (it will now serve as an amendment request):
 # modify fields you want to be amended
-lp_data=vac.commands.v1.commands.LiquidityProvisionSubmission(
+lp_data=vac.vega.commands.v1.commands.LiquidityProvisionSubmission(
     market_id=marketID,
-    commitment_amount=500,
+    commitment_amount="500",
     fee="0.005",
     buys=[
-        vac.vega.LiquidityOrder(
-            reference=vac.vega.PEGGED_REFERENCE_MID,
+        vac.vega.vega.LiquidityOrder(
+            reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=1,
             offset=-1
         )
     ],
     sells=[
-        vac.vega.LiquidityOrder(
-            reference=vac.vega.PEGGED_REFERENCE_MID,
+        vac.vega.vega.LiquidityOrder(
+            reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=1,
             offset=1
         )
@@ -243,9 +241,9 @@ time.sleep(10)
 # (it will now serve as a cancellation request): set commitmentAmount to 0,
 # note that transaction may get rejected if removing previously supplied liquidity
 # will result in insufficient liquidity for the market
-lp_data=vac.commands.v1.commands.LiquidityProvisionSubmission(
+lp_data=vac.vega.commands.v1.commands.LiquidityProvisionSubmission(
     market_id=marketID,
-    commitment_amount=0
+    commitment_amount="0"
 )
 # :cancel_liquidity_order__
 

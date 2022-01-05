@@ -58,7 +58,6 @@ import vegaapiclient as vac
 
 # Vega gRPC clients for reading/writing data
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-trading_client = vac.VegaTradingClient(node_url_grpc)
 # :import_client__
 
 #####################################################################################
@@ -97,7 +96,7 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
+markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 marketID = markets[0].id
 # :get_market__
 
@@ -110,7 +109,7 @@ print(f"Market found: {marketID}")
 
 # __get_expiry_time:
 # Request the current blockchain time, calculate an expiry time
-blockchain_time = data_client.GetVegaTime(vac.api.trading.GetVegaTimeRequest()).timestamp
+blockchain_time = data_client.GetVegaTime(vac.data_node.api.v1.trading_data.GetVegaTimeRequest()).timestamp
 expiresAt = int(blockchain_time + 120 * 1e9)  # expire in 2 minutes
 # :get_expiry_time__
 
@@ -126,16 +125,16 @@ print(f"Blockchain time: {blockchain_time}")
 # Set your own user specific reference to find the order in next step and
 # as a foreign key to your local client/trading application
 order_ref = f"{pubkey}-{uuid.uuid4()}"
-order_data = vac.commands.v1.commands.OrderSubmission(
+order_data = vac.vega.commands.v1.commands.OrderSubmission(
     market_id=marketID,
     # price is an integer. For example 123456 is a price of 1.23456,
     # assuming 5 decimal places.
-    price=1,
-    side=vac.vega.Side.SIDE_BUY,
+    price="1",
+    side=vac.vega.vega.Side.SIDE_BUY,
     size=10,
     expires_at=expiresAt,
-    time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTT,
-    type=vac.vega.Order.Type.TYPE_LIMIT,
+    time_in_force=vac.vega.vega.Order.TimeInForce.TIME_IN_FORCE_GTT,
+    type=vac.vega.vega.Order.Type.TYPE_LIMIT,
     reference=order_ref
 )
 # :prepare_submit_order__
@@ -158,10 +157,10 @@ print("Signed order and sent to Vega")
 # Wait for order submission to be included in a block
 print("Waiting for blockchain...")
 time.sleep(4)
-order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
+order_ref_request = vac.data_node.api.v1.trading_data.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
 orderID = response.order.id
-orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+orderStatus = helpers.enum_to_str(vac.vega.vega.Order.Status, response.order.status)
 createVersion = response.order.version
 orderReason = response.order.reason
 print(f"Order processed, ID: {orderID}, Status: {orderStatus}, Version: {createVersion}")
@@ -174,11 +173,11 @@ if orderStatus == "STATUS_REJECTED":
 
 # __prepare_amend_order:
 # Compose your amend order command, with changes to your existing order
-amend_data = vac.commands.v1.commands.OrderAmendment(
+amend_data = vac.vega.commands.v1.commands.OrderAmendment(
     market_id=marketID,
     order_id=orderID,
-    price=vac.vega.Price(value=2),
-    time_in_force=vac.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
+    price=vac.vega.vega.Price(value="2"),
+    time_in_force=vac.vega.vega.Order.TimeInForce.TIME_IN_FORCE_GTC,
 )
 # :prepare_amend_order__
 
@@ -200,14 +199,14 @@ print("Signed amendment and sent to Vega")
 # Wait for amendment to be included in a block
 print("Waiting for blockchain...")
 time.sleep(4)
-order_id_request = vac.api.trading.OrderByIDRequest(order_id=orderID)
+order_id_request = vac.data_node.api.v1.trading_data.OrderByIDRequest(order_id=orderID)
 response = data_client.OrderByID(order_id_request)
 
 orderID = response.order.id
 orderPrice = response.order.price
 orderSize = response.order.size
-orderTif = helpers.enum_to_str(vac.vega.Order.TimeInForce, response.order.time_in_force)
-orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+orderTif = helpers.enum_to_str(vac.vega.vega.Order.TimeInForce, response.order.time_in_force)
+orderStatus = helpers.enum_to_str(vac.vega.vega.Order.Status, response.order.status)
 orderVersion = response.order.version
 orderReason = response.order.reason
 
@@ -227,7 +226,7 @@ if orderStatus == "STATUS_REJECTED":
 
 # __prepare_cancel_order_req1:
 # 1 - Cancel single order for party (pubkey)
-cancel_data = vac.commands.v1.commands.OrderCancellation(
+cancel_data = vac.vega.commands.v1.commands.OrderCancellation(
     # Include party, market and order identifier fields to cancel single order.
     market_id=marketID,
     order_id=orderID,
@@ -236,7 +235,7 @@ cancel_data = vac.commands.v1.commands.OrderCancellation(
 
 # __prepare_cancel_order_req2:
 # 2 - Cancel all orders on market for party (pubkey)
-cancel_data = vac.commands.v1.commands.OrderCancellation(
+cancel_data = vac.vega.commands.v1.commands.OrderCancellation(
     # Only include market identifier field.
     market_id=marketID,
 )
@@ -244,7 +243,7 @@ cancel_data = vac.commands.v1.commands.OrderCancellation(
 
 # __prepare_cancel_order_req3:
 # 3 - Cancel all orders on all markets for party (pubkey)
-cancel_data = vac.commands.v1.commands.OrderCancellation(
+cancel_data = vac.vega.commands.v1.commands.OrderCancellation(
     # No filters, cancel all
 )
 # :prepare_cancel_order_req3__
@@ -267,9 +266,9 @@ print("Signed cancellation and sent to Vega")
 # Wait for cancellation to be included in a block
 print("Waiting for blockchain...")
 time.sleep(4)
-order_ref_request = vac.api.trading.OrderByReferenceRequest(reference=order_ref)
+order_ref_request = vac.data_node.api.v1.trading_data.OrderByReferenceRequest(reference=order_ref)
 response = data_client.OrderByReference(order_ref_request)
-orderStatus = helpers.enum_to_str(vac.vega.Order.Status, response.order.status)
+orderStatus = helpers.enum_to_str(vac.vega.vega.Order.Status, response.order.status)
 orderReason = response.order.reason
 
 print("Cancelled Order:")

@@ -22,6 +22,7 @@ Responses:
 # some code here
 # :something__
 
+import requests
 import helpers
 import os
 
@@ -53,7 +54,6 @@ import vegaapiclient as vac
 
 # Vega gRPC clients for reading/writing data
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-wallet_client = vac.WalletClient(wallet_server_url)
 # :import_client__
 
 #####################################################################################
@@ -62,22 +62,21 @@ wallet_client = vac.WalletClient(wallet_server_url)
 
 print(f"Logging into wallet: {wallet_name}")
 
-# __login_wallet:
 # Log in to an existing wallet
-response = wallet_client.login(wallet_name, wallet_passphrase)
+req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
+response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
 helpers.check_response(response)
-# Note: secret wallet token is stored internally for duration of session
-# :login_wallet__
+token = response.json()["token"]
 
+assert token != ""
 print("Logged in to wallet successfully")
 
-# __get_pubkey:
 # List key pairs and select public key to use
-response = wallet_client.listkeys()
+headers = {"Authorization": f"Bearer {token}"}
+response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
 helpers.check_response(response)
 keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
-# :get_pubkey__
 
 assert pubkey != ""
 print("Selected pubkey for signing")
@@ -88,7 +87,7 @@ print("Selected pubkey for signing")
 
 # __get_proposals:
 # Request a list of proposals on a Vega network
-request = vac.api.trading.GetProposalsRequest()
+request = vac.data_node.api.v1.trading_data.GetProposalsRequest()
 proposals = data_client.GetProposals(request)
 print("Proposals:\n{}".format(proposals))
 # :get_proposals__
@@ -103,7 +102,7 @@ print(f"Proposal found: {proposalID}")
 
 # __get_proposal_detail:
 # Request results of a specific proposal on a Vega network
-request = vac.api.trading.GetProposalByIDRequest(proposal_id=proposalID)
+request = vac.data_node.api.v1.trading_data.GetProposalByIDRequest(proposal_id=proposalID)
 proposal = data_client.GetProposalByID(request)
 print("Proposal:\n{}".format(proposal))
 # :get_proposal_detail__
@@ -114,7 +113,7 @@ print("Proposal:\n{}".format(proposal))
 
 # __get_proposals_by_party:
 # Request a list of proposals for a party (pubkey) on a Vega network
-request = vac.api.trading.GetProposalsByPartyRequest(party_id=pubkey)
+request = vac.data_node.api.v1.trading_data.GetProposalsByPartyRequest(party_id=pubkey)
 party_proposals = data_client.GetProposalsByParty(request)
 print("Party proposals:\n{}".format(party_proposals))
 # :get_proposals_by_party__

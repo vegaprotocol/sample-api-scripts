@@ -30,7 +30,7 @@ data_client = vac.VegaTradingDataClient(node_url_grpc)
 
 # __get_markets:
 # Request a list of markets available on the specified Vega Network
-markets = data_client.Markets(vac.api.trading.MarketsRequest()).markets
+markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
 print("Markets:\n{}".format(markets))
 # :get_markets__
 
@@ -39,7 +39,7 @@ assert market_id != ""
 
 # __get_market_data:
 # Request the market data for a market on a Vega network
-market_data_request = vac.api.trading.MarketDataByIDRequest(
+market_data_request = vac.data_node.api.v1.trading_data.MarketDataByIDRequest(
     market_id=market_id
 )
 market_data = data_client.MarketDataByID(market_data_request)

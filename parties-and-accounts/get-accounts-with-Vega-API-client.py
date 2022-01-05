@@ -22,9 +22,8 @@ Responses:
 # some code here
 # :something__
 
-import base64
+import requests
 import helpers
-import time
 import os
 
 node_url_grpc = os.getenv("NODE_URL_GRPC")
@@ -55,7 +54,6 @@ import vegaapiclient as vac
 
 # Vega gRPC clients for reading/writing data
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-wallet_client = vac.WalletClient(wallet_server_url)
 # :import_client__
 
 #####################################################################################
@@ -66,16 +64,19 @@ print(f"Logging into wallet: {wallet_name}")
 
 # __login_wallet:
 # Log in to an existing wallet
-response = wallet_client.login(wallet_name, wallet_passphrase)
+req = {"wallet": wallet_name, "passphrase": wallet_passphrase}
+response = requests.post(f"{wallet_server_url}/api/v1/auth/token", json=req)
 helpers.check_response(response)
-# Note: secret wallet token is stored internally for duration of session
+token = response.json()["token"]
 # :login_wallet__
 
+assert token != ""
 print("Logged in to wallet successfully")
 
 # __get_pubkey:
 # List key pairs and select public key to use
-response = wallet_client.listkeys()
+headers = {"Authorization": f"Bearer {token}"}
+response = requests.get(f"{wallet_server_url}/api/v1/keys", headers=headers)
 helpers.check_response(response)
 keys = response.json()["keys"]
 pubkey = keys[0]["pub"]
@@ -89,7 +90,7 @@ print("Selected pubkey for signing")
 #####################################################################################
 
 # Request a list of markets and select the first one
-req = vac.api.trading.MarketsRequest()
+req = vac.data_node.api.v1.trading_data.MarketsRequest()
 markets = data_client.Markets(req).markets
 marketID = markets[0].id
 
@@ -98,7 +99,7 @@ print(f"Market found: {marketID}")
 
 # __get_accounts_by_market:
 # Request a list of accounts for a market on a Vega network
-request = vac.api.trading.MarketAccountsRequest(market_id=marketID)
+request = vac.data_node.api.v1.trading_data.MarketAccountsRequest(market_id=marketID)
 market_accounts = data_client.MarketAccounts(request)
 print("Market accounts:\n{}".format(market_accounts))
 # :get_accounts_by_market__
@@ -109,7 +110,7 @@ print("Market accounts:\n{}".format(market_accounts))
 
 # __get_accounts_by_party:
 # Request a list of accounts for a party (pubkey) on a Vega network
-request = vac.api.trading.PartyAccountsRequest(party_id=pubkey)
+request = vac.data_node.api.v1.trading_data.PartyAccountsRequest(party_id=pubkey)
 party_accounts = data_client.PartyAccounts(request)
 print("Party accounts:\n{}".format(party_accounts))
 # :get_accounts_by_party__
@@ -120,7 +121,7 @@ print("Party accounts:\n{}".format(party_accounts))
 
 # __get_positions_by_party:
 # Request a list of positions for a party (pubkey) on a Vega network
-request = vac.api.trading.PositionsByPartyRequest(party_id=pubkey)
+request = vac.data_node.api.v1.trading_data.PositionsByPartyRequest(party_id=pubkey)
 party_positions = data_client.PositionsByParty(request)
 print("Party positions:\n{}".format(party_positions))
 # :get_positions_by_party__

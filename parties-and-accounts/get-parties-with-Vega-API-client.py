@@ -32,7 +32,7 @@ node_url_grpc = os.getenv("NODE_URL_GRPC")
 # __get_parties:
 # Request a list of parties trading on a Vega network
 data_client = vac.VegaTradingDataClient(node_url_grpc)
-req = vac.api.trading.PartiesRequest()
+req = vac.data_node.api.v1.trading_data.PartiesRequest()
 response = data_client.Parties(req)
 print("Parties:\n{}".format(response))
 # :get_parties__
