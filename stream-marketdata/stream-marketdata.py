@@ -27,8 +27,8 @@ def on_error(ws, error):
     print(str(error).strip())
 
 
-def on_close(ws):
-    print("### closed ###")
+def on_close(ws, close_status_code, close_msg):
+    print(f"### closed {close_status_code}: {close_msg} ###")
 
 
 def generate_on_open_function(marketID: str):
