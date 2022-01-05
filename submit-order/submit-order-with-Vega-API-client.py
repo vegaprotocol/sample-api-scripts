@@ -117,5 +117,5 @@ url = f"{wallet_server_url}/api/v1/command/sync"
 response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
 
-print("Signed pegged order and sent to Vega")
+print("Signed order and sent to Vega")
 
