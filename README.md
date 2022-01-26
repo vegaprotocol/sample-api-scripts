@@ -10,12 +10,19 @@ Vega core and wallet APIs to interact with Vega core nodes and wallet servers.
 Get started with the sample API scripts with zero configuration. Click on the
 "Gitpod ready-to-code" button above.
 
-# Getting started
+# Getting started for Unix based systems (Mac OS & Linux)
 
 1. Copy or rename the `credentials-template` file as `credentials`.  
 *Note: When running on Gitpod this is already done for you.*
 1. Edit the `credentials` file. (`nano` and `vim` are installed, or use the built-in Gitpod text editor.)
 1. Import the credentials into your local environment: `source credentials`
+
+# Getting started for Windows
+
+1. Copy or rename the `credentials-win-template` file as `credentials-win`.  
+1. Edit the `credentials-win` file.
+1. Run the setup batch script to import the credentials into your local environment: `setup.bat`
+
 
 And you're good to go. Now choose a sample program to run from the following (see the link in the **Folder** column to learn how to run each sample script):
 
