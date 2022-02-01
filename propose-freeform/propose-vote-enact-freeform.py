@@ -76,6 +76,39 @@ def main():
     assert pubkey
     print("Selected pubkey for signing")
 
+    ###############################################################################
+    #                              F I N D   A S S E T S                          #
+    ###############################################################################
+
+    # __get_assets:
+    # Request a list of assets available on a Vega network
+    url = f"{node_url_rest}/assets"
+    response = requests.get(url)
+    helpers.check_response(response)
+    # :get_assets__
+
+    # Debugging
+    # print("Assets:\n{}".format(
+    #    json.dumps(response.json(), indent=2, sort_keys=True)))
+
+    # __find_asset:
+    # Find settlement asset with name tDAI
+    found_asset_id = None
+    assets = response.json()["assets"]
+    for asset in assets:
+        if asset["details"]["symbol"] == "tDAI":
+            print("Found an asset with symbol tDAI")
+            print(asset)
+            found_asset_id = asset["id"]
+            break
+    # :find_asset__
+
+    if found_asset_id is None:
+        print(
+            "tDAI asset not found on specified Vega network, please propose and "
+            "create this asset first"
+        )
+        sys.exit(1)
 
     #####################################################################################
     #                   G O V E R N A N C E   T O K E N   C H E C K                     #
