@@ -33,7 +33,7 @@ if not helpers.check_url(node_url_rest):
 # Request an order by reference on a Vega network
 # Note: This is an example and order reference will be provided in the response
 # from a prepareSubmitOrder request in the field named `submitID` or similar.
-reference = "4617844f-6fab-4cf6-8852-e29dbd96e5f1"
+reference = "V0000192494-0018706527-0000000001"
 url = "{base}/orders/{ref}".format(base=node_url_rest, ref=reference)
 response = requests.get(url)
 helpers.check_response(response)
