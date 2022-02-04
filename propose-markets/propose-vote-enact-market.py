@@ -177,8 +177,8 @@ proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time
-closing_time = blockchain_time_seconds + 360
-enactment_time = blockchain_time_seconds + 480
+closing_time = blockchain_time_seconds + 86400
+enactment_time = blockchain_time_seconds + 86500
 validation_time = blockchain_time_seconds + 1
 
 # The proposal command below contains the configuration for a new market
@@ -310,7 +310,7 @@ helpers.check_response(response)
 print("Signed market proposal and sent to Vega")
 
 # Debugging
-# print("Signed transaction:\n", response.json(), "\n")
+print("Signed transaction:\n", response.json(), "\n")
 
 # Wait for proposal to be included in a block and to be accepted by Vega
 # network
@@ -319,6 +319,7 @@ proposal_id = ""
 done = False
 while not done:
     time.sleep(0.5)
+
     print(".", end="", flush=True)
     my_proposals = requests.get(
         node_url_rest + "/parties/" + pubkey + "/proposals"
