@@ -80,6 +80,7 @@ def main():
     #                              F I N D   A S S E T S                                #
     #####################################################################################
 
+
     # __get_assets:
     # Request a list of assets available on a Vega network
     url = f"{node_url_rest}/assets"
