@@ -153,7 +153,7 @@ def main():
 
     # Set closing/enactment and validation timestamps to valid time offsets
     # from the current Vega blockchain time
-    closing_time = blockchain_time_seconds + 86401
+    closing_time = blockchain_time_seconds + 172900
     validation_time = blockchain_time_seconds + 1
 
     new_freeform = {
@@ -205,7 +205,7 @@ def main():
                         n["proposal"]['state'] == 'STATE_FAILED'):
                     print("Your proposal has been " + n["proposal"]['state'] + "!")
                     print("Due to: " + n["proposal"]["reason"])
-                    print("Further details: " + n["proposal"]["errorDetails"])
+                    if ((n["proposal"]["errorDetails"]) != ''): print("Further details: " + n["proposal"]["errorDetails"])
                     exit()
                 else:
                     print("Your proposal has been accepted by the network!")

@@ -334,7 +334,7 @@ while not done:
             if (n["proposal"]['state']=='STATE_REJECTED') or (n["proposal"]['state']=='STATE_DECLINED') or (n["proposal"]['state']=='STATE_FAILED'):
                 print("Your proposal has been " + n["proposal"]['state'] + "!")
                 print("Due to: " + n["proposal"]["reason"])
-                print("Further details: " + n["proposal"]["errorDetails"])
+                if ((n["proposal"]["errorDetails"]) != ''): print("Further details: " + n["proposal"]["errorDetails"])
                 exit()
             else:
                 print("Your proposal has been accepted by the network!")
