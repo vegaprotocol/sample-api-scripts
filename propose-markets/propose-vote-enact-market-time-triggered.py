@@ -205,12 +205,12 @@ proposal = {
                                     {
                                         "key": {
                                             "name": "price.DAI.value",
-                                            "type": "TYPE_STRING",
+                                            "type": "TYPE_DECIMAL",
                                         },
                                         "conditions": [
                                             {
-                                                "operator": "OPERATOR_EQUALS",
-                                                "value": "5797800153",
+                                                "operator": "OPERATOR_GREATER_THAN",
+                                                "value": "0",
                                             },
                                         ],
                                     },
