@@ -177,7 +177,7 @@ proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time
-closing_time = blockchain_time_seconds + 86400
+closing_time = blockchain_time_seconds + 80000
 enactment_time = blockchain_time_seconds + 86500
 validation_time = blockchain_time_seconds + 1
 
@@ -310,7 +310,7 @@ helpers.check_response(response)
 print("Signed market proposal and sent to Vega")
 
 # Debugging
-print("Signed transaction:\n", response.json(), "\n")
+# print("Signed transaction:\n", response.json(), "\n")
 
 # Wait for proposal to be included in a block and to be accepted by Vega
 # network
@@ -331,8 +331,14 @@ while not done:
         if n["proposal"]["reference"] == proposal_ref:
             proposal_id = n["proposal"]["id"]
             print()
-            print("Your proposal has been accepted by the network")
-            print(n)
+            if (n["proposal"]['state']=='STATE_REJECTED') or (n["proposal"]['state']=='STATE_DECLINED') or (n["proposal"]['state']=='STATE_FAILED'):
+                print("Your proposal has been " + n["proposal"]['state'] + "!")
+                print("Due to: " + n["proposal"]["reason"])
+                print("Further details: " + n["proposal"]["errorDetails"])
+                exit()
+            else:
+                print("Your proposal has been accepted by the network!")
+                print(n)
             done = True
             break
 
