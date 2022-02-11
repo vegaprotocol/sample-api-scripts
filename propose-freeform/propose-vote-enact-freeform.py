@@ -255,31 +255,32 @@ def main():
     print("Signed vote on proposal and sent to Vega")
 
     # Debugging
-    # print("Signed transaction:\n", response.json(), "\n")
+    print("Signed transaction:\n", response.json(), "\n")
 
-    print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
-    while True:
-        time.sleep(0.5)
-        my_proposals = requests.get(
-            node_url_rest + "/parties/" + pubkey + "/proposals"
-        )
-        if my_proposals.status_code != 200:
-            continue
+    # Optionally wait for proposal time to elapse
+    # print("Waiting for vote on proposal to succeed or fail...", end="", flush=True)
+    # while True:
+    #     time.sleep(0.5)
+    #     my_proposals = requests.get(
+    #         node_url_rest + "/parties/" + pubkey + "/proposals"
+    #     )
+    #     if my_proposals.status_code != 200:
+    #         continue
 
-        proposal = next((n["proposal"] for n in my_proposals.json()["data"] if n["proposal"]["reference"] == proposal_ref), None)
+    #     proposal = next((n["proposal"] for n in my_proposals.json()["data"] if n["proposal"]["reference"] == proposal_ref), None)
 
-        if proposal is None or proposal["state"] == "STATE_OPEN":
-            continue
+    #     if proposal is None or proposal["state"] == "STATE_OPEN":
+    #         continue
 
-        if proposal["state"] == "STATE_PASSED":
-            print("proposal vote has succeeded, waiting for enactment")
-            continue
+    #     if proposal["state"] == "STATE_PASSED":
+    #         print("proposal vote has succeeded, waiting for enactment")
+    #         continue
 
-        print(proposal)
-        if proposal["state"] == "STATE_ENACTED":
-            break
+    #     print(proposal)
+    #     if proposal["state"] == "STATE_ENACTED":
+    #         break
         
-        sys.exit(1)
+    #     sys.exit(1)
 
 
 if __name__ == "__main__":

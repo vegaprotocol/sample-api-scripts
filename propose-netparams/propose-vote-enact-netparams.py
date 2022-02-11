@@ -280,9 +280,6 @@ while True:
         print("proposal vote has succeeded, waiting for enactment")
         continue
 
-
-
-
     if proposal["state"] == "STATE_ENACTED":
         break
     
