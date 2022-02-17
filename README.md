@@ -33,7 +33,7 @@ And you're good to go. Now choose a sample program to run from the following (se
 | Get Asset | python3 | Vega node [GraphQL, REST, gRPC]  | / [get-assets](get-assets) |
 | Orders by reference | bash, python3 | Vega node [GraphQL, REST, gRPC]  | / [get-by-reference](get-by-reference) |
 | List market details and market data | bash, python3 | Vega node [GraphQL, REST, gRPC]  | / [get-markets-and-market-data](get-markets-and-market-data) |
-| List Vega network parameters | bash, python3  | Vega node [GraphQL, REST, gRPC]  | / [get-netowork-parameters](get-network-parameters) |
+| List Vega network parameters | bash, python3  | Vega node [GraphQL, REST, gRPC]  | / [get-network-parameters](get-network-parameters) |
 | List orders and trades | bash, python3 | Vega node [GraphQL, REST, gRPC]  | / [get-orders-and-trades](get-orders-and-trades) |
 | Vega statistics | bash, python3 | Vega node [GraphQL, REST, gRPC]  | / [get-statistics](get-statistics) |
 | List parties and accounts | bash, python3 | Vega node [REST, gRPC]  | / [parties-and-accounts](parties-and-accounts) |
@@ -51,6 +51,9 @@ And you're good to go. Now choose a sample program to run from the following (se
 | Propose, vote and enact network parameters update | python3 | Vega node [REST] | / [propose-markets](propose-netparam) |
 | Propose, vote and enact new freeform proposal | python3 | Vega node [REST] | / [propose-markets](propose-freeform) |
 | List proposals | bash, python3 | Vega node [GraphQL, gRPC] | / [propose-votes](propose-votes) |
+| Submit create liquidity provision | bash, python3 | Data node [GraphQL, gRPC] | / [submit-create-liquidity-provision](submit-create-liquidity-provision) |
+| Submit amend liquidity provision | bash, python3 | Data node [GraphQL, gRPC] | / [submit-amend-liquidity-provision](submit-amend-liquidity-provision) |
+| Submit cancel liquidity provision | bash, python3 | Data node [GraphQL, gRPC] | / [submit-cancel-liquidity-provision](submit-cancel-liquidity-provision) |
 
 # Troubleshooting
 
