@@ -26,6 +26,8 @@ import requests
 import time
 import helpers
 
+import json
+import base64
 
 node_url_rest = os.getenv("NODE_URL_REST")
 if not helpers.check_url(node_url_rest):
@@ -116,7 +118,7 @@ if found_asset_id is None:
 
 # Get the identifier of the governance asset on the Vega network
 assets = response.json()["assets"]
-vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "VEGA"), None)
+vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "VOTE"), None)
 if vote_asset_id is None:
     print("VEGA asset not found on specified Vega network, please symbol name check and try again")
     sys.exit(1)
@@ -177,8 +179,8 @@ proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time
-closing_time = blockchain_time_seconds + 80000
-enactment_time = blockchain_time_seconds + 86500
+closing_time = blockchain_time_seconds + 360
+enactment_time = blockchain_time_seconds + 480
 validation_time = blockchain_time_seconds + 1
 
 # The proposal command below contains the configuration for a new market
@@ -191,51 +193,39 @@ proposal = {
             "validationTimestamp": validation_time,
             "newMarket": {
                 "changes": {
-                    "continuous": {
-                        "tickSize": "0.01"
-                    },
                     "decimalPlaces": 5,
                     "instrument": {
                         "code": "CRYPTO:BTCDAI/DEC22",
                         "future": {
-                            "maturity": "2022-12-31T23:59:59Z",
                             "oracleSpecForSettlementPrice": {
-                                "pubKeys": ["0x0000"],
+                                "pubKeys": ["e3c154cbf037f6439ebb290e2a45831c5a63d124d0bd24dd3e957504859a8555"],
                                 "filters": [
                                     {
                                         "key": {
                                             "name": "price.DAI.value",
-                                            "type": "TYPE_STRING",
+                                            "type": "TYPE_INTEGER",
                                         },
                                         "conditions": [
-                                            {
-                                                "operator": "OPERATOR_EQUALS",
-                                                "value": "5797800153",
-                                            },
                                         ],
                                     },
                                 ],
                             },
                             "oracleSpecForTradingTermination": {
-                                "pubKeys": ["0x0000"],
+                                "pubKeys": ["e3c154cbf037f6439ebb290e2a45831c5a63d124d0bd24dd3e957504859a8555"],
                                 "filters": [
                                     {
                                         "key": {
-                                            "name": "price.DAI.value",
-                                            "type": "TYPE_STRING",
+                                            "name": "trading.terminated",
+                                            "type": "TYPE_BOOLEAN",
                                         },
                                         "conditions": [
-                                            {
-                                                "operator": "OPERATOR_EQUALS",
-                                                "value": "5797800153",
-                                            },
                                         ],
                                     },
                                 ],
                             },
                             "oracleSpecBinding": {
                                 "settlementPriceProperty": "price.DAI.value",
-                                "tradingTerminationProperty": "price.DAI.value"
+                                "tradingTerminationProperty": "trading.terminated"
                             },
                             "quoteName": "tDAI",
                             "settlementAsset": found_asset_id,
@@ -267,24 +257,24 @@ proposal = {
                         {
                             "reference": "PEGGED_REFERENCE_BEST_ASK",
                             "proportion": 10,
-                            "offset": 2000,
+                            "offset": "2000",
                         },
                         {
                             "reference": "PEGGED_REFERENCE_BEST_ASK",
                             "proportion": 10,
-                            "offset": 1000,
+                            "offset": "1000",
                         },
                     ],
                     "buys": [
                         {
                             "reference": "PEGGED_REFERENCE_BEST_BID",
                             "proportion": 10,
-                            "offset": -1000,
+                            "offset": "1000",
                         },
                         {
                             "reference": "PEGGED_REFERENCE_BEST_BID",
                             "proportion": 10,
-                            "offset": -2000,
+                            "offset": "2000",
                         },
                     ],
                     "reference": "",
@@ -298,6 +288,7 @@ proposal = {
 # :prepare_propose_market__
 
 print("Market proposal: ", proposal)
+
 
 # __sign_tx_proposal:
 # Sign the new market proposal transaction
@@ -445,3 +436,45 @@ while not done:
 # :wait_for_market__
 
 # Completed.
+
+
+print("Sending in trading terminated")
+# Use oracle to terminated market
+
+payload = {"trading.terminated": "true"}
+as_str = json.dumps(payload).encode()
+oracle = {
+    "oracleDataSubmission": {
+        "source": "ORACLE_SOURCE_JSON",
+        "payload": base64.b64encode(as_str).decode("ascii"),
+    },
+    "pubKey": pubkey,
+    "propagate": True
+}
+
+time.sleep(10)
+print("sending in settled")
+
+# Send it in
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=oracle)
+helpers.check_response(response)
+
+
+# use oracle to settle market
+payload = {"price.DAI.value": "5797800153"}
+as_str = json.dumps(payload).encode()
+oracle = {
+    "oracleDataSubmission": {
+        "source": "ORACLE_SOURCE_JSON",
+        "payload": base64.b64encode(as_str).decode("ascii"),
+    },
+    "pubKey": pubkey,
+    "propagate": True
+}
+
+
+# Send it in
+url = f"{wallet_server_url}/api/v1/command/sync"
+response = requests.post(url, headers=headers, json=oracle)
+helpers.check_response(response)
