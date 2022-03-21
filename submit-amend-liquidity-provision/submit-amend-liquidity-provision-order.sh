@@ -95,18 +95,18 @@ echo "Liquidity provisions: $response"
 # __prepare_liquidity_order:
 # Compose a submit liquidity provision command
 submission=$(cat <<-END
-"liquidityProvisionSubmission": {
+"liquidityProvisionAmendment": {
     "market_id": "$marketID",
-    "commitment_amount": "100",
+    "commitment_amount": "5000000",
     "fee": "0.01",
     "buys": [
       {
-        "offset": "-1",
+        "offset": "1",
         "proportion": "1",
         "reference": "PEGGED_REFERENCE_MID"
       },
       {
-        "offset": "-2",
+        "offset": "2",
         "proportion": "2",
         "reference": "PEGGED_REFERENCE_MID"
       }

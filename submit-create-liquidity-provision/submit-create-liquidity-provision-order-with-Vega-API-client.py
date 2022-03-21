@@ -137,12 +137,12 @@ lp_data=vac.vega.commands.v1.commands.LiquidityProvisionSubmission(
         vac.vega.vega.LiquidityOrder(
             reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=1,
-            offset=-1
+            offset=1
         ),
         vac.vega.vega.LiquidityOrder(
             reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=2,
-            offset=-2
+            offset=2
         )
     ],
     sells=[
@@ -181,85 +181,3 @@ helpers.check_response(response)
 # :sign_tx_liquidity_order__
 
 print("Signed LP submission and sent to Vega")
-
-# Comment out the lines below to add a cancellation of the newly created LP commitment
-print("To add amend/cancellation step, comment line 190 of the script file")
-exit(0)
-
-#####################################################################################
-#               A M E N D    L I Q U I D I T Y   C O M M I T M E N T                #
-#####################################################################################
-
-# __amend_liquidity_order:
-# Compose a liquidity commitment order message
-# (it will now serve as an amendment request):
-# modify fields you want to be amended
-lp_data=vac.vega.commands.v1.commands.LiquidityProvisionSubmission(
-    market_id=marketID,
-    commitment_amount="500",
-    fee="0.005",
-    buys=[
-        vac.vega.vega.LiquidityOrder(
-            reference=vac.vega.vega.PEGGED_REFERENCE_MID,
-            proportion=1,
-            offset=-1
-        )
-    ],
-    sells=[
-        vac.vega.vega.LiquidityOrder(
-            reference=vac.vega.vega.PEGGED_REFERENCE_MID,
-            proportion=1,
-            offset=1
-        )
-    ]
-)
-# :amend_liquidity_order__
-
-print("Liquidity provision amendment: ", lp_data)
-
-# Sign the transaction with an order submission command
-# Note: Setting propagate to true will also submit to a Vega node
-submission = {
-    "liquidityProvisionSubmission": MessageToDict(lp_data),
-    "pubKey": pubkey,
-    "propagate": True
-}
-url = f"{wallet_server_url}/api/v1/command/sync"
-response = requests.post(url, headers=headers, json=submission)
-helpers.check_response(response)
-
-print("Signed liquidity commitment (amendment) and sent to Vega")
-
-time.sleep(10)
-
-#####################################################################################
-#               C A N C E L    L I Q U I D I T Y   C O M M I T M E N T              #
-#####################################################################################
-
-# __cancel_liquidity_order:
-# Compose a liquidity commitment order message
-# (it will now serve as a cancellation request): set commitmentAmount to 0,
-# note that transaction may get rejected if removing previously supplied liquidity
-# will result in insufficient liquidity for the market
-lp_data=vac.vega.commands.v1.commands.LiquidityProvisionSubmission(
-    market_id=marketID,
-    commitment_amount="0"
-)
-# :cancel_liquidity_order__
-
-print("Liquidity provision cancellation: ", lp_data)
-
-# Sign the transaction with an order submission command
-# Note: Setting propagate to true will also submit to a Vega node
-submission = {
-    "liquidityProvisionSubmission": MessageToDict(lp_data),
-    "pubKey": pubkey,
-    "propagate": True
-}
-url = f"{wallet_server_url}/api/v1/command/sync"
-response = requests.post(url, headers=headers, json=submission)
-helpers.check_response(response)
-
-print("Signed liquidity commitment (cancellation) and sent to Vega")
-
-# Completed.
