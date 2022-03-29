@@ -70,6 +70,19 @@ The following tools or applications are required for these scripts to work. Here
     ```bash
     pip3 install -r requirements.txt
     ```
+1. gq (https://github.com/hasura/graphqurl)
+    ```bash
+    gq --version
+    ```
+    
+
+To make sure you have all the tools required and have setup your environment correctly it is best to try out the most basic vega time script.
+
+```bash
+python3 vega-time/get-time.py
+```
+
+If this correctly gets the time then you have everything you need to use the other scripts.
 
 
 And you're good to go. Now choose a sample program to run from the following (see the link in the **Folder** column to learn how to run each sample script):
