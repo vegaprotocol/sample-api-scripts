@@ -34,9 +34,42 @@ Get started with the sample API scripts with zero configuration. Click on the
 
 # Getting started for Windows
 
+1. Clone this repo onto your local machine so you have access to all the files and can change them as you need.
+    ```bash
+    git clone git@github.com:vegaprotocol/sample-api-scripts.git
+    ```
+    This should create you a folder named `sample-api-scripts` that you will use for the rest of this README.
 1. Copy or rename the `credentials-win-template` file as `credentials-win`.  
+    ```bash
+    copy credentials-win-template credentials-win
+    ```
 1. Edit the `credentials-win` file.
+    ```bash
+    notepad credentials-win
+    ```
+1. The URL values will already be setup correctly for testnet, the items you will need to update are relating to your wallet and are located near the top of the file. If you are going to use the scripts on mainnet the URL details can be found in your wallet connections file. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
+    ```bash
+    set WALLET_PASSPHRASE="<your password>"
+    ```
 1. Run the setup batch script to import the credentials into your local environment: `setup.bat`
+
+
+Prerequisites 
+
+The following tools or applications are required for these scripts to work. Here are the commands to check they are installed on your system:
+
+1. python3
+   ```bash
+   python3 --version
+   ```
+1. pip3
+    ```bash
+    pip3 --version
+    ```
+    To make sure we have all the correct libraries you can use pip with the requirements.txt to install them all
+    ```bash
+    pip3 install -r requirements.txt
+    ```
 
 
 And you're good to go. Now choose a sample program to run from the following (see the link in the **Folder** column to learn how to run each sample script):
