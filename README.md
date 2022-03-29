@@ -11,10 +11,25 @@ Get started with the sample API scripts with zero configuration. Click on the
 "Gitpod ready-to-code" button above.
 
 # Getting started for Unix based systems (Mac OS & Linux)
-
+1. Clone this repo onto your local machine so you have access to all the files and can change them as you need.
+    ```bash
+    git clone git@github.com:vegaprotocol/sample-api-scripts.git
+    ```
+    This should create you a folder named `sample-api-scripts` that you will use for the rest of this README.
 1. Copy or rename the `credentials-template` file as `credentials`.  
-*Note: When running on Gitpod this is already done for you.*
+    *Note: When running on Gitpod this is already done for you.*
+    ```bash
+    cp credentials-template credentials
+    ```
 1. Edit the `credentials` file. (`nano` and `vim` are installed, or use the built-in Gitpod text editor.)
+    ```bash
+    nano credentials
+    ```
+1. The URL values will already be setup correctly for testnet, the items you will need to update are relating to your wallet and are located near the top of the file. If you are going to use the scripts on mainnet the URL details can be found in your wallet connections file. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
+    ```bash
+    export WALLET_PASSPHRASE="<your password>"
+    ```
+
 1. Import the credentials into your local environment: `source credentials`
 
 # Getting started for Windows
