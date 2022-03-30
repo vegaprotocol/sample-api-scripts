@@ -173,7 +173,7 @@ submission=$(cat <<-END
     "fee": "0.005",
     "buys": [
       {
-        "offset": "-1",
+        "offset": "1",
         "proportion": "1",
         "reference": "PEGGED_REFERENCE_MID"
       }

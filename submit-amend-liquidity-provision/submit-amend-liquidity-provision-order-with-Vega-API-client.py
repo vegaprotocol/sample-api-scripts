@@ -134,7 +134,7 @@ lp_data=vac.vega.commands.v1.commands.LiquidityProvisionAmendment(
         vac.vega.vega.LiquidityOrder(
             reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=1,
-            offset=-1
+            offset=1
         )
     ],
     sells=[
