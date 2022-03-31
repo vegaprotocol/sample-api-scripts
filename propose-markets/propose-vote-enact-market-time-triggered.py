@@ -205,7 +205,7 @@ proposal = {
                                     {
                                         "key": {
                                             "name": "price.DAI.value",
-                                            "type": "TYPE_DECIMAL",
+                                            "type": "TYPE_INTEGER",
                                         },
                                         "conditions": [
                                             {
@@ -401,7 +401,7 @@ while True:
         print("proposal vote has succeeded, waiting for enactment")
         continue
 
-    if proposal["state"] == "STATE_ENACTED":
+    if proposal["state"] in ["STATE_ENACTED", "STATE_REJECTED", "STATE_FAILED"]:
         break
     
     print(proposal)

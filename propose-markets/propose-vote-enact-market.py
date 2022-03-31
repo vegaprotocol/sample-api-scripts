@@ -205,7 +205,7 @@ proposal = {
                                     {
                                         "key": {
                                             "name": "price.DAI.value",
-                                            "type": "TYPE_DECIMAL",
+                                            "type": "TYPE_INTEGER",
                                         },
                                         "conditions": [
                                             {
