@@ -15,7 +15,7 @@ Please see the [documentation](https://docs.testnet.vega.xyz) on Vega for furthe
 Interact with wallet and node API operations using shell scripts and `curl` [REST API]:
 
 ```bash
-bash submit-liquidity-provision/submit-create-liquidity-provision-order.sh
+bash submit-create-liquidity-provision/submit-create-liquidity-provision-order.sh
 ```
 
 ## Python + requests
@@ -23,7 +23,7 @@ bash submit-liquidity-provision/submit-create-liquidity-provision-order.sh
 Interact with wallet and node API operations using python3 and the [requests](https://pypi.org/project/requests/) library [REST API]:
 
 ```bash
-python3 submit-liquidity-provision/submit-create-liquidity-provision-order.py
+python3 submit-create-liquidity-provision/submit-create-liquidity-provision-order.py
 ```
 
 ## Python + Vega-API-client
@@ -31,7 +31,7 @@ python3 submit-liquidity-provision/submit-create-liquidity-provision-order.py
 Interact with wallet and node API operations using python3 and the [Vega-API-client](https://pypi.org/project/Vega-API-client/) library [REST API]:
 
 ```bash
-python3 submit-liquidity-provision/submit-create-liquidity-provision-order-with-Vega-API-client.py
+python3 submit-create-liquidity-provision/submit-create-liquidity-provision-order-with-Vega-API-client.py
 ```
  
 ---
