@@ -24,6 +24,7 @@ Get started with the sample API scripts with zero configuration. Click on the
 1. Edit the `credentials` file. (`nano` and `vim` are installed, or use the built-in Gitpod text editor.)
     ```bash
     nano credentials
+    (press Ctrl-O, Enter, Ctrl-X to save and exit)
     ```
 1. The URL values will already be setup correctly for testnet, the items you will need to update are relating to your wallet and are located near the top of the file. If you are going to use the scripts on mainnet the URL details can be found in your wallet connections file. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
     ```bash
@@ -54,7 +55,7 @@ Get started with the sample API scripts with zero configuration. Click on the
 1. Run the setup batch script to import the credentials into your local environment: `setup.bat`
 
 
-Prerequisites 
+# Prerequisites 
 
 The following tools or applications are required for these scripts to work. Here are the commands to check they are installed on your system:
 
@@ -76,7 +77,7 @@ The following tools or applications are required for these scripts to work. Here
     ```
     
 
-To make sure you have all the tools required and have setup your environment correctly it is best to try out the most basic vega time script.
+To make sure you have all the tools required and have setup your environment correctly, it is best to try out the most basic `vega-time` script.
 
 ```bash
 python3 vega-time/get-time.py
