@@ -116,7 +116,7 @@ if found_asset_id is None:
 
 # Get the identifier of the governance asset on the Vega network
 assets = response.json()["assets"]
-vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "VEGA"), None)
+vote_asset_id = next((x["id"] for x in assets if x["details"]["symbol"] == "VOTE"), None)
 if vote_asset_id is None:
     print("VEGA asset not found on specified Vega network, please symbol name check and try again")
     sys.exit(1)
@@ -177,8 +177,8 @@ proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
 
 # Set closing/enactment and validation timestamps to valid time offsets
 # from the current Vega blockchain time
-closing_time = blockchain_time_seconds + 80000
-enactment_time = blockchain_time_seconds + 86500
+closing_time = blockchain_time_seconds + 360
+enactment_time = blockchain_time_seconds + 480
 validation_time = blockchain_time_seconds + 1
 
 # The proposal command below contains the configuration for a new market
@@ -217,17 +217,17 @@ proposal = {
                                 ],
                             },
                             "oracleSpecForTradingTermination": {
-                                "pubKeys": ["0x0000"],
+                                "pubKeys": [],
                                 "filters": [
                                     {
                                         "key": {
-                                            "name": "price.DAI.value",
-                                            "type": "TYPE_STRING",
+                                            "name": "vegaprotocol.builtin.timestamp",
+                                            "type": "TYPE_TIMESTAMP",
                                         },
                                         "conditions": [
                                             {
-                                                "operator": "OPERATOR_EQUALS",
-                                                "value": "5797800153",
+                                                "operator": "OPERATOR_GREATER_THAN_OR_EQUAL",
+                                                "value": "1648684800000000000",
                                             },
                                         ],
                                     },
@@ -235,7 +235,7 @@ proposal = {
                             },
                             "oracleSpecBinding": {
                                 "settlementPriceProperty": "price.DAI.value",
-                                "tradingTerminationProperty": "price.DAI.value"
+                                "tradingTerminationProperty": "vegaprotocol.builtin.timestamp"
                             },
                             "quoteName": "tDAI",
                             "settlementAsset": found_asset_id,
@@ -267,24 +267,24 @@ proposal = {
                         {
                             "reference": "PEGGED_REFERENCE_BEST_ASK",
                             "proportion": 10,
-                            "offset": 2000,
+                            "offset": "2000",
                         },
                         {
                             "reference": "PEGGED_REFERENCE_BEST_ASK",
                             "proportion": 10,
-                            "offset": 1000,
+                            "offset": "1000",
                         },
                     ],
                     "buys": [
                         {
                             "reference": "PEGGED_REFERENCE_BEST_BID",
                             "proportion": 10,
-                            "offset": -1000,
+                            "offset": "1000",
                         },
                         {
                             "reference": "PEGGED_REFERENCE_BEST_BID",
                             "proportion": 10,
-                            "offset": -2000,
+                            "offset": "2000",
                         },
                     ],
                     "reference": "",
@@ -319,7 +319,6 @@ proposal_id = ""
 done = False
 while not done:
     time.sleep(0.5)
-
     print(".", end="", flush=True)
     my_proposals = requests.get(
         node_url_rest + "/parties/" + pubkey + "/proposals"
@@ -331,14 +330,8 @@ while not done:
         if n["proposal"]["reference"] == proposal_ref:
             proposal_id = n["proposal"]["id"]
             print()
-            if (n["proposal"]['state']=='STATE_REJECTED') or (n["proposal"]['state']=='STATE_DECLINED') or (n["proposal"]['state']=='STATE_FAILED'):
-                print("Your proposal has been " + n["proposal"]['state'] + "!")
-                print("Due to: " + n["proposal"]["reason"])
-                if ((n["proposal"]["errorDetails"]) != ''): print("Further details: " + n["proposal"]["errorDetails"])
-                exit()
-            else:
-                print("Your proposal has been accepted by the network!")
-                print(n)
+            print("Your proposal has been accepted by the network")
+            print(n)
             done = True
             break
 
@@ -408,7 +401,7 @@ while True:
         print("proposal vote has succeeded, waiting for enactment")
         continue
 
-    if proposal["state"] == "STATE_ENACTED":
+    if proposal["state"] in ["STATE_ENACTED", "STATE_REJECTED", "STATE_FAILED"]:
         break
     
     print(proposal)
