@@ -47,7 +47,7 @@ Get started with the sample API scripts with zero configuration. Click on the
     ```bash
     notepad credentials-win
     ```
-1. The URL values will already be setup correctly for testnet, the items you will need to update are relating to your wallet and are located near the top of the file. If you are going to use the scripts on mainnet the URL details can be found in your wallet connections file. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
+1. The URL values will already be setup correctly for testnet, the items you will need to update are relating to your wallet and are located near the top of the file. If you are going to use the scripts on mainnet, the URL details can be found in your wallet connections file. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
     ```bash
     set WALLET_PASSPHRASE="<your password>"
     ```
