@@ -47,6 +47,11 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
+marketID = os.getenv("VEGA_MARKET")
+if not helpers.check_var(marketID):
+    print("Error: Invalid or missing VEGA_WALLET environment variable.")
+    exit(1)
+
 # Help guide users against including api version suffix on url
 wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 

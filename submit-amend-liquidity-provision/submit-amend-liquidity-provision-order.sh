@@ -26,6 +26,8 @@ check_url "WALLETSERVER_URL" || exit 1
 check_var "WALLET_NAME" || exit 1
 check_var "WALLET_PASSPHRASE" || exit 1
 
+check_var "VEGA_MARKET" || exit 1
+
 # __create_wallet:
 CREATE_NEW_WALLET=no
 if test "$CREATE_NEW_WALLET" == yes ; then
@@ -66,15 +68,14 @@ fi
 test -n "$pubKey" || exit 1
 test "$pubKey" == null && exit 1
 
-çNext, get a Market ID ###
+### Next, get a Market ID ###
 # __get_market:
-url="$NODE_URL_REST/markets"
-echo "get market ID url: $url"
-response="$(curl -s "$url")"
-marketID="$(echo "$response" | jq -r '.markets[0].id')"
+# url="$NODE_URL_REST/markets"
+# echo "get market ID url: $url"
+# response="$(curl -s "$url")"
+# marketID="$(echo "$response" | jq -r '.markets[0].id')"
 # :get_market__
-
-
+marketID=$VEGA_MARKET
 
 ### List liquidity provisions on the specified market
 # __get_liquidity_provisions:
@@ -85,8 +86,6 @@ echo "get liquidity provisions data for the market: $url"
 response="$(curl -s "$url")"
 echo "Liquidity provisions: $response"
 # :get_liquidity_provisions__
-
-
 
 ### Submit liquidity commitment for the selected market
 # Note: commitment_amount is an integer. For example 123456 is a price of 1.23456,

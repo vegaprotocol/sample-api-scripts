@@ -50,6 +50,11 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
+marketID = os.getenv("VEGA_MARKET")
+if not helpers.check_var(marketID):
+    print("Error: Invalid or missing VEGA_MARKET environment variable.")
+    exit(1)
+
 # Help guide users against including api version suffix on url
 wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
@@ -92,16 +97,18 @@ print("Selected pubkey for signing")
 #####################################################################################
 #                               F I N D   M A R K E T                               #
 #####################################################################################
+# Helper code to list out the available markets                                     #
+#####################################################################################
 
 # __get_market:
 # Request the identifier for the market to place on
-markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
-marketID = markets[0].id
+# markets = data_client.Markets(vac.data_node.api.v1.trading_data.MarketsRequest()).markets
+# marketID = markets[0].id
 # :get_market__
 
-assert marketID != ""
-marketName = markets[0].tradable_instrument.instrument.name
-print(f"Market found: {marketID} {marketName}")
+# assert marketID != ""
+# marketName = markets[0].tradable_instrument.instrument.name
+# print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
 #                 L I S T   L I Q U I D I T Y   P R O V I S I O N S                 #
@@ -137,29 +144,29 @@ lp_data=vac.vega.commands.v1.commands.LiquidityProvisionSubmission(
         vac.vega.vega.LiquidityOrder(
             reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=1,
-            offset=1
+            offset="1"
         ),
         vac.vega.vega.LiquidityOrder(
             reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=2,
-            offset=2
+            offset="2"
         )
     ],
     sells=[
         vac.vega.vega.LiquidityOrder(
             reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=1,
-            offset=1
+            offset="1"
         ),
         vac.vega.vega.LiquidityOrder(
             reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=2,
-            offset=2
+            offset="2"
         ),
         vac.vega.vega.LiquidityOrder(
             reference=vac.vega.vega.PEGGED_REFERENCE_MID,
             proportion=5,
-            offset=3
+            offset="3"
         )
     ]
 )

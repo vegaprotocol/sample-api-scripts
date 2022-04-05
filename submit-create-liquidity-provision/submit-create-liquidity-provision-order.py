@@ -47,6 +47,11 @@ if not helpers.check_var(wallet_passphrase):
     print("Error: Invalid or missing WALLET_PASSPHRASE environment variable.")
     exit(1)
 
+marketID = os.getenv("VEGA_MARKET")
+if not helpers.check_var(marketID):
+    print("Error: Invalid or missing VEGA_MARKET environment variable.")
+    exit(1)
+
 # Help guide users against including api version suffix on url
 wallet_server_url = helpers.check_wallet_url(wallet_server_url)
 
@@ -82,18 +87,21 @@ print("Selected pubkey for signing")
 #####################################################################################
 #                               F I N D   M A R K E T                               #
 #####################################################################################
+# You can use this code to list out the available markets if you do not already     #
+# know which market you are using                                                   #
+#####################################################################################
 
 # __get_market:
 # Request the identifier for the market to place on
-url = f"{node_url_rest}/markets"
-response = requests.get(url)
-helpers.check_response(response)
-marketID = response.json()["markets"][0]["id"]
+# url = f"{node_url_rest}/markets"
+# response = requests.get(url)
+# helpers.check_response(response)
+# marketID = response.json()["markets"][0]["id"]
 # :get_market__
 
-assert marketID != ""
-marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["name"]
-print(f"Market found: {marketID} {marketName}")
+# assert marketID != ""
+# marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["name"]
+# print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
 #                 L I S T   L I Q U I D I T Y   P R O V I S I O N S                 #
