@@ -68,7 +68,7 @@ fi
 test -n "$pubKey" || exit 1
 test "$pubKey" == null && exit 1
 
-çNext, get a Market ID ###
+### Next, get a Market ID ###
 # __get_market:
 # url="$NODE_URL_REST/markets"
 # echo "get market ID url: $url"
