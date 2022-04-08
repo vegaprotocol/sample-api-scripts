@@ -48,7 +48,7 @@ Get started with the sample API scripts with zero configuration. Click on the
     ```bash
     notepad credentials-win
     ```
-1. The URL values will already be setup correctly for testnet including using the testnet hosted wallet. The items you will need to update are related to your wallet credentials and are located near the top of the file. If you are going to use the scripts on mainnet, the URL details can be found in your wallet connections file of your local wallet server. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
+1. The URL values will already be set up correctly for testnet including using the testnet hosted wallet. You will need to update your wallet credentials, near the top of the file. If you are going to use the scripts on mainnet, the URL details can be found in your wallet connections file of your local wallet server or in the Vega Wallet desktop app. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
     ```bash
     set WALLET_PASSPHRASE="<your password>"
     ```
