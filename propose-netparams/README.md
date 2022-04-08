@@ -20,7 +20,7 @@ Please see the documentation on Vega for further information.
 Interact with wallet and node API operations using python3 and the [requests](https://pypi.org/project/requests/) library [REST API]:
 
 ```bash
-python3 propose-markets/propose-vote-enact-netparams.py
+python3 propose-netparams/propose-vote-enact-netparams.py
 ```
 
 ---

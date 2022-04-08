@@ -10,7 +10,7 @@ Please see the documentation on Vega for further information.
 Get an order by reference using shell scripts and `curl` only [REST API]:
 
 ```bash
-bash get-order-by-reference/get-order-by-reference.sh
+bash get-by-reference/get-order-by-reference.sh
 ```
 
 ## Python + requests
@@ -18,7 +18,7 @@ bash get-order-by-reference/get-order-by-reference.sh
 Get an order by reference using python3 and the [requests](https://pypi.org/project/requests/) library [REST API]:
 
 ```bash
-python3 get-order-by-reference/get-order-by-reference.py
+python3 get-by-reference/get-order-by-reference.py
 ```
 
 ## Python + Vega-API-client
@@ -26,7 +26,7 @@ python3 get-order-by-reference/get-order-by-reference.py
 Get an order by reference using python3 and the [Vega-API-client](https://pypi.org/project/Vega-API-client/) library [gRPC API]:
 
 ```bash
-python3 get-order-by-reference/get-order-by-reference-with-Vega-API-client.py
+python3 get-by-reference/get-order-by-reference-with-Vega-API-client.py
 ```
 
 ## Shell + graphqurl
@@ -35,7 +35,7 @@ python3 get-order-by-reference/get-order-by-reference-with-Vega-API-client.py
 Get an order by reference using shell scripts and [graphqurl](https://github.com/hasura/graphqurl) only [GraphQL API]:
 
 ```bash
-bash get-order-by-reference/get-order-by-reference-gql.sh
+bash get-by-reference/get-order-by-reference-gql.sh
 ```
 
 ---

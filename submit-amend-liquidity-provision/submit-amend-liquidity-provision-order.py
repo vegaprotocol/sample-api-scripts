@@ -90,15 +90,15 @@ print("Selected pubkey for signing")
 
 # __get_market:
 # Request the identifier for the market to place on
-url = f"{node_url_rest}/markets"
-response = requests.get(url)
-helpers.check_response(response)
-marketID = response.json()["markets"][0]["id"]
+# url = f"{node_url_rest}/markets"
+# response = requests.get(url)
+# helpers.check_response(response)
+# marketID = response.json()["markets"][0]["id"]
 # :get_market__
 
-assert marketID != ""
-marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["name"]
-print(f"Market found: {marketID} {marketName}")
+# assert marketID != ""
+# marketName = response.json()["markets"][0]["tradableInstrument"]["instrument"]["name"]
+# print(f"Market found: {marketID} {marketName}")
 
 #####################################################################################
 #                 L I S T   L I Q U I D I T Y   P R O V I S I O N S                 #
