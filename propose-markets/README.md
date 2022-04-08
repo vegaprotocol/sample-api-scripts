@@ -21,20 +21,8 @@ Please see the documentation on Vega for further information.
 Interact with wallet and node API operations using python3 and the [requests](https://pypi.org/project/requests/) library [REST API]:
 
 ```bash
-python3 propose-markets/submit-amend-cancel-orders.py
+python3 propose-markets/propose-vote-enact-market.py
 ```
-### Bonus: 
-
-Script to demonstrate retrieving a list of assets and also search by identifier .
-
-## Python + requests
-
-Interact with wallet and node API operations using python3 and the [requests](https://pypi.org/project/requests/) library [REST API]:
-
-```bash
-python3 propose-markets/get-assets.py
-```
-
 
 ---
 

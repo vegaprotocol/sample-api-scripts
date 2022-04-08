@@ -26,7 +26,7 @@ Get started with the sample API scripts with zero configuration. Click on the
     nano credentials
     (press Ctrl-O, Enter, Ctrl-X to save and exit)
     ```
-1. The URL values will already be setup correctly for testnet, the items you will need to update are relating to your wallet and are located near the top of the file. If you are going to use the scripts on mainnet, the URL details can be found in your wallet connections file. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
+1. The URL values will already be set up correctly for testnet including using the testnet hosted wallet. You will need to update your wallet credentials, near the top of the file. If you are going to use the scripts on mainnet, the URL details can be found in your wallet connections file of your local wallet server or in the Vega Wallet desktop app. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
     ```bash
     export WALLET_PASSPHRASE="<your password>"
     ```
@@ -48,14 +48,14 @@ Get started with the sample API scripts with zero configuration. Click on the
     ```bash
     notepad credentials-win
     ```
-1. The URL values will already be setup correctly for testnet, the items you will need to update are relating to your wallet and are located near the top of the file. If you are going to use the scripts on mainnet, the URL details can be found in your wallet connections file. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
+1. The URL values will already be set up correctly for testnet including using the testnet hosted wallet. You will need to update your wallet credentials, near the top of the file. If you are going to use the scripts on mainnet, the URL details can be found in your wallet connections file of your local wallet server or in the Vega Wallet desktop app. If you are uncomfortable placing your wallet password into the credentials file, you can directly set the value using the export command:
     ```bash
     set WALLET_PASSPHRASE="<your password>"
     ```
 1. Run the setup batch script to import the credentials into your local environment: `setup.bat`
 
 
-## Prerequisites 
+# Prerequisites 
 
 The following tools or applications are required for these scripts to work. Here are the commands to check they are installed on your system:
 
@@ -99,7 +99,6 @@ And you're good to go. Now choose a sample program to run from the following (se
 | List orders and trades | bash, python3 | Vega node [GraphQL, REST, gRPC]  | / [get-orders-and-trades](get-orders-and-trades) |
 | Vega statistics | bash, python3 | Vega node [GraphQL, REST, gRPC]  | / [get-statistics](get-statistics) |
 | List parties and accounts | bash, python3 | Vega node [REST, gRPC]  | / [parties-and-accounts](parties-and-accounts) |
-| Stream events | python3 | Vega node [GraphQL, REST, gRPC] | / [stream-events](stream-events) |
 | Stream market data | python3 | Vega node [GraphQL] | / [stream-marketdata](stream-marketdata) |
 | Stream orders and trades | python3  | Vega node [GraphQL] | / [stream-orders-and-trades](stream-orders-and-trades) |
 | Interact with Vega wallet API | bash, python3 | Vega wallet [REST] | / [wallet](wallet) |
@@ -107,11 +106,11 @@ And you're good to go. Now choose a sample program to run from the following (se
 | Submit and amend pegged orders | bash, python3 | Vega wallet [REST], Vega node [REST, gRPC] | / [submit-amend-pegged-order](submit-amend-pegged-order) |
 | Submit order (tutorial, inc send tx) | bash, python3 | Vega wallet [REST], Vega node [REST, gRPC] | / [submit-order](submit-order) |
 | Vega/blockchain time  | bash, python3 | Vega node [GraphQL, REST, gRPC] | / [vega-time](vega-time) |
-| Streaming events | bash, python3 | Vega node [GraphQL, gRPC] | / [stream-events](stream-events) |
+| Streaming events | bash, python3 | Vega node [GraphQL, REST, gRPC] | / [stream-events](stream-events) |
 | Fees and margins estimation | bash, python3 | Vega node [REST, gRPC] | / [fees-margins-estimation](fees-margins-estimation) |
 | Propose, vote and enact new markets | python3 | Vega node [REST] | / [propose-markets](propose-markets) |
-| Propose, vote and enact network parameters update | python3 | Vega node [REST] | / [propose-markets](propose-netparam) |
-| Propose, vote and enact new freeform proposal | python3 | Vega node [REST] | / [propose-markets](propose-freeform) |
+| Propose, vote and enact network parameters update | python3 | Vega node [REST] | / [propose-netparams](propose-netparams) |
+| Propose, vote and enact new freeform proposal | python3 | Vega node [REST] | / [propose-freeform](propose-freeform) |
 | List proposals | bash, python3 | Vega node [GraphQL, gRPC] | / [propose-votes](propose-votes) |
 | Submit create liquidity provision | bash, python3 | Data node [GraphQL, gRPC] | / [submit-create-liquidity-provision](submit-create-liquidity-provision) |
 | Submit amend liquidity provision | bash, python3 | Data node [GraphQL, gRPC] | / [submit-amend-liquidity-provision](submit-amend-liquidity-provision) |
