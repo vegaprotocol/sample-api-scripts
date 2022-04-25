@@ -161,6 +161,9 @@ validation_time = blockchain_time_seconds + 1
 network_param_update = {
     "proposalSubmission": {
         "reference": proposal_ref,
+        "rationale": {
+            "description": "Update network parameter"
+        },
         "terms": {
             "closingTimestamp": closing_time,
             "enactmentTimestamp": enactment_time,
