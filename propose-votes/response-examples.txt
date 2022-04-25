@@ -6,6 +6,9 @@
     partyId: "fe6c26706cb64f33e323d6755d2fffa8ba09ab65b7c7fba89102b2c8b36c41aa"
     state: STATE_ENACTED
     timestamp: 1605876045102272496
+    rationale {
+      description: "..."
+    }
     terms {
       closingTimestamp: 1605876058
       enactmentTimestamp: 1605876063

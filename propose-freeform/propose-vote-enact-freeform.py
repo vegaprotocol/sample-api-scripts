@@ -159,14 +159,15 @@ def main():
     new_freeform = {
         "proposalSubmission": {
             "reference": proposal_ref,
+            "rationale": {
+                "url": "www.example.com/full-proposal.md",
+                "description": "A short description of the proposals",
+                "hash": "1869c3081c5a294269070aa496a4d80d1b0824c239af02625b2e304f011bb190"
+            },
             "terms": {
                 "closingTimestamp": closing_time,
                 "validationTimestamp": validation_time,
-                "newFreeform": {
-                    "url": "www.example.com/full-proposal.md",
-                    "description": "A short description of the proposals",
-                    "hash": "1869c3081c5a294269070aa496a4d80d1b0824c239af02625b2e304f011bb190"
-                },
+                "newFreeform": {},
             }
         },
         "pubKey": pubkey,
