@@ -13,7 +13,7 @@ Get started with the sample API scripts with zero configuration. Click on the
 # Getting started for Unix based systems (Mac OS & Linux)
 1. Clone this repo onto your local machine so you have access to all the files and can change them as you need.
     ```bash
-    git clone git@github.com:vegaprotocol/sample-api-scripts.git
+    git clone https://github.com/vegaprotocol/sample-api-scripts.git
     ```
     This should create you a folder named `sample-api-scripts` that you will use for the rest of this README.
 1. Copy or rename the `credentials-template` file as `credentials`.  
@@ -83,7 +83,7 @@ To make sure you have all the tools required and have setup your environment cor
 python3 vega-time/get-time.py
 ```
 
-If this correctly gets the time then you have everything you need to use the other scripts.
+If this correctly gets the time then you have everything you need to use the other scripts. If the script fails to run, check out the trouble shooting guide at the bottom of this page.
 
 
 And you're good to go. Now choose a sample program to run from the following (see the link in the **Folder** column to learn how to run each sample script):
