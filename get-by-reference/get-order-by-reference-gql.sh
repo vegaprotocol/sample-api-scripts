@@ -47,5 +47,5 @@ query GetOrderByID(
   }
 }
 EOF
-gq $NODE_URL_GRAPHQL --queryFile=query
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" --queryFile=query
 # :get_order_by_ref__

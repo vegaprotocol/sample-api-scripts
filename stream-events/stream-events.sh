@@ -38,7 +38,7 @@ echo $marketID
 #           Party identifier - filter by party
 # By default, all events on all markets for all parties will be returned on the stream.
 # Event types and schema can be found here: https://docs.testnet.vega.xyz/docs/api-howtos/event-stream/
-gq $NODE_URL_GRAPHQL -q 'subscription { busEvents(batchSize: 0, types: [Order], marketID: "'$marketID'" ) { 
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" -q 'subscription { busEvents(batchSize: 0, types: [Order], marketID: "'$marketID'" ) { 
     type 
     event
     { 
@@ -71,7 +71,7 @@ gq $NODE_URL_GRAPHQL -q 'subscription { busEvents(batchSize: 0, types: [Order], 
 
 # Another example, with even deeper graphql nesting would be to select on Governance Proposals:
 #
-# gq $NODE_URL_GRAPHQL -q 'subscription { busEvents(batchSize: 0, types: [Proposal] ) { 
+# gq $NODE_URL_GRAPHQL "$GQL_HEADER"  -q 'subscription { busEvents(batchSize: 0, types: [Proposal] ) { 
 #     type 
 #     event
 #     { 

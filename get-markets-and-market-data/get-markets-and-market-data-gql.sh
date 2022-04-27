@@ -58,7 +58,7 @@ query GetMarkets{
   }
 }
 EOF
-gq $NODE_URL_GRAPHQL --queryFile=query
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" --queryFile=query
 # :get_markets__
 
 #####################################################################################
@@ -97,5 +97,5 @@ query GetMarkets{
   }
 }
 EOF
-gq $NODE_URL_GRAPHQL --queryFile=query
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" --queryFile=query
 # :get_market_data__

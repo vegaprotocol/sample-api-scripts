@@ -59,7 +59,7 @@ query {
   }
 }
 EOF
-gq $NODE_URL_GRAPHQL --queryFile=query
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" --queryFile=query
 # :get_proposals__
 
 #####################################################################################
@@ -99,7 +99,7 @@ query {
   }
 }
 EOF
-gq $NODE_URL_GRAPHQL --queryFile=query
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" --queryFile=query
 # :get_proposal_detail__
 
 #####################################################################################
@@ -141,5 +141,5 @@ query {
   }
 }
 EOF
-gq $NODE_URL_GRAPHQL --queryFile=query
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" --queryFile=query
 # :get_proposals_by_party__

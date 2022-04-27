@@ -23,25 +23,18 @@ source helpers.sh
 check_url "NODE_URL_GRAPHQL" || exit 1
 
 #####################################################################################
-#                           STREAM MARKET DATA                                      #
+#                           GET MARKETS                                             #
 #####################################################################################
 
-# __stream_marketdata:
-# Subscribe to the Market Data stream for the marketID specified
+# __get_markets:
+# Request a list of markets available on a Vega network
 cat >query <<EOF
-subscription StreamMarketData (
-  \$marketID: ID! = "9b358cb36b63001ae74b9f815c30a58f1db258fa11b17ba082a66abebed75951",
-){
-  marketData(marketId:\$marketID){
-    bestBidPrice
-    bestBidVolume
-    bestOfferPrice
-    bestOfferVolume
-    midPrice
-    timestamp
-    marketTradingMode
+query GetMarkets{
+  markets{
+    id
+    name
+    tradingMode
   }
 }
 EOF
 gq $NODE_URL_GRAPHQL "$GQL_HEADER" --queryFile=query
-# :stream_marketdata__

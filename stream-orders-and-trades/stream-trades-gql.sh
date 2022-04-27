@@ -43,5 +43,5 @@ subscription StreamTrades{
   }
 }
 EOF
-gq $NODE_URL_GRAPHQL --queryFile=query
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" --queryFile=query
 # :stream_trades__
