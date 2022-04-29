@@ -25,6 +25,6 @@ check_url "NODE_URL_GRAPHQL" || exit 1
 # Stream orders by reference on a Vega network
 reference="4617844f-6fab-4cf6-8852-e29dbd96e5f1"
 pubkey="94c21a5bfc212c0b4ee6e3593e8481559972ad31f1fb453491f255e72bdb6fdb"
-gq $NODE_URL_GRAPHQL -q 'subscription { orders(partyId: "'$pubkey'") { id, reference } }'
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" -q 'subscription { orders(partyId: "'$pubkey'") { id, reference } }'
 # In target language, filter the result stream and search for orders matching the reference
 # :stream_orders_by_ref__

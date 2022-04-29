@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+GQL_HEADER="-H content-type: application/json"
+
 check_var() {
 	var_name="$1"
 	var_value="${!var_name}"

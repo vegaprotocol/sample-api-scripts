@@ -36,5 +36,5 @@ query GetNetworkParameters{
   }
 }
 EOF
-gq $NODE_URL_GRAPHQL --queryFile=query
+gq $NODE_URL_GRAPHQL "$GQL_HEADER" --queryFile=query
 # :get_network_params__
