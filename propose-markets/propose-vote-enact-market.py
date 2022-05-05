@@ -282,12 +282,12 @@ proposal = {
                         {
                             "reference": "PEGGED_REFERENCE_BEST_BID",
                             "proportion": 10,
-                            "offset": -1000,
+                            "offset": 1000,
                         },
                         {
                             "reference": "PEGGED_REFERENCE_BEST_BID",
                             "proportion": 10,
-                            "offset": -2000,
+                            "offset": 2000,
                         },
                     ],
                     "reference": "",
