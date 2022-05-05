@@ -129,7 +129,7 @@ submission = {
         "type": "TYPE_LIMIT",
         "reference": order_ref,
         "peggedOrder": {
-            "offset": "-5",
+            "offset": "5",
             "reference": "PEGGED_REFERENCE_MID"
         }
     },

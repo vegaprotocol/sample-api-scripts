@@ -102,7 +102,7 @@ submission=$(cat <<-END
     "expiresAt": "$expiresAt",
     "type": "TYPE_LIMIT",
     "peggedOrder": {
-        "offset": "-5",
+        "offset": "5",
         "reference": "PEGGED_REFERENCE_MID"
     }
 }
