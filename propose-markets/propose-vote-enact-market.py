@@ -171,6 +171,8 @@ print(
 # Further documentation on creating markets:
 # https://docs.testnet.vega.xyz/docs/api-howtos/create-market/
 
+# IMPORTANT: Governance token $VEGA must be staked to propose markets on Vega
+
 # __prepare_propose_market:
 # Compose a governance proposal for a new market
 proposal_ref = f"{pubkey}-{helpers.generate_id(30)}"
@@ -194,20 +196,17 @@ proposal = {
             "validationTimestamp": validation_time,
             "newMarket": {
                 "changes": {
-                    "continuous": {
-                        "tickSize": "0.01"
-                    },
                     "decimalPlaces": 5,
                     "instrument": {
+                        "name": "BTC/DAI (2022, tDAI)",
                         "code": "CRYPTO:BTCDAI/DEC22",
                         "future": {
-                            "maturity": "2022-12-31T23:59:59Z",
                             "oracleSpecForSettlementPrice": {
-                                "pubKeys": ["0x0000"],
+                                "pubKeys": ["c77fe74b64b2c97723bac8c3f110e5c3d7fb78f6c6c8915a56cb962968fbcfa7"],
                                 "filters": [
                                     {
                                         "key": {
-                                            "name": "price.DAI.value",
+                                            "name": "price.BTCDAI.value",
                                             "type": "TYPE_INTEGER",
                                         },
                                         "conditions": [
@@ -220,35 +219,48 @@ proposal = {
                                 ],
                             },
                             "oracleSpecForTradingTermination": {
-                                "pubKeys": ["0x0000"],
+                                "pubKeys": ["c77fe74b64b2c97723bac8c3f110e5c3d7fb78f6c6c8915a56cb962968fbcfa7"],
                                 "filters": [
                                     {
                                         "key": {
-                                            "name": "price.DAI.value",
-                                            "type": "TYPE_STRING",
+                                            "name": "trading.terminated.BTCDAI",
+                                            "type": "TYPE_BOOLEAN"
                                         },
                                         "conditions": [
                                             {
-                                                "operator": "OPERATOR_EQUALS",
-                                                "value": "5797800153",
-                                            },
+                                            "operator": "OPERATOR_EQUALS",
+                                            "value": "true"
+                                            }
                                         ],
                                     },
                                 ],
                             },
                             "oracleSpecBinding": {
-                                "settlementPriceProperty": "price.DAI.value",
-                                "tradingTerminationProperty": "price.DAI.value"
+                                "settlementPriceProperty": "price.BTCDAI.value",
+                                "tradingTerminationProperty": "trading.terminated.BTCDAI"
                             },
                             "quoteName": "tDAI",
                             "settlementAsset": found_asset_id,
-                        },
-                        "name": "BTC/DAI (2022, tDAI)"
+                        }
                     },
                     "metadata": [
                         "base:BTC",
                         "quote:DAI",
                     ],
+                    "priceMonitoringParameters": {
+                        "triggers": [
+                            {
+                            "horizon": 43200,
+                            "probability": "0.9999999",
+                            "auctionExtension": 600
+                            },
+                            {
+                            "horizon": 300,
+                            "probability": "0.9999",
+                            "auctionExtension": 60
+                            }
+                        ]
+                    },
                     "liquidityMonitoringParameters": {
                         "targetStakeParameters": {
                             "timeWindow": 3600,
@@ -270,24 +282,24 @@ proposal = {
                         {
                             "reference": "PEGGED_REFERENCE_BEST_ASK",
                             "proportion": 10,
-                            "offset": 2000,
+                            "offset": "2000",
                         },
                         {
                             "reference": "PEGGED_REFERENCE_BEST_ASK",
                             "proportion": 10,
-                            "offset": 1000,
+                            "offset": "1000",
                         },
                     ],
                     "buys": [
                         {
                             "reference": "PEGGED_REFERENCE_BEST_BID",
                             "proportion": 10,
-                            "offset": 1000,
+                            "offset": "1000",
                         },
                         {
                             "reference": "PEGGED_REFERENCE_BEST_BID",
                             "proportion": 10,
-                            "offset": 2000,
+                            "offset": "2000",
                         },
                     ],
                     "reference": "",

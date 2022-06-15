@@ -194,20 +194,17 @@ proposal = {
             "validationTimestamp": validation_time,
             "newMarket": {
                 "changes": {
-                    "continuous": {
-                        "tickSize": "0.01"
-                    },
                     "decimalPlaces": 5,
                     "instrument": {
+                        "name": "BTC/DAI (2022, tDAI)",
                         "code": "CRYPTO:BTCDAI/DEC22",
                         "future": {
-                            "maturity": "2022-12-31T23:59:59Z",
                             "oracleSpecForSettlementPrice": {
-                                "pubKeys": ["0x0000"],
+                                "pubKeys": ["c77fe74b64b2c97723bac8c3f110e5c3d7fb78f6c6c8915a56cb962968fbcfa7"],
                                 "filters": [
                                     {
                                         "key": {
-                                            "name": "price.DAI.value",
+                                            "name": "price.BTCDAI.value",
                                             "type": "TYPE_INTEGER",
                                         },
                                         "conditions": [
@@ -237,18 +234,31 @@ proposal = {
                                 ],
                             },
                             "oracleSpecBinding": {
-                                "settlementPriceProperty": "price.DAI.value",
+                                "settlementPriceProperty": "price.BTCDAI.value",
                                 "tradingTerminationProperty": "vegaprotocol.builtin.timestamp"
                             },
                             "quoteName": "tDAI",
                             "settlementAsset": found_asset_id,
-                        },
-                        "name": "BTC/DAI (2022, tDAI)"
+                        }
                     },
                     "metadata": [
                         "base:BTC",
                         "quote:DAI",
                     ],
+                    "priceMonitoringParameters": {
+                        "triggers": [
+                            {
+                            "horizon": 43200,
+                            "probability": "0.9999999",
+                            "auctionExtension": 600
+                            },
+                            {
+                            "horizon": 300,
+                            "probability": "0.9999",
+                            "auctionExtension": 60
+                            }
+                        ]
+                    },
                     "liquidityMonitoringParameters": {
                         "targetStakeParameters": {
                             "timeWindow": 3600,
