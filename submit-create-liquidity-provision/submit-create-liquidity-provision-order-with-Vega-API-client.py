@@ -129,8 +129,8 @@ print("Liquidity provisions:\n{}".format(liquidityProvisions))
 #              S U B M I T   L I Q U I D I T Y   C O M M I T M E N T                #
 #####################################################################################
 
-# Note: commitment_amount is an integer. For example 123456 is a price of 1.23456,
-# for a market which is configured to have a precision of 5 decimal places.
+# Note: commitment_amount is an integer. For example 1234567891234567890 is a price of 1.234567891234567890,
+# for a settlement asset (ERC20) which is configured to have a precision of 18 decimal places.
 
 # __prepare_liquidity_order:
 # Prepare a liquidity commitment transaction message

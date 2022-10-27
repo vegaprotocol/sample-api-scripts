@@ -87,11 +87,9 @@ response="$(curl -s "$url")"
 echo "Liquidity provisions: $response"
 # :get_liquidity_provisions__
 
-
-
 ### Submit liquidity commitment for the selected market
-# Note: commitment_amount is an integer. For example 123456 is a price of 1.23456,
-# for a market which is configured to have a precision of 5 decimal places.
+# Note: commitment_amount is an integer. For example 1234567891234567890 is a price of 1.234567891234567890,
+# for a settlement asset (ERC20) which is configured to have a precision of 18 decimal places.
 
 # __prepare_liquidity_order:
 # Compose a submit liquidity provision command
