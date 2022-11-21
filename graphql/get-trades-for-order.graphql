@@ -1,11 +1,13 @@
-query GetTradesForOrder(
-  $orderId: ID! = ""
-) {
-  order(id: $orderId) {
-    trades {
-      id
-      price
-      size
+query GetTradesForOrder($orderId: ID! = "7e862ff63b4d70380b0b78ea5762e346ac1e711ec2516bc9994f92c7c19a3af6") {
+  orderByID(id: $orderId) {
+    tradesConnection {
+      edges {
+        node {
+          id
+          price
+          size
+        }
+      }
     }
   }
 }

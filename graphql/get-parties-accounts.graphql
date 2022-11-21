@@ -1,17 +1,24 @@
 query getParties {
-  parties{
-    id
-    accounts{
-      balance
-      asset {
+  partiesConnection {
+    edges {
+      node {
         id
-        name
-        symbol
-      }
-      type
-      market {
-        id
-        name
+        accountsConnection {
+          edges {
+            node {
+              balance
+              asset {
+                id
+                name
+                symbol
+              }
+              type
+              market {
+                id
+              }
+            }
+          }
+        }
       }
     }
   }
