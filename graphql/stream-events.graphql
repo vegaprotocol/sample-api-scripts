@@ -1,29 +1,42 @@
-subscription { busEvents(batchSize: 0, types: [Order], marketID: "'$marketID'" ) { 
-    type 
-    event
-    { 
-        ... on Order {
+subscription {
+  busEvents(batchSize: 0, types: [Order], marketId: "'$marketID'") {
+    type
+    event {
+      ... on Order {
+        id
+        side
+        price
+        timeInForce
+        side
+        market {
+          id
+        }
+        size
+        remaining
+        party {
+          id
+        }
+        createdAt
+        expiresAt
+        status
+        reference
+        tradesConnection {
+          edges {
+            node {
               id
-              side
-              price
-              timeInForce
-              side
-              market { id }
               size
-              remaining
-              party { id }
-              createdAt
-              expiresAt
-              status
-              reference
-              trades { id, size, aggressor }
-              type
-              rejectionReason
-              version
-              updatedAt
+              aggressor
+            }
+          }
         }
-        ... on TimeUpdate {
-              timestamp
-        }
+        type
+        rejectionReason
+        version
+        updatedAt
+      }
+      ... on TimeUpdate {
+        timestamp
+      }
     }
-}}
+  }
+}

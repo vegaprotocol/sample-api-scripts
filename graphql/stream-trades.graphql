@@ -1,9 +1,7 @@
-subscription StreamTrades{
-  trades{
+subscription StreamTrades {
+  trades {
     id
-    market{
-      name
-    }
+    marketId
     buyOrder
     sellOrder
   }

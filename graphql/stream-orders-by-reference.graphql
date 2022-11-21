@@ -1,14 +1,12 @@
 subscription StreamOrdersByReference(
-  $partyId:ID!="ed20dab0d670b22a6bfb9d0eb21580289ac67ae5e10ebbca1b6dface9dfa6b22"
+  $partyId:ID!="644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759"
 ){
   orders(partyId:$partyId){
     id
     price
     timeInForce
     side
-    market{
-      name
-    }
+    marketId
     size
   }
 }
