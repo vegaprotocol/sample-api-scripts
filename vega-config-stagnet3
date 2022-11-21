@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Default server configuration used by REST/GRPC/GRAPHQL examples
+
+DATA_NODE_URL_REST="https://api.n01.stagnet3.vega.xyz/api/v2"
+DATA_NODE_URL_GRAPHQL="https://api.n01.stagnet3.vega.xyz/graphql"
+DATA_NODE_URL_GRPC="n01.stagnet3.vega.xyz:3007"
+WALLET_SERVER_URL="localhost:1127"
+MARKET_ID=""
+PARTY_ID=""
+ASSET_ID=""
+
+export DATA_NODE_URL_GRPC
+export DATA_NODE_URL_REST
+export DATA_NODE_URL_GRAPHQL
+export WALLET_SERVER_URL
+
+export MARKET_ID
+export PARTY_ID
+export ASSET_ID
