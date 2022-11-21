@@ -1,16 +1,30 @@
-query GetMarker(
-  $marketID: ID! = "9b358cb36b63001ae74b9f815c30a58f1db258fa11b17ba082a66abebed75951"
-){ 
-	market(id:$marketID){
-    name
-    tradableInstrument{
-      instrument{
-        name
+{
+  marketsConnection (id: "e9ec6d5c46a7e7bcabf9ba7a893fa5a5eeeec08b731f06f7a6eb7bf0e605b829") {
+    edges {
+      node {
+        id
+        tradingMode
+        marketTimestamps {
+          proposed
+          pending
+          open
+          close
+        }
+        depth {
+          buy {
+            volume
+            numberOfOrders
+          }
+          sell {
+            volume
+            numberOfOrders
+          }
+          lastTrade {
+            price
+            size
+          }
+        }
       }
-    }
-    orders(first:10){
-      id
-      price
     }
   }
 }
