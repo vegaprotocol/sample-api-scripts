@@ -1,0 +1,24 @@
+{
+  partiesConnection {
+    edges {
+      node {
+        id 
+        accountsConnection {
+          edges {
+            node {
+              balance
+  						asset {
+  						  id
+  						}
+  						type
+  						market {
+  						  id
+  						}
+              
+            }
+          }
+        }
+      }
+    }
+  }
+}

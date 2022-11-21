@@ -1,0 +1,22 @@
+{
+  partiesConnection {
+    edges {
+      node {
+        id
+        accountsConnection {
+          edges {
+            node {
+              asset {
+                id
+                symbol
+                decimals
+              }
+              balance
+              type
+            }
+          }
+        }
+      }
+    }
+  }
+}
