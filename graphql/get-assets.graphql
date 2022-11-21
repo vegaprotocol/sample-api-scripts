@@ -1,11 +1,14 @@
-query getAsset {
-  assets{
-    name
-    symbol
-    totalSupply
-    decimals
-		source{
-      __typename
+{
+  assetsConnection {
+    edges {
+      node {
+        id
+        name
+        symbol
+        decimals
+        quantum
+        status
+      }
     }
   }
 }
