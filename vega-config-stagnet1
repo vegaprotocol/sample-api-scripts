@@ -10,6 +10,8 @@ MARKET_ID=""
 PARTY_ID=""
 ASSET_ID=""
 
+# Do not edit below this line
+
 export DATA_NODE_URL_GRPC
 export DATA_NODE_URL_REST
 export DATA_NODE_URL_GRAPHQL

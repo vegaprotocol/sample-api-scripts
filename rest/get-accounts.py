@@ -34,7 +34,6 @@ data_node_url_rest = helpers.get_from_env("DATA_NODE_URL_REST")
 
 market_id = helpers.env_market_id()
 assert market_id != ""
-print(f"Market found: {market_id}")
 
 # __get_accounts_by_market:
 # Request a list of accounts for a single market (repeat the filter for multiple markets)
