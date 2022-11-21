@@ -1,6 +1,10 @@
-query GetNetworkParameters{
-  networkParameters{
-    key
-    value
+query getNetworkParameters {
+  networkParametersConnection {
+    edges {
+      node {
+        key
+        value
+      }
+    }
   }
 }

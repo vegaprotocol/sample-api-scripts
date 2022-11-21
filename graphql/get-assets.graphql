@@ -1,4 +1,4 @@
-{
+query getAssets {
   assetsConnection {
     edges {
       node {

@@ -1,4 +1,4 @@
-{
+query getMarkets {
   marketsConnection {
     edges {
       node {
