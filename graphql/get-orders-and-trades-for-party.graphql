@@ -1,17 +1,23 @@
-query GetOrderTradesForParty (
-  $partyId: ID! = "38b36ca0ca7076a02bde23f08765158bf6efaef409b9a98966f2f5e3eb07042d"
-){
-  party(id:$partyId){
+query GetOrderTradesForParty($partyId: ID! = "644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759") {
+  party(id: $partyId) {
     id
-    orders{
-      id
-      price
-      side
-      status
-      trades {
-        id
-        price
-        size
+    ordersConnection {
+      edges {
+        node {
+          id
+          price
+          side
+          status
+          tradesConnection {
+            edges {
+              node {
+                id
+                price
+                size
+              }
+            }
+          }
+        }
       }
     }
   }

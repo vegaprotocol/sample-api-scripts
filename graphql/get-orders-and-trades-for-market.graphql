@@ -1,17 +1,23 @@
-query GetOrderTradesForMarket (
-  $marketId: ID! = ""
-){
-  market(id:$marketId){
-    name
-    orders{
-      id
-      price
-      side
-      status
-      trades {
-        id
-        price
-        size
+query GetOrderTradesForMarket($marketId: ID! = "ad2e531441c2e8a43e85423db399a4acc8f9a8a2376304a4c377d0da8eb31e80") {
+  market(id: $marketId) {
+    id
+    ordersConnection {
+      edges {
+        node {
+          id
+          price
+          side
+          status
+          tradesConnection {
+            edges {
+              node {
+                id
+                price
+                size
+              }
+            }
+          }
+        }
       }
     }
   }
