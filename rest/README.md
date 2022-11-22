@@ -23,12 +23,49 @@ The following tools or applications are required for these scripts to work. Here
     ```bash
     pip3 install -r requirements.txt
     ```
+   
+    To make sure you have all the tools required and have setup your environment correctly, it is best to try out the most basic `vega-time` script.
+    
+    ```bash
+    python3 get-vega-time.py
+    ```
+   
+1. wallet
 
-To make sure you have all the tools required and have setup your environment correctly, it is best to try out the most basic `vega-time` script.
+    If this correctly gets the Vega blockchain time then next we need to authenticate with the Vega wallet API so that the scripts can sign transactions.
+    
+    ```bash
+    python3 login.py
+    ```
 
+    Run the login script, enter your wallet username and passphrase to authenticate and store a token for use in scripts such as submit-amend-cancel-order.py
+
+    To logout or remove the token, simply run the logout script or delete `token.temp` 
+    
+    ```bash
+    python3 logout.py
+    ```
+ 
+## How to run a script
+
+All the source files are named logically so that the caller can read the file tree and understand the actions performed within. 
+Hint: If you do not require all of the actions within a script, simply comment them out.
+
+If the prerequisites are installed and set up correctly you can run a simple query or 'read' action script as follows:
+    
 ```bash
-python3 get-vega-time.py
+python3 get-statistics.py
 ```
 
-If this correctly gets the Vega blockchain time then you have everything you need to use the other scripts. If the script fails to run, check out the trouble shooting guide at the bottom of this page.
+To run a 'write' action, sending a command into Vega, make sure you are authenticated first and have edited the file to your requirements:
+
+```bash
+python3 submit-amend-cancel-order.py
+```
+
+Finally to run a streaming action (the code is set to exit after 30 seconds):
+
+```bash
+python3 stream-market-data.py
+```
 
