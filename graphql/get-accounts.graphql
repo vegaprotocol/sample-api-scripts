@@ -25,3 +25,58 @@
     }
   }
 }
+
+###############################################################################
+#                   A C C O U N T S   B Y   P A R T Y                #
+###############################################################################
+{
+  partiesConnection (id: "644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759") {
+    edges {
+      node {
+        id 
+        accountsConnection {
+          edges {
+            node {
+              balance
+  						asset {
+  						  id
+  						}
+  						type
+  						market  {
+  						  id 
+  						}
+              
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+###############################################################################
+#                  A C C O U N T S   B Y   M A R K E T                        #
+###############################################################################
+
+{
+  marketsConnection (id: "e9ec6d5c46a7e7bcabf9ba7a893fa5a5eeeec08b731f06f7a6eb7bf0e605b829") {
+    edges {
+      node {
+        accountsConnection {
+          edges {
+            node {
+              balance
+              asset {
+                id
+              }
+              type
+            }
+          }
+        }
+      }
+    }
+  }
+}

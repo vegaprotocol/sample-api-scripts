@@ -1,5 +1,70 @@
+###############################################################################
+#                 L I S T     A L L      B A L A N C E S                      #
+###############################################################################
+
+
 {
   partiesConnection {
+    edges {
+      node {
+        id
+        accountsConnection {
+          edges {
+            node {
+              asset {
+                id
+                symbol
+                decimals
+              }
+              balance
+              type
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+###############################################################################
+#                 B A L A N C E S   B Y   A S S E T                           #
+###############################################################################
+
+query ($assetId: ID) {
+		partiesConnection {
+		  edges {
+			node {
+			  id
+			  accountsConnection(assetId: $assetId) {
+				edges {
+				  node {
+					asset {
+					  id
+					  symbol
+					  decimals
+					}
+					balance
+					type
+				  }
+				}
+			  }
+			}
+		  }
+		}
+	  }
+
+
+
+
+###############################################################################
+#                 B A L A N C E S   B Y   P A R T Y                           #
+###############################################################################
+
+{
+  partiesConnection(
+    id: "644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759"
+  ) {
     edges {
       node {
         id
