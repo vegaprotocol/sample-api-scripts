@@ -1,0 +1,67 @@
+
+###############################################################################
+#                       L I S T   W I T H D R A W A L S                       #
+###############################################################################
+
+
+		partiesConnection {
+		  edges {
+			node {
+			  id
+			  withdrawalsConnection {
+				edges {
+				  node {
+					amount
+					createdTimestamp
+					createdTimestamp
+					status
+					asset {
+					  id
+					  symbol
+					  source {
+						__typename
+					  }
+					}
+				  }
+				}
+			  }
+			}
+		  }
+		}
+	  }
+
+###############################################################################
+#                   W I T H D R A W A L S   B Y   P A R T Y                   #
+###############################################################################
+
+partiesConnection (id: "644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759") {
+		  edges {
+			node {
+			  id
+			  withdrawalsConnection {
+				edges {
+				  node {
+					amount
+					createdTimestamp
+					createdTimestamp
+					status
+					asset {
+					  id
+					  symbol
+					  source {
+						__typename
+					  }
+					}
+				  }
+				}
+			  }
+			}
+		  }
+		}
+	  }
+
+
+###############################################################################
+#                       W I T H D R A W A L   B Y   I D                       #
+###############################################################################
+

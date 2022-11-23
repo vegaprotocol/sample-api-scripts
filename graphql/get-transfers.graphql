@@ -1,0 +1,60 @@
+###############################################################################
+#                         L I S T   T R A N S F E R S                         #
+###############################################################################
+
+{
+		partiesConnection {
+		  edges {
+			node {
+			  id
+			  transfersConnection {
+				edges {
+				  node {
+					id
+					fromAccountType
+					toAccountType
+					from
+					amount
+					timestamp
+					asset {
+					  id
+					  name
+					}
+				  }
+				}
+			  }
+			}
+		  }
+		}
+	  }
+
+###############################################################################
+#           T R A N S F E R S   B Y   P A R T Y  &  D I R E C T I O N         #
+###############################################################################
+
+
+{
+		partiesConnection {
+		  edges {
+			node {
+			  id
+			  transfersConnection {
+				edges {
+				  node {
+					id
+					fromAccountType
+					toAccountType
+					from
+					amount
+					timestamp
+					asset {
+					  id
+					  name
+					}
+				  }
+				}
+			  }
+			}
+		  }
+		}
+	  }
