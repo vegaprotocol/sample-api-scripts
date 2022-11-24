@@ -1,0 +1,30 @@
+
+###############################################################################
+#                           N E T W O R K   D A T A                           #
+###############################################################################
+
+
+
+
+
+
+
+###############################################################################
+#                         N E T W O R K   L I M I T S                         #
+###############################################################################
+
+
+
+{
+  networkLimits {
+    canProposeMarket
+    canProposeAsset
+    bootstrapFinished
+    proposeMarketEnabled
+    proposeAssetEnabled
+    bootstrapBlockCount
+    genesisLoaded
+    proposeMarketEnabledFrom
+    proposeAssetEnabledFrom
+  }
+}
