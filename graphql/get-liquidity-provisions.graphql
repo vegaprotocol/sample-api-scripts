@@ -1,0 +1,80 @@
+###############################################################################
+#                          L P S   B Y   P A R T Y                            #
+###############################################################################
+
+{
+  partiesConnection {
+    edges {
+      node {
+        liquidityProvisionsConnection {
+          edges {
+            node {
+              id
+              market {
+                id
+              }
+              commitmentAmount
+              createdAt
+              reference
+              buys {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+              sells {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+###############################################################################
+#                          L P S   B Y   M A R K E T                          #
+###############################################################################
+
+{
+  marketsConnection {
+    edges {
+      node {
+        liquidityProvisionsConnection {
+          edges {
+            node {
+              id
+              market {
+                id
+              }
+              commitmentAmount
+              createdAt
+              reference
+              buys {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+              sells {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+###############################################################################
+#                         L I S T   P R O P O S A L S                         #
+###############################################################################
+
+
+{
+  proposalsConnection {
+    edges {
+      node {
+        id
+        reference
+        party {
+          id
+        }
+        state
+        datetime
+        rationale {
+          description
+        }
+        terms {
+          closingDatetime
+          enactmentDatetime
+        }
+        votes {
+          yes {
+            totalNumber
+            totalWeight
+            totalTokens
+          }
+          no {
+            totalNumber
+            totalWeight
+            totalTokens
+          }
+        }
+        rejectionReason
+        errorDetails
+      }
+    }
+  }
+}

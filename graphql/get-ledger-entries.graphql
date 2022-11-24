@@ -1,0 +1,20 @@
+###############################################################################
+#                    L I S T   L E D G E R   E N T R I E S                    #
+###############################################################################
+
+{
+  ledgerEntries(
+    filter: {AccountToFilter: {partyIds: "644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759"}}
+  ) {
+    edges {
+      node {
+        vegaTime
+        quantity
+        partyId
+        assetId
+        marketId
+        accountType
+      }
+    }
+  }
+}
