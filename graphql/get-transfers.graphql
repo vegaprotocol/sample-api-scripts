@@ -1,6 +1,11 @@
-###############################################################################
-#                         L I S T   T R A N S F E R S                         #
-###############################################################################
+#  How to get withdrawal information from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   partiesConnection (id: "PUBLIC_KEY")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
 {
 		partiesConnection {
@@ -28,33 +33,3 @@
 		}
 	  }
 
-###############################################################################
-#           T R A N S F E R S   B Y   P A R T Y  &  D I R E C T I O N         #
-###############################################################################
-
-
-{
-		partiesConnection {
-		  edges {
-			node {
-			  id
-			  transfersConnection {
-				edges {
-				  node {
-					id
-					fromAccountType
-					toAccountType
-					from
-					amount
-					timestamp
-					asset {
-					  id
-					  name
-					}
-				  }
-				}
-			  }
-			}
-		  }
-		}
-	  }

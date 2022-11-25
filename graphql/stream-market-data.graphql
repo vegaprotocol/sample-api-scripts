@@ -1,6 +1,14 @@
-subscription StreamMarketData (
-  $marketID: [ID!] = "e9ec6d5c46a7e7bcabf9ba7a893fa5a5eeeec08b731f06f7a6eb7bf0e605b829",
-){
+#  How to stream market data from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  An array of market Ids must be passed in as an argument, as follows:
+#   marketsData(marketIds: "MARKET_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+
+subscription StreamMarketData ($marketID: [ID!] = "e9ec6d5c46a7e7bcabf9ba7a893fa5a5eeeec08b731f06f7a6eb7bf0e605b829",){
   marketsData(marketIds:$marketID){
     bestBidPrice
     bestBidVolume

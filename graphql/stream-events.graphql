@@ -1,4 +1,16 @@
-subscription {
+#  How to stream events from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  There can be various arguments passed into busEvents, such as:
+#   batchSize
+#   marketId
+#   partyId
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+
+subscription StreamEvents {
   busEvents(batchSize: 0, types: [Order], marketId: "'$marketID'") {
     type
     event {
