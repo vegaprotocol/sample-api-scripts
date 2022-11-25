@@ -1,30 +1,28 @@
-#  How to get account information for a Party from a Data Node using GraphQL calls:
+#  How to get information on candles from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
 #  The list can be filtered by various parameters, like so:
-#   partiesConnection (id: "PUBLIC_KEY")
+#   marketsConnection (id: "MARKET_ID")
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query getParties {
-  partiesConnection {
+
+query getCandles {
+  marketsConnection {
     edges {
       node {
-        id
-        accountsConnection {
+        candlesConnection(
+          since: "2022-11-12T15:49:00.69896836Z"
+          interval: INTERVAL_I1H
+        ) {
           edges {
             node {
-              balance
-              asset {
-                id
-                name
-                symbol
-              }
-              type
-              market {
-                id
-              }
+              high
+              low
+              open
+              close
+              volume
             }
           }
         }

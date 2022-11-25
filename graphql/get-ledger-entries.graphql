@@ -1,0 +1,22 @@
+#  How to get information on ledger entries from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+query getLedgerEntries {
+  ledgerEntries(
+    filter: {AccountToFilter: {partyIds: "644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759"}}
+  ) {
+    edges {
+      node {
+        vegaTime
+        quantity
+        partyId
+        assetId
+        marketId
+        accountType
+      }
+    }
+  }
+}

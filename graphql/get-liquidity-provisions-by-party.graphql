@@ -1,4 +1,4 @@
-#  How to get account information for a Party from a Data Node using GraphQL calls:
+#  How to get liquidity provision information for a Party from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
@@ -7,23 +7,33 @@
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query getParties {
+query getLPByParty {
   partiesConnection {
     edges {
       node {
-        id
-        accountsConnection {
+        liquidityProvisionsConnection {
           edges {
             node {
-              balance
-              asset {
-                id
-                name
-                symbol
-              }
-              type
+              id
               market {
                 id
+              }
+              commitmentAmount
+              createdAt
+              reference
+              buys {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+              sells {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
               }
             }
           }

@@ -1,13 +1,15 @@
-#  How to get account information for a Party from a Data Node using GraphQL calls:
+#  How to get information on asset balances from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
 #  The list can be filtered by various parameters, like so:
 #   partiesConnection (id: "PUBLIC_KEY")
+#   accountsConnection (assetId: "ASSET_ID")
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query getParties {
+
+query getBalances {
   partiesConnection {
     edges {
       node {
@@ -15,16 +17,13 @@ query getParties {
         accountsConnection {
           edges {
             node {
-              balance
               asset {
                 id
-                name
                 symbol
+                decimals
               }
+              balance
               type
-              market {
-                id
-              }
             }
           }
         }

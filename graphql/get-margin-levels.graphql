@@ -1,30 +1,34 @@
-#  How to get account information for a Party from a Data Node using GraphQL calls:
+#  How to get information on margin levels from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
 #  The list can be filtered by various parameters, like so:
 #   partiesConnection (id: "PUBLIC_KEY")
+#   marketsConnection (assetId: "MARKET_ID")
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query getParties {
+query getMarginLevels {
   partiesConnection {
     edges {
       node {
-        id
-        accountsConnection {
+        marginsConnection {
           edges {
             node {
-              balance
-              asset {
-                id
-                name
-                symbol
-              }
-              type
-              market {
-                id
-              }
+               market {
+                 id
+               }
+  						 asset {
+  						   id
+  						 }
+  						 party {
+  						   id
+  						 }
+  						 maintenanceLevel
+ 							 searchLevel
+  						 initialLevel
+  						 collateralReleaseLevel
+  						 timestamp
             }
           }
         }

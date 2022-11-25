@@ -1,4 +1,4 @@
-#  How to get account information for a Party from a Data Node using GraphQL calls:
+#  How to get information on governance votes from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
@@ -7,23 +7,19 @@
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query getParties {
-  partiesConnection {
+
+ query getGovernanceVotes {
+  partiesConnection (id: "644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759") {
     edges {
       node {
-        id
-        accountsConnection {
+        id 
+        votesConnection {
           edges {
             node {
-              balance
-              asset {
-                id
-                name
-                symbol
-              }
-              type
-              market {
-                id
+              proposalId
+              vote {
+                value
+                datetime
               }
             }
           }
