@@ -1,6 +1,9 @@
-###############################################################################
-#                      G E T   K E Y   R O T A T I O N S                      #
-###############################################################################
+#  How to get information on key rotations from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
 
 {
   keyRotationsConnection {

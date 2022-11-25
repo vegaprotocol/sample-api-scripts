@@ -1,6 +1,8 @@
-###############################################################################
-#                    L I S T   L E D G E R   E N T R I E S                    #
-###############################################################################
+#  How to get information on ledger entries from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
 {
   ledgerEntries(

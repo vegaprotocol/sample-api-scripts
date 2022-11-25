@@ -1,29 +1,15 @@
-###############################################################################
-#                         L I S T   A L L    A S S E T S                      #
-###############################################################################
+#  How to get information on assets from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   assetsConnection (id: "ASSET_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
 query getAssets {
   assetsConnection {
     edges {
-      node {
-        id
-        name
-        symbol
-        decimals
-        quantum
-        status
-      }
-    }
-  }
-}
-
-###############################################################################
-#                           S I N G L E   A S S E T                           #
-###############################################################################
-
-query getAsset {
-  assetsConnection (id: "b340c130096819428a62e5df407fd6abe66e444b89ad64f670beb98621c9c663"){
-    edges  {
       node {
         id
         name

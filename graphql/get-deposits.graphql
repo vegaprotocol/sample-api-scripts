@@ -1,6 +1,12 @@
-###############################################################################
-#                          L I S T   D E P O S I T S                          #
-###############################################################################
+#  How to get deposit information for a Party from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   partiesConnection (id: "PUBLIC_KEY")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
 {
   partiesConnection {
     edges {
@@ -28,41 +34,3 @@
     }
   }
 }
-
-###############################################################################
-#                         D E P O S I T   B Y   I D                           #
-###############################################################################
-
-
-
-
-###############################################################################
-#                      D E P O S I T S   B Y   P A R T Y                      #
-###############################################################################
-
-{
-  partiesConnection (id:"644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759") {
-    edges {
-      node {
-        id
-        depositsConnection {
-          edges {
-            node {
-              id
-              amount
-              createdTimestamp
-              creditedTimestamp
-              status
-              asset {
-                id
-                symbol
-                source {
-                  __typename
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }

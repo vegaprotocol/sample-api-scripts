@@ -1,7 +1,11 @@
-###############################################################################
-#                         L I S T   P R O P O S A L S                         #
-###############################################################################
-
+#  How to get information on governance proposals from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   proposalsConnection (proposalType: "PROPOSAL_TYPE")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
 {
   proposalsConnection {

@@ -1,39 +1,15 @@
-###############################################################################
-#                           G E T   C A N D L E S                             #
-###############################################################################
+#  How to get information on candles from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   marketsConnection (id: "MARKET_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
 
 {
   marketsConnection {
-    edges {
-      node {
-        candlesConnection(
-          since: "2022-11-12T15:49:00.69896836Z"
-          interval: INTERVAL_I1H
-        ) {
-          edges {
-            node {
-              high
-              low
-              open
-              close
-              volume
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-
-###############################################################################
-#               G E T   C A N D L E S  F O R    M A R K E T                  #
-###############################################################################
-
-
-{
-  marketsConnection (id:"e9ec6d5c46a7e7bcabf9ba7a893fa5a5eeeec08b731f06f7a6eb7bf0e605b829") {
     edges {
       node {
         candlesConnection(

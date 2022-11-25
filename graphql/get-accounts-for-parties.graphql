@@ -1,4 +1,4 @@
-#  How to get withdrawal information from a Data Node using GraphQL calls:
+#  How to get account information for a Party from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
@@ -7,26 +7,23 @@
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-
-query {
+query GetAccountsByParty {
   partiesConnection {
     edges {
       node {
-        id
-        withdrawalsConnection {
+        id 
+        accountsConnection {
           edges {
             node {
-              amount
-              createdTimestamp
-              createdTimestamp
-              status
-              asset {
-                id
-                symbol
-                source {
-                  __typename
-                }
-              }
+              balance
+  						asset {
+  						  id
+  						}
+  						type
+  						market {
+  						  id
+  						}
+              
             }
           }
         }
@@ -34,4 +31,3 @@ query {
     }
   }
 }
-
