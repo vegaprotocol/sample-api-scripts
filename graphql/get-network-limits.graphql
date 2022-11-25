@@ -1,21 +1,12 @@
 
-###############################################################################
-#                           N E T W O R K   D A T A                           #
-###############################################################################
+#  How to get information on network limits from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
 
-
-
-
-
-
-###############################################################################
-#                         N E T W O R K   L I M I T S                         #
-###############################################################################
-
-
-
-{
+query getNetworkLimits {
   networkLimits {
     canProposeMarket
     canProposeAsset

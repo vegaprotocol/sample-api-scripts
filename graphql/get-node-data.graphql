@@ -1,7 +1,11 @@
-###############################################################################
-#                        L I S T   N O D E S   D A T A                        #
-###############################################################################
-{
+
+#  How to get information on nodes from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+query getNodeData {
   nodeData {
     stakedTotal
     totalNodes

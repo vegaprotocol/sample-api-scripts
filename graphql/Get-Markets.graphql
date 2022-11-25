@@ -1,44 +1,16 @@
-###############################################################################
-#                           L I S T   M A R K E T S                           #
-###############################################################################
+#  How to get information on markets from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   marketsConnection (id: "MARKET_KEY")
+#   accountsConnection (assetId: "ASSET_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
 
 query getMarkets {
   marketsConnection {
-    edges {
-      node {
-        id
-        tradingMode
-        marketTimestamps {
-          proposed
-          pending
-          open
-          close
-        }
-        depth {
-          buy {
-            volume
-            numberOfOrders
-          }
-          sell {
-            volume
-            numberOfOrders
-          }
-          lastTrade {
-            price
-            size
-          }
-        }
-      }
-    }
-  }
-}
-
-###############################################################################
-#                          M A R K E T   B Y   I D                            #
-###############################################################################
-
-query getMarket {
-  marketsConnection (id: "e9ec6d5c46a7e7bcabf9ba7a893fa5a5eeeec08b731f06f7a6eb7bf0e605b829") {
     edges {
       node {
         id

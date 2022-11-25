@@ -1,3 +1,13 @@
+#  How to get information on an orders and trades for a party from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The query must contain an id argument on the market field:
+#   party(id: "PUBKEY")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+
 query GetOrderTradesForParty($partyId: ID! = "644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759") {
   party(id: $partyId) {
     id
