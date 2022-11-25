@@ -1,0 +1,43 @@
+#  How to get liquidity provision information for a Party from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   partiesConnection (id: "PUBLIC_KEY")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+{
+  partiesConnection {
+    edges {
+      node {
+        liquidityProvisionsConnection {
+          edges {
+            node {
+              id
+              market {
+                id
+              }
+              commitmentAmount
+              createdAt
+              reference
+              buys {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+              sells {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

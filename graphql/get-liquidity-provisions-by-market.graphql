@@ -1,4 +1,4 @@
-#  How to get account information for a Market from a Data Node using GraphQL calls:
+#  How to get liqudity provision information for a Market from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
@@ -7,18 +7,35 @@
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query GetAccountsByMarket {
+
+{
   marketsConnection {
     edges {
       node {
-        accountsConnection {
+        liquidityProvisionsConnection {
           edges {
             node {
-              balance
-              asset {
+              id
+              market {
                 id
               }
-              type
+              commitmentAmount
+              createdAt
+              reference
+              buys {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+              sells {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
             }
           }
         }

@@ -1,6 +1,11 @@
-###############################################################################
-#                    M A R K E T   D A T A   H I S T O R Y                    #
-###############################################################################
+#  How to get market data historyt from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The query must contain an id argument:
+#   getMarketDataHistoryConnectionByID(id: "MARKET_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
 
 {

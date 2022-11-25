@@ -1,6 +1,12 @@
-###############################################################################
-#                   L I S T   M A R G I N   L E V E L S                       #
-###############################################################################
+#  How to get information on margin levels from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   partiesConnection (id: "PUBLIC_KEY")
+#   marketsConnection (assetId: "MARKET_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
 {
   partiesConnection {
@@ -23,111 +29,6 @@
   						 initialLevel
   						 collateralReleaseLevel
   						 timestamp
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-###############################################################################
-#                 M A R G I N   L E V E L S   B Y   P A R T Y                 #
-###############################################################################
-
-{
-  partiesConnection (id: "e3ac4e601d5492b8282f04a82043b4ea3003ea17c6f206db01a988df2512a799") {
-    edges {
-      node {
-        marginsConnection {
-          edges {
-            node {
-               market {
-                 id
-               }
-  						 asset {
-  						   id
-  						 }
-  						 party {
-  						   id
-  						 }
-  						 maintenanceLevel
- 							 searchLevel
-  						 initialLevel
-  						 collateralReleaseLevel
-  						 timestamp
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-
-###############################################################################
-#                M A R G I N   L E V E L S   B Y   M A R K E T                #
-###############################################################################
-
-{
-  partiesConnection {
-    edges {
-      node {
-        marginsConnection(marketId: "ad2e531441c2e8a43e85423db399a4acc8f9a8a2376304a4c377d0da8eb31e80") {
-          edges {
-            node {
-               market {
-                 id
-               }
-  						 asset {
-  						   id
-  						 }
-  						 party {
-  						   id
-  						 }
-  						 maintenanceLevel
- 							 searchLevel
-  						 initialLevel
-  						 collateralReleaseLevel
-  						 timestamp
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-###############################################################################
-#        M A R G I N   L E V E L S   B Y   M A R K E T   &   P A R T Y        #
-###############################################################################
-
-
-{
-  partiesConnection(
-    id: "1ceebc1232635235fb5d4a1d18a7fa06519a03df9fbac2a36a5ca3adc168d1d1"
-  ) {
-    edges {
-      node {
-        marginsConnection(
-          marketId: "ad2e531441c2e8a43e85423db399a4acc8f9a8a2376304a4c377d0da8eb31e80"
-        ) {
-          edges {
-            node {
-              market {
-                id
-              }
-              asset {
-                id
-              }
-              party {
-                id
-              }
-              maintenanceLevel
-              searchLevel
-              initialLevel
-              collateralReleaseLevel
-              timestamp
             }
           }
         }
