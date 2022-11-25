@@ -7,7 +7,7 @@
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-{
+query getGovernanceProposals {
   proposalsConnection {
     edges {
       node {

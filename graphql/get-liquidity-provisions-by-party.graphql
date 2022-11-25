@@ -6,7 +6,8 @@
 #   partiesConnection (id: "PUBLIC_KEY")
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
-{
+
+query getLPByParty {
   partiesConnection {
     edges {
       node {

@@ -8,7 +8,7 @@
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
 
- {
+ query getGovernanceVotes {
   partiesConnection (id: "644a1a8bb2fba612612dd6a5d400c49eb469d91dff777b0eda3f4cd554296759") {
     edges {
       node {
