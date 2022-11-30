@@ -1,17 +1,19 @@
 #!/usr/bin/python3
 
 ###############################################################################
-#                          S T R E A M   T R A D E S                          #
+#                        S T R E A M   A C C O U N T S                        #
 ###############################################################################
 
-#  How to stream trade information from a Data Node using Websockets:
+#  How to stream account information from a Data Node using Websockets:
 #  ----------------------------------------------------------------------
-#  Pagination and Date Range are not supported, this is a realtime stream.
+#  Pagination is not supported, but the initial snapshot may contain
+#  multiple pages. Date Range is not supported, this is a realtime stream.
 #  ----------------------------------------------------------------------
 #  The stream can be filtered by various parameters, including:
 #   partyId:    Vega party id (public key)
 #   marketId:   Vega market id
-#     > Include none, one or both to refine the stream of data from Vega
+#   asset:      Vega asset id
+#   type:       Account type
 #  ----------------------------------------------------------------------
 #  For full details see the REST Reference API docs at https://docs.vega.xyz
 
@@ -29,14 +31,14 @@ market_id = helpers.env_market_id()
 assert market_id != ""
 
 # Connect to the data node with a WSS based endpoint, this is not a HTTPS:// url
-#  Hint: to include/filter data from a party add the param `partyId`
-#  e.g. ?marketIds=xxx&partyId=yyy
-url = f"{data_node_url_rest}/stream/trades?marketId={market_id}".replace("https://", "wss://")
+#  Hint: to include/filter data from a party, asset or account types:
+#  e.g. ?marketId=xxx&partyId=yyy&asset=zzz&type=ccc
+url = f"{data_node_url_rest}/stream/accounts?marketId={market_id}".replace("https://", "wss://")
 res = []
 event = threading.Event()
 
-# __stream_trades_by_market:
-# Request a stream of trades and updates for a market id on a Vega network
+# __stream_accounts_by_market:
+# Request a stream of accounts and updates for a market id on a Vega network
 
 def on_message(wsa, line):
     # Vega data-node v2 returns the json line by line so we need to wait
@@ -47,25 +49,27 @@ def on_message(wsa, line):
     elif line == "}":
         res.append(line)
         obj = json.loads(''.join(res))
-        if "trades" in obj["result"]:
-            # Result contains each trade update (may be multiple)
-            total_in_update = len(obj["result"]["trades"])
-            print(f"Trade data found [{total_in_update}]:")
-            print(obj["result"]["trades"])
+        if "snapshot" in obj["result"]:
+            # An 'initial image' snapshot containing current accounts state (may be multiple pages)
+            print("Snapshot found:")
+            print(obj["result"]["snapshot"]["accounts"])
+        if "updates" in obj["result"]:
+            # A list of account updates typically from the last block
+            print("Updates found:")
+            print(obj["result"]["updates"]["accounts"])
     else:
         res.append(line)
-
 
 def on_error(wsa, error):
     print(error)
 
 
 def on_close(wsa, close_status_code, close_msg):
-    print(f"Trades stream closed: {url}")
+    print(f"Accounts stream closed: {url}")
 
 
 def on_open(wsa):
-    print(f"Trades stream open: {url}")
+    print(f"Accounts stream open: {url}")
 
 
 def timeout():
@@ -80,4 +84,4 @@ thread.start()
 ws = websocket.WebSocketApp(url, on_message=on_message, on_error=on_error, on_close=on_close)
 ws.on_open = on_open
 ws.run_forever()
-# :stream_trades_by_market__
+# :stream_accounts_by_market__

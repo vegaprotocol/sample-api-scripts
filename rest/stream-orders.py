@@ -9,7 +9,7 @@
 #  Pagination is not supported, but the initial snapshot may contain
 #  multiple pages. Date Range is not supported, this is a realtime stream.
 #  ----------------------------------------------------------------------
-#  The list can be filtered by various parameters, including:
+#  The stream can be filtered by various parameters, including:
 #   partyId:    Vega party id (public key)
 #   marketId:   Vega market id
 #     > Include none, one or both to refine the stream of data from Vega
@@ -35,10 +35,6 @@ assert market_id != ""
 url = f"{data_node_url_rest}/stream/orders?marketId={market_id}".replace("https://", "wss://")
 res = []
 event = threading.Event()
-
-# Load Vega node API v2 URL, this is set using 'source vega-config'
-# located in the root folder of the sample-api-scripts repository
-data_node_url_rest = helpers.get_from_env("DATA_NODE_URL_REST")
 
 # __stream_orders_by_market:
 # Request a stream of live orders and updates for a market id on a Vega network

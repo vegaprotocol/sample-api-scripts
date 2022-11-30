@@ -73,6 +73,6 @@ Click on the "Gitpod ready-to-code" button above to load a browser based linux d
 
 # Contributing or raising issues
 
-Please reach out to us on the [Discord chat](https://discord.gg/bkAF3Tu) to enquire further about how to get involved with Vega.
+Please reach out to us on the [Discord chat](https://discord.gg/bkAF3Tu) to enquire further about how to get involved with Vega, alternatively you can check out the [Builders Club](https://vega.xyz/builders-club/).
 
 If you have found an issue or would like to suggest an improvement with our public code samples, please raise an issue in the [Sample-API-Scripts](https://github.com/vegaprotocol/sample-api-scripts/) repository. If you'd like to submit a PR we welcome additional sample code.

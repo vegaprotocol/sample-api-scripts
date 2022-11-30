@@ -26,6 +26,7 @@ import helpers
 # located in the root folder of the sample-api-scripts repository
 data_node_url_rest = helpers.get_from_env("DATA_NODE_URL_REST")
 market_id = helpers.env_market_id()
+assert market_id != ""
 
 ###############################################################################
 #                 L I S T   C A N D L E   I N T E R V A L S                   #

@@ -12,7 +12,7 @@
 #  The list can be filtered by various parameters, including:
 #   filter.partyIds:      Vega party ids (public keys)
 #   filter.marketIds:     Vega market ids
-#   filter.assets:        Specific assets e.g. tDAI, tBTC, etc
+#   filter.assets:        Specific asset ids e.g. if for tDAI, tBTC, etc
 #   filter.accountTypes:  Account types e.g. infrastructure, general, etc
 #  ----------------------------------------------------------------------
 #  For full details see the REST Reference API docs at https://docs.vega.xyz

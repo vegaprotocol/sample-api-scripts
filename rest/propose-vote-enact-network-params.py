@@ -235,7 +235,7 @@ if WAIT_FOR_PARAMETER_AFTER_VOTE is not True:
 # As described on docs.vega.xyz, a network parameter change will need community
 # voting support to be passed and then enacted.
 
-# __wait_for_market:
+# __wait_for_param:
 print("Waiting for network parameter update to be completed...", end="", flush=True)
 while True:
     time.sleep(0.5)
@@ -250,4 +250,4 @@ while True:
             print()
             print(edge["node"])
             break
-# :wait_for_market__
+# :wait_for_param__

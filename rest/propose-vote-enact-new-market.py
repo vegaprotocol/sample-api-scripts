@@ -80,6 +80,9 @@ if voting_balance == 0:
     print(f"Please deposit VEGA asset to public key {pubkey} and try again")
     exit(1)
 
+print("Voting balance:")
+print(voting_balance)
+
 ###############################################################################
 #                        B L O C K C H A I N   T I M E                        #
 ###############################################################################
@@ -267,14 +270,12 @@ found_proposal = helpers.get_nested_response(response, "connection")[0]["node"][
 proposal_id = found_proposal["id"]
 proposal_state = found_proposal["state"]
 
-print()
+print(found_proposal)
 if (proposal_state == 'STATE_REJECTED') or (
         proposal_state == 'STATE_DECLINED') or (
         proposal_state == 'STATE_FAILED'):
     print(f"Your proposal has been {proposal_state}!")
     print("Due to: " + found_proposal["reason"])
-    if (found_proposal["errorDetails"]) != '':
-        print("Further details: " + found_proposal["errorDetails"])
     exit()
 else:
     print("Your proposal has been accepted by the network!")
@@ -337,28 +338,27 @@ if WAIT_FOR_MARKET_AFTER_VOTE is not True:
     exit(1)
 
 ###############################################################################
-#                       W A I T   F O R   M A R K E T                         #
+#                        W A I T   F O R   M A R K E T                        #
 ###############################################################################
 
-# Hint: When voting for a proposal on the Vega Testnet, typically a single
-# YES vote from the proposer will not be enough to vote the market into
-# existence. As described above in the previous stage, a market will need
-# community voting support to be passed and then enacted.
+# IMPORTANT: When voting for a proposal on Vega networks, typically a single
+# YES vote from the proposer will not be enough to vote the proposal in.
+# As described on docs.vega.xyz, a network parameter change will need community
+# voting support to be passed and then enacted.
 
 # __wait_for_market:
-# print("Waiting for proposal to be enacted or failed...", end="", flush=True)
-# done = False
-# while not done:
-#     time.sleep(0.5)
-#     print(".", end="", flush=True)
-#     markets = requests.get(data_node_url_rest + "/markets")
-#     if markets.status_code != 200:
-#         continue
-#
-#     for n in markets.json()["markets"]:
-#         if n["id"] == proposal_id:
-#             print()
-#             print(n)
-#             done = True
-#             break
+print("Waiting for new market to be enacted...", end="", flush=True)
+while True:
+    time.sleep(0.5)
+    print(".", end="", flush=True)
+    url = f"{data_node_url_rest}/markets"
+    response = requests.get(url)
+    if response.status_code != 200:
+        continue
+
+    for edge in response.json()["markets"]["edges"]:
+        if edge["node"]["id"] == proposal_id:
+            print()
+            print(edge["node"])
+            break
 # :wait_for_market__

@@ -8,7 +8,7 @@
 #  ----------------------------------------------------------------------
 #  Pagination and Date Range are not supported, this is a realtime stream.
 #  ----------------------------------------------------------------------
-#  The list has a required filter:
+#  The stream requires the following parameter/filter:
 #   marketIds:   Vega market id (a repeated param) for one or more markets
 #  ----------------------------------------------------------------------
 #  For full details see the REST Reference API docs at https://docs.vega.xyz
@@ -32,10 +32,6 @@ assert market_id != ""
 url = f"{data_node_url_rest}/stream/markets/data?marketIds={market_id}".replace("https://", "wss://")
 res = []
 event = threading.Event()
-
-# Load Vega node API v2 URL, this is set using 'source vega-config'
-# located in the root folder of the sample-api-scripts repository
-data_node_url_rest = helpers.get_from_env("DATA_NODE_URL_REST")
 
 # __stream_market_data_by_markets:
 # Request a stream of live market data for one or more market ids on a Vega network
