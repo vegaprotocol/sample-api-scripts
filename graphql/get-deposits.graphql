@@ -1,4 +1,4 @@
-#  How to get account information for a Party from a Data Node using GraphQL calls:
+#  How to get deposit information for a Party from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
@@ -7,23 +7,25 @@
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query getParties {
+query getDeposits {
   partiesConnection {
     edges {
       node {
         id
-        accountsConnection {
+        depositsConnection {
           edges {
             node {
-              balance
+              id
+              amount
+              createdTimestamp
+              creditedTimestamp
+              status
               asset {
                 id
-                name
                 symbol
-              }
-              type
-              market {
-                id
+                source {
+                  __typename
+                }
               }
             }
           }

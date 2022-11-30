@@ -1,0 +1,45 @@
+#  How to get liqudity provision information for a Market from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   marketsConnection (id: "MARKET_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+
+query getLPByMarket {
+  marketsConnection {
+    edges {
+      node {
+        liquidityProvisionsConnection {
+          edges {
+            node {
+              id
+              market {
+                id
+              }
+              commitmentAmount
+              createdAt
+              reference
+              buys {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+              sells {
+                liquidityOrder {
+                  reference
+                  proportion
+                  offset
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

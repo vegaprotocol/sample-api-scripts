@@ -1,22 +1,32 @@
-#  How to get information on assets from a Data Node using GraphQL calls:
+#  How to get account information for a Party from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
 #  The list can be filtered by various parameters, like so:
-#   assetsConnection (id: "ASSET_ID")
+#   partiesConnection (id: "PUBLIC_KEY")
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query getAssets {
-  assetsConnection {
+query GetAccountsByParty {
+  partiesConnection {
     edges {
       node {
-        id
-        name
-        symbol
-        decimals
-        quantum
-        status
+        id 
+        accountsConnection {
+          edges {
+            node {
+              balance
+  						asset {
+  						  id
+  						}
+  						type
+  						market {
+  						  id
+  						}
+              
+            }
+          }
+        }
       }
     }
   }

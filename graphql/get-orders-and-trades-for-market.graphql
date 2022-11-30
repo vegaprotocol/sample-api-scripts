@@ -1,17 +1,34 @@
-query GetOrderTradesForMarket (
-  $marketId: ID! = ""
-){
-  market(id:$marketId){
-    name
-    orders{
-      id
-      price
-      side
-      status
-      trades {
-        id
-        price
-        size
+#  How to get information on an orders and trades on a market from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The query must contain an id argument on the market field:
+#   market(id: "MARKET_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+
+
+query GetOrderTradesForMarket($marketId: ID! = "ad2e531441c2e8a43e85423db399a4acc8f9a8a2376304a4c377d0da8eb31e80") {
+  market(id: $marketId) {
+    id
+    ordersConnection {
+      edges {
+        node {
+          id
+          price
+          side
+          status
+          tradesConnection {
+            edges {
+              node {
+                id
+                price
+                size
+              }
+            }
+          }
+        }
       }
     }
   }

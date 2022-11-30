@@ -1,13 +1,17 @@
+#  How to stream orders from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+
 subscription StreamOrders{
   orders{
     id
     price
     timeInForce
     side
-    market{
-      name
-    }
+    marketId
     size
   }
-}
 }

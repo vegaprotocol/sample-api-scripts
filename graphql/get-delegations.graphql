@@ -1,34 +1,32 @@
-#  How to get account information for a Party from a Data Node using GraphQL calls:
+#  How to get information on delegations from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
 #  The list can be filtered by various parameters, like so:
-#   partiesConnection (id: "PUBLIC_KEY")
+#   delegationsConnection(partyId: "PUBLIC_KEY")
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query getParties {
-  partiesConnection {
-    edges {
-      node {
-        id
-        accountsConnection {
-          edges {
-            node {
-              balance
-              asset {
-                id
-                name
-                symbol
-              }
-              type
-              market {
-                id
-              }
+query getDelegations {
+nodesConnection {
+  edges {
+    node {
+      delegationsConnection {
+        edges {
+          node {
+            amount
+            party {
+              id
             }
+            node {
+              id
+            }
+            epoch
           }
         }
       }
     }
   }
+} 
 }
+

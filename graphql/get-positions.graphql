@@ -1,4 +1,4 @@
-#  How to get account information for a Party from a Data Node using GraphQL calls:
+#  How to get account information for Positions from a Data Node using GraphQL calls:
 #  ----------------------------------------------------------------------
 #  Cursor pagination is supported
 #  ----------------------------------------------------------------------
@@ -7,28 +7,24 @@
 #  ----------------------------------------------------------------------
 #  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
 
-query getParties {
-  partiesConnection {
-    edges {
-      node {
-        id
-        accountsConnection {
-          edges {
-            node {
-              balance
-              asset {
-                id
-                name
-                symbol
-              }
-              type
-              market {
-                id
+query getPositions {
+	partiesConnection {
+      edges {
+        node {
+          id
+          positionsConnection() {
+            edges {
+              node {
+              market{id}
+              openVolume
+              realisedPNL
+              averageEntryPrice
+              unrealisedPNL
+              realisedPNL
               }
             }
-          }
-        }
-      }
+		  }
+		}
+	  }
     }
-  }
 }
