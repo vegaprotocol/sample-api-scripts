@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 
 ###############################################################################
-#                    S T R E A M   M A R K E T   D E P T H                    #
+#            S T R E A M   M A R K E T   D E P T H   U P D A T E S            #
 ###############################################################################
 
-#  IMPORTANT: This streaming endpoint returns the entire market depth/order
-#  book on each update, if you're looking for a stream of differences see
-#  the script `stream-market-depth-updates.py`
+#  IMPORTANT: This streaming endpoint returns only the changes to market depth
+#  /order book on each update, if you're looking for a stream of the full order
+#  book, see the script `stream-market-depth.py`
 
 #  How to stream market depth information from a Data Node using Websockets:
 #  ----------------------------------------------------------------------
@@ -22,7 +22,6 @@ import threading
 import json
 import helpers
 
-
 # Load Vega node API v2 URL, this is set using 'source vega-config'
 # located in the root folder of the sample-api-scripts repository
 data_node_url_rest = helpers.get_from_env("DATA_NODE_URL_REST")
@@ -34,14 +33,15 @@ assert market_id != ""
 # Connect to the data node with a WSS based endpoint, this is not a HTTPS:// url
 #  Hint: to include data from multiple markets repeat the param `marketIds`
 #  e.g. marketIds=xxx&marketIds=yyy&marketIds=zzz
-url = f"{data_node_url_rest}/stream/markets/depth?marketIds={market_id}".replace("https://", "wss://")
+url = f"{data_node_url_rest}/stream/markets/depth/updates?marketIds={market_id}"\
+    .replace("https://", "wss://")
 res = []
 event = threading.Event()
 
 print(url)
 
 # __stream_market_depth_by_markets:
-# Request a stream of live market depth data for one or more market ids on a Vega network
+# Request a stream of live market depth update data for one or more market ids on a Vega network
 
 def on_message(wsa, line):
     # Vega data-node v2 returns the json line by line so we need to wait
@@ -52,11 +52,11 @@ def on_message(wsa, line):
     elif line == "}":
         res.append(line)
         obj = json.loads(''.join(res))
-        if "marketDepth" in obj["result"]:
+        if "update" in obj["result"]:
             # Result contains each market-depth update (may be multiple)
-            found_market = obj["result"]["marketDepth"][0]["marketId"]
+            found_market = obj["result"]["update"][0]["marketId"]
             print(f"Market depth data found for {found_market}:")
-            print(obj["result"]["marketDepth"][0])
+            print(obj["result"]["update"][0])
     else:
         res.append(line)
 
