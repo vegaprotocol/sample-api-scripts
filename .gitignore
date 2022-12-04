@@ -6,3 +6,4 @@ credentials.*
 *.tmp
 .idea
 .DS_Store
+token.temp

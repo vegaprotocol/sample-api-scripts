@@ -1,5 +1,0 @@
-query GetVegaTime {
-  statistics{
-    vegaTime
-  }
-}

@@ -1,0 +1,36 @@
+#  How to get deposit information for a Party from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   partiesConnection (id: "PUBLIC_KEY")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+query getDeposits {
+  partiesConnection {
+    edges {
+      node {
+        id
+        depositsConnection {
+          edges {
+            node {
+              id
+              amount
+              createdTimestamp
+              creditedTimestamp
+              status
+              asset {
+                id
+                symbol
+                source {
+                  __typename
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

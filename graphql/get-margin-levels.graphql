@@ -1,0 +1,38 @@
+#  How to get information on margin levels from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   partiesConnection (id: "PUBLIC_KEY")
+#   marketsConnection (assetId: "MARKET_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+query getMarginLevels {
+  partiesConnection {
+    edges {
+      node {
+        marginsConnection {
+          edges {
+            node {
+               market {
+                 id
+               }
+  						 asset {
+  						   id
+  						 }
+  						 party {
+  						   id
+  						 }
+  						 maintenanceLevel
+ 							 searchLevel
+  						 initialLevel
+  						 collateralReleaseLevel
+  						 timestamp
+            }
+          }
+        }
+      }
+    }
+  }
+}

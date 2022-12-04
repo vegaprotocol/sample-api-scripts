@@ -1,0 +1,23 @@
+#  How to get information on trades for an order from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The query must contain an id argument:
+#   orderByID(id: "ORDER_ID")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+
+query GetTradesForOrder($orderId: ID! = "7e862ff63b4d70380b0b78ea5762e346ac1e711ec2516bc9994f92c7c19a3af6") {
+  orderByID(id: $orderId) {
+    tradesConnection {
+      edges {
+        node {
+          id
+          price
+          size
+        }
+      }
+    }
+  }
+}

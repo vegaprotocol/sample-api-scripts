@@ -1,0 +1,37 @@
+#  How to get account information about Rewards from a Data Node using GraphQL calls:
+#  ----------------------------------------------------------------------
+#  Cursor pagination is supported
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, like so:
+#   partiesConnection (id: "PUBLIC_KEY")
+#  ----------------------------------------------------------------------
+#  For full details see the GraphQL Reference API docs at https://docs.vega.xyz
+
+query getRewards {
+  partiesConnection {
+    edges {
+      node {
+        rewardsConnection {
+          edges {
+            node {
+              asset {
+                id
+              }
+  					  marketId
+ 						  rewardType
+ 						  party {
+                id
+              }
+  						epoch {
+                id
+              }
+  						amount
+  						percentageOfTotal
+  						receivedAt
+            }
+          }
+        }
+      }
+    }
+  }
+}

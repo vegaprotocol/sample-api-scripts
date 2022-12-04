@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+
+###############################################################################
+#                      G E T   K E Y   R O T A T I O N S                      #
+###############################################################################
+
+#  How to get key rotation information from a Data Node using REST calls:
+#  ----------------------------------------------------------------------
+#  Pagination is supported [default page size is 1000]
+#   -> Check out pagination.py for example usage
+#  ----------------------------------------------------------------------
+#  The list can be filtered by various parameters, including:
+#   nodeId:  Vega node id
+#  ----------------------------------------------------------------------
+#  For full details see the REST Reference API docs at https://docs.vega.xyz
+
+import json
+import requests
+import helpers
+
+# Load Vega node API v2 URL, this is set using 'source vega-config'
+# located in the root folder of the sample-api-scripts repository
+data_node_url_rest = helpers.get_from_env("DATA_NODE_URL_REST")
+
+# __get_key_rotations:
+# Request a list of key rotations for a Vega network
+url = f"{data_node_url_rest}/vega/keys/rotations"
+response = requests.get(url)
+helpers.check_response(response)
+print("Key rotations for network:\n{}".format(
+    json.dumps(response.json(), indent=2, sort_keys=True)
+))
+# :get_key_rotations__
