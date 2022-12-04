@@ -15,7 +15,7 @@ data_node_url_rest = helpers.get_from_env("DATA_NODE_URL_REST")
 wallet_server_url = helpers.get_from_env("WALLET_SERVER_URL")
 
 # Set to True to optionally wait/block until the new market proposal is enacted
-WAIT_FOR_MARKET_AFTER_VOTE = False
+WAIT_FOR_MARKET_AFTER_VOTE = True
 
 ###############################################################################
 #                            F I N D   A S S E T S                            #
@@ -57,27 +57,17 @@ if vote_asset_id is None:
     print("VEGA asset not found on specified Vega network, please symbol name check and try again")
     exit(1)
 
-# Request accounts for party and check governance asset balance
-url = f"{data_node_url_rest}/accounts?filter.partyIds={pubkey}"
-response = requests.get(url)
-helpers.check_response(response)
-
 # Debugging
 # print("Accounts:\n{}".format(
 #    json.dumps(response.json(), indent=2, sort_keys=True)))
 
-voting_balance = 0
-accounts = response.json()["accounts"]["edges"]
-
-for account in accounts:
-    if account["account"]["asset"] == vote_asset_id:
-        print("Found governance asset account")
-        print(json.dumps(account, indent=2, sort_keys=True))
-        voting_balance = account["account"]["balance"]
-        break
-
+# Request accounts for party and check governance asset balance
+url = f"{data_node_url_rest}/parties/{pubkey}/stake"
+response = requests.get(url)
+helpers.check_response(response)
+voting_balance = response.json()["currentStakeAvailable"]
 if voting_balance == 0:
-    print(f"Please deposit VEGA asset to public key {pubkey} and try again")
+    print(f"Please associate VEGA governance asset to public key {pubkey} and try again")
     exit(1)
 
 print("Voting balance:")
@@ -124,7 +114,7 @@ rationale_title = "New market required for tDAI April 2023 Futures"
 rationale_desc = "Proposal to create a new futures market for tDAI terminating in April 2023"
 
 # The proposal command below contains the configuration for a new market
-proposal = {
+new_market = {
     "proposalSubmission": {
         "reference": proposal_ref,
         "rationale": {
@@ -249,8 +239,16 @@ proposal = {
 }
 # :propose_market__
 
-print(json.dumps(response.json(), indent=4, sort_keys=True))
+# __sign_tx_proposal:
+# Sign the transaction with a proposal submission command
+# Hint: Setting propagate to true will also submit to a Vega node
+url = f"{wallet_server_url}/api/v1/command/sync"
+headers = {"Authorization": f"Bearer {token}"}
+response = requests.post(url, headers=headers, json=new_market)
+helpers.check_response(response)
+# :sign_tx_proposal__
 
+print(json.dumps(response.json(), indent=4, sort_keys=True))
 print()
 print("Signed new market proposal and sent to Vega")
 
