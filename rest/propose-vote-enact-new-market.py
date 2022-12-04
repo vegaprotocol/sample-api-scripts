@@ -61,7 +61,7 @@ if vote_asset_id is None:
 # print("Accounts:\n{}".format(
 #    json.dumps(response.json(), indent=2, sort_keys=True)))
 
-# Request accounts for party and check governance asset balance
+# Request governance stake/voting balance
 url = f"{data_node_url_rest}/parties/{pubkey}/stake"
 response = requests.get(url)
 helpers.check_response(response)

@@ -1,19 +1,17 @@
 #!/usr/bin/python3
 
 ###############################################################################
-#                    S T R E A M   M A R K E T   D E P T H                    #
+#                   S T R E A M   M A R G I N   L E V E L S                   #
 ###############################################################################
 
-#  IMPORTANT: This streaming endpoint returns the entire market depth/order
-#  book on each update, if you're looking for a stream of differences see
-#  the script `stream-market-depth-updates.py`
-
-#  How to stream market depth information from a Data Node using Websockets:
+#  How to stream margin levels information from a Data Node using Websockets:
 #  ----------------------------------------------------------------------
 #  Pagination and Date Range are not supported, this is a realtime stream.
 #  ----------------------------------------------------------------------
-#  The stream requires the following parameter/filter:
-#   marketIds:   Vega market id (a repeated param) for one or more markets
+#  The stream has two required parameters, as follows:
+#   partyId:    Vega party id (public key)
+#   marketId:   Vega market id
+#     > Both are required to stream margin level data
 #  ----------------------------------------------------------------------
 #  For full details see the REST Reference API docs at https://docs.vega.xyz
 
@@ -22,6 +20,8 @@ import threading
 import json
 import helpers
 
+# Vega wallet interaction helper, see login.py for detail
+from login import pubkey
 
 # Load Vega node API v2 URL, this is set using 'source vega-config'
 # located in the root folder of the sample-api-scripts repository
@@ -32,16 +32,14 @@ market_id = helpers.env_market_id()
 assert market_id != ""
 
 # Connect to the data node with a WSS based endpoint, this is not a HTTPS:// url
-#  Hint: to include data from multiple markets repeat the param `marketIds`
-#  e.g. marketIds=xxx&marketIds=yyy&marketIds=zzz
-url = f"{data_node_url_rest}/stream/markets/depth?marketIds={market_id}".replace("https://", "wss://")
+#  e.g. ?marketId=xxx&partyId=yyy
+url = f"{data_node_url_rest}/stream/margin/levels?partyId={pubkey}&marketId={market_id}"\
+    .replace("https://", "wss://")
 res = []
 event = threading.Event()
 
-print(url)
-
-# __stream_market_depth_by_markets:
-# Request a stream of live market depth data for one or more market ids on a Vega network
+# __stream_margin_levels:
+# Request a stream of margin level updates for a party and market id on a Vega network
 
 def on_message(wsa, line):
     # Vega data-node v2 returns the json line by line so we need to wait
@@ -52,11 +50,10 @@ def on_message(wsa, line):
     elif line == "}":
         res.append(line)
         obj = json.loads(''.join(res))
-        if "marketDepth" in obj["result"]:
-            # Result contains each market-depth update (may be multiple)
-            found_market = obj["result"]["marketDepth"][0]["marketId"]
-            print(f"Market depth data found for {found_market}:")
-            print(obj["result"]["marketDepth"][0])
+        if "marginLevels" in obj["result"]:
+            # Result contains margin level update for party on a market
+            print(f"Margin level data found:")
+            print(obj["result"]["marginLevels"])
     else:
         res.append(line)
 
@@ -66,11 +63,11 @@ def on_error(wsa, error):
 
 
 def on_close(wsa, close_status_code, close_msg):
-    print(f"Market-depth stream closed: {url}")
+    print(f"Margin levels stream closed: {url}")
 
 
 def on_open(wsa):
-    print(f"Market-depth stream open: {url}")
+    print(f"Margin levels stream open: {url}")
 
 
 def timeout():
@@ -85,4 +82,4 @@ thread.start()
 ws = websocket.WebSocketApp(url, on_message=on_message, on_error=on_error, on_close=on_close)
 ws.on_open = on_open
 ws.run_forever()
-# :stream_market_depth_by_markets__
+# :stream_margin_levels__

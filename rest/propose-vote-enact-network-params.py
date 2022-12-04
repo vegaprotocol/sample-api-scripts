@@ -48,19 +48,17 @@ helpers.check_response(response)
 # print("Accounts:\n{}".format(
 #    json.dumps(response.json(), indent=2, sort_keys=True)))
 
-voting_balance = 0
-accounts = response.json()["accounts"]["edges"]
-
-for account in accounts:
-    if account["account"]["asset"] == vote_asset_id:
-        print("Found governance asset account")
-        print(account)
-        voting_balance = account["account"]["balance"]
-        break
-
+# Request governance stake/voting balance
+url = f"{data_node_url_rest}/parties/{pubkey}/stake"
+response = requests.get(url)
+helpers.check_response(response)
+voting_balance = response.json()["currentStakeAvailable"]
 if voting_balance == 0:
-    print(f"Please deposit VEGA asset to public key {pubkey} and try again")
+    print(f"Please associate VEGA governance asset to public key {pubkey} and try again")
     exit(1)
+
+print("Voting balance:")
+print(voting_balance)
 
 #####################################################################################
 #                          B L O C K C H A I N   T I M E                            #

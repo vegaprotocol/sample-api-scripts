@@ -40,7 +40,7 @@ event = threading.Event()
 
 print(url)
 
-# __stream_market_depth_by_markets:
+# __stream_market_depth_updates_by_markets:
 # Request a stream of live market depth update data for one or more market ids on a Vega network
 
 def on_message(wsa, line):
@@ -85,4 +85,4 @@ thread.start()
 ws = websocket.WebSocketApp(url, on_message=on_message, on_error=on_error, on_close=on_close)
 ws.on_open = on_open
 ws.run_forever()
-# :stream_market_data_by_markets__
+# :stream_market_depth_updates_by_markets__
