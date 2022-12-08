@@ -71,6 +71,15 @@ Click on the "Gitpod ready-to-code" button above to load a browser based linux d
    
 1. Follow the sub-folder README.md information on how to run the samples.
 
+# Future Improvements
+
+We are constantly trying to improve these sample scripts and keep them up to date with Vega's most recent software releases. Below is a future roadmap for the sample-api-scripts, including what we will add next:
+
+- Add more transaction scripts
+- Basic CI support through Github Actions
+- Add support for gRPC
+
+
 # Contributing or raising issues
 
 Please reach out to us on the [Discord chat](https://discord.gg/bkAF3Tu) to enquire further about how to get involved with Vega, alternatively you can check out the [Builders Club](https://vega.xyz/builders-club/).
