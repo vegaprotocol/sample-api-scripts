@@ -53,16 +53,12 @@ Click on the "Gitpod ready-to-code" button above to load a browser based linux d
     ```
     This should create you a folder named `sample-api-scripts` that you will use for the rest of this README.
     
-1. Import the appropriate `vega-config-win` into your local environment for the network you want to test against (default is Fairground testnet). 
+1. Import the appropriate `vega-config-win.bat` into your local environment for the network you want to test against (default is Fairground testnet). Simply run this batch script in your terminal:
    ```
-   source vega-config-win
+   vega-config-win.bat
    ```
    You can define, copy or edit your own configurations. Out of the box, the vega-config-win file is included for ease and defaults to the Fairground testnet with hosted wallet configuration. *Node: Don't forget to source your configs after making any changes.*
-   
-1. Run the setup batch script on your command prompt/terminal to import the vega-config into your local environment: 
-   ```
-   setenv.bat
-   ```
+
    
 1. Navigate to the API transport you would like to explore, for example:
    ```
