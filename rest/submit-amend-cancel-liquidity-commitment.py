@@ -107,6 +107,7 @@ time.sleep(3)
 # __get_liquidity_provisions:
 # Request liquidity provisions for a party on a Vega network
 url = f"{data_node_url_rest}/liquidity/provisions?partyId={pubkey}"
+headers = {"Authorization": f"Bearer {token}"}
 response = requests.get(url)
 helpers.check_response(response)
 print("Liquidity Provisions for party:\n{}".format(
@@ -155,6 +156,7 @@ print("Liquidity commitment amendment:\n{}".format(
 # Sign the transaction with an order submission command
 # Hint: Setting propagate to true will also submit to a Vega node
 url = f"{wallet_server_url}/api/v1/command/sync"
+headers = {"Authorization": f"Bearer {token}"}
 response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
 # :sign_tx_liquidity_amend__
