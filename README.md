@@ -57,7 +57,7 @@ Click on the "Gitpod ready-to-code" button above to load a browser based linux d
    ```
    vega-config-win.bat
    ```
-   You can define, copy or edit your own configurations. Out of the box, the vega-config-win file is included for ease and defaults to the Fairground testnet with hosted wallet configuration. *Node: Don't forget to source your configs after making any changes.*
+   You can define, copy or edit your own configurations. Out of the box, the vega-config-win file is included for ease and defaults to the Fairground testnet with hosted wallet configuration. *Note: Don't forget to rerun this after making any config changes.*
 
    
 1. Navigate to the API transport you would like to explore, for example:
