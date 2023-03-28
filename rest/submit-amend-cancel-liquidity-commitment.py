@@ -84,7 +84,7 @@ print("Liquidity commitment submission:\n{}".format(
 # __sign_tx_liquidity_submit:
 # Sign the transaction with an liquidity commitment command
 # Hint: Setting propagate to true will also submit to a Vega node
-url = f"{wallet_server_url}/api/v1/command/sync"
+url = f"{wallet_server_url}/api/v2/requests"
 headers = {"Authorization": f"Bearer {token}"}
 response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
@@ -155,7 +155,7 @@ print("Liquidity commitment amendment:\n{}".format(
 # __sign_tx_liquidity_amend:
 # Sign the transaction with an order submission command
 # Hint: Setting propagate to true will also submit to a Vega node
-url = f"{wallet_server_url}/api/v1/command/sync"
+url = f"{wallet_server_url}/api/v2/requests"
 headers = {"Authorization": f"Bearer {token}"}
 response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
@@ -190,7 +190,7 @@ print("Liquidity commitment cancellation:\n{}".format(
 # __sign_tx_liquidity_cancel:
 # Sign the transaction with an order submission command
 # Hint: Setting propagate to true will also submit to a Vega node
-url = f"{wallet_server_url}/api/v1/command/sync"
+url = f"{wallet_server_url}/api/v2/requests"
 response = requests.post(url, headers=headers, json=submission)
 helpers.check_response(response)
 # :sign_tx_liquidity_cancel__

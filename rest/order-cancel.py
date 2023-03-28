@@ -94,7 +94,7 @@ print()
 # __sign_tx_cancel:
 # Sign the transaction for cancellation
 # Hint: Setting propagate to true will also submit to a Vega node
-url = f"{wallet_server_url}/api/v1/command/sync"
+url = f"{wallet_server_url}/api/v2/requests"
 headers = {"Authorization": f"Bearer {token}"}
 response = requests.post(url, headers=headers, json=cancellation)
 helpers.check_response(response)

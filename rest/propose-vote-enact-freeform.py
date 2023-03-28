@@ -114,7 +114,7 @@ new_freeform = {
 # __sign_tx_proposal:
 # Sign the transaction with a proposal submission command
 # Hint: Setting propagate to true will also submit to a Vega node
-url = f"{wallet_server_url}/api/v1/command/sync"
+url = f"{wallet_server_url}/api/v2/requests"
 headers = {"Authorization": f"Bearer {token}"}
 response = requests.post(url, headers=headers, json=new_freeform)
 helpers.check_response(response)
@@ -188,7 +188,7 @@ vote = {
 # __sign_tx_vote:
 # Sign the vote transaction
 # Note: Setting propagate to true will also submit to a Vega node
-url = f"{wallet_server_url}/api/v1/command/sync"
+url = f"{wallet_server_url}/api/v2/requests"
 response = requests.post(url, headers=headers, json=vote)
 helpers.check_response(response)
 # :sign_tx_vote__
@@ -217,7 +217,7 @@ vote = {
 # __sign_tx_vote:
 # Sign the vote command
 # Hint: Setting propagate to true will also submit to a Vega node
-url = f"{wallet_server_url}/api/v1/command/sync"
+url = f"{wallet_server_url}/api/v2/requests"
 response = requests.post(url, headers=headers, json=vote)
 helpers.check_response(response)
 # :sign_tx_vote__
