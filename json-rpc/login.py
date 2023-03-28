@@ -1,72 +1,27 @@
 
-
 import requests
-import walletClient
-
-def get_chain_id():
-   {
-    "id": 1,
-    "jsonrpc": "2.0",
-    "method": "client.get_chain_id",
-    "params": []
-}
-
-def connect_wallet():
-{
-    "id": 1,
-    "jsonrpc": "2.0",
-    "method": "client.connect_wallet",
-    "params": {
-        "hostname": "vega.xyz"
-    }
-}
-
-def verify_permissions():
-    print(" client.get_permissions")
-
-
-# 1. Get a live session token.
-# Jump direction to step 2 if you are using a long-living token.
-connectionRequest = {
-    "method": "POST",
-    "path": "/api/v2/requests",
-    "body": {
-        "id": 1,
-        "jsonrpc": "2.0",
-        "method": "client.connect_wallet"
-    }
-}
-
-connectionResponse = walletClient.send(connectionRequest)
-
-# 2. Set the connection token in the `Authorization` header.
-listKeysRequest = {
-    "method": "POST",
-    "path": "/api/v2/requests",
-    "body": {
-        "id": 1,
-        "jsonrpc": "2.0",
-        "method": "client.list_keys"
-    },
-    "headers": {
-        "Authorization": connectionResponse.Header("Authorization")
-    }
-}
-
-listKeysResponse = walletClient.send(listKeysRequest)
-
-
-
 
 url = "http://localhost:1789/api/v2/requests"
-
-payload = ""
-headers = {
+connect_payload = "{\n        \"id\": \"1\",\n        \"jsonrpc\": \"2.0\",\n        \"method\": \"client.connect_wallet\"\n    }"
+connect_headers = {
   'Content-Type': 'application/json-rpc',
-  'Accept': 'application/json-rpc'
+  'Accept': 'application/json-rpc', 
+  'Origin': 'application/json-rpc'
+}
+connectionResponse = requests.request("POST", url, headers=connect_headers, data=connect_payload)
+
+print(connectionResponse.text)
+print(connectionResponse.headers)
+
+
+authorize_payload = "{\n        \"id\": \"1\",\n        \"jsonrpc\": \"2.0\",\n        \"method\": \"client.list_keys\"\n    }"
+authorize_headers = {
+  'Content-Type': 'application/json-rpc',
+  'Accept': 'application/json-rpc',
+  'Origin': 'application/json-rpc',
+  "Authorization": connectionResponse.headers("Authorization")
 }
 
-response = requests.request("POST", url, headers=headers, data=payload)
+authorizationResponse = requests.request("POST", url, headers=authorize_headers, data=authorize_payload)
 
-print(response.text)
-
+print(authorizationResponse.text)
