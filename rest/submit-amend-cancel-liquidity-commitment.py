@@ -82,7 +82,7 @@ print("Liquidity commitment submission:\n{}".format(
 ))
 
 
-# First sign liquidity commitment
+# Send liqudity commitment
 url = "http://localhost:1789/api/v2/requests"
 
 payload1 = {
