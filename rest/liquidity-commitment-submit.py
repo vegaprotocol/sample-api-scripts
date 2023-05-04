@@ -106,9 +106,9 @@ headers = {
   'Authorization': f'{token}'
 }
 
-send_response = requests.request("POST", url, headers=headers, data=payload)
+response = requests.request("POST", url, headers=headers, data=payload)
 
-print(send_response.text)
+print(response.text)
 # :sign_tx_liquidity_submit__
 
 print(json.dumps(response.json(), indent=4, sort_keys=True))
