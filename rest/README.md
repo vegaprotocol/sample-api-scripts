@@ -29,7 +29,13 @@ The following tools or applications are required for these scripts to work. Here
     ```bash
     python3 get-vega-time.py
     ```
-   
+
+1. Import the appropriate vega-config into your local environment for the network you want to test against (default vega-config is Fairground testnet).
+
+    ```bash
+    source vega-config
+    ```
+
 1. wallet
 
     If this correctly gets the Vega blockchain time then next we need to authenticate with the Vega wallet API so that the scripts can sign transactions.
