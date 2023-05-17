@@ -84,10 +84,31 @@ print("Liquidity commitment submission:\n{}".format(
 # __sign_tx_liquidity_submit:
 # Sign the transaction with an liquidity commitment command
 # Hint: Setting propagate to true will also submit to a Vega node
-url = f"{wallet_server_url}/api/v1/command/sync"
-headers = {"Authorization": f"Bearer {token}"}
-response = requests.post(url, headers=headers, json=submission)
-helpers.check_response(response)
+url = "http://localhost:1789/api/v2/requests"
+
+payload1 = {
+    "id": "1",
+    "jsonrpc": "2.0",
+    "method": "client.send_transaction",
+    "params": {
+        "publicKey": pubkey,
+        "sendingMode": "TYPE_SYNC",
+        "transaction": submission
+    }
+}
+
+payload = json.dumps(payload1)
+
+headers = {
+  'Content-Type': 'application/json-rpc',
+  'Accept': 'application/json-rpc',
+  'Origin': 'application/json-rpc', 
+  'Authorization': f'{token}'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(response.text)
 # :sign_tx_liquidity_submit__
 
 print(json.dumps(response.json(), indent=4, sort_keys=True))

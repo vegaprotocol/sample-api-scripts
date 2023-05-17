@@ -76,11 +76,31 @@ print()
 
 # __sign_tx_amend:
 # Sign the transaction with an order amendment command
-# Hint: Setting propagate to true will also submit to a Vega node
-url = f"{wallet_server_url}/api/v1/command/sync"
-headers = {"Authorization": f"Bearer {token}"}
-response = requests.post(url, headers=headers, json=amendment)
-helpers.check_response(response)
+url = "http://localhost:1789/api/v2/requests"
+
+payload1 = {
+    "id": "1",
+    "jsonrpc": "2.0",
+    "method": "client.send_transaction",
+    "params": {
+        "publicKey": pubkey,
+        "sendingMode": "TYPE_SYNC",
+        "transaction": amendment
+    }
+}
+
+payload = json.dumps(payload1)
+
+headers = {
+  'Content-Type': 'application/json-rpc',
+  'Accept': 'application/json-rpc',
+  'Origin': 'application/json-rpc', 
+  'Authorization': f'{token}'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(response.text)
 # :sign_tx_amend__
 
 print("Signed amendment and sent to Vega")
