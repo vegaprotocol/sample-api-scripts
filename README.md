@@ -45,7 +45,7 @@ Click on the "Gitpod ready-to-code" button above to load a browser based linux d
    
 1. Follow the sub-folder README.md information on how to run the samples.
 
-1. For most scripts, you will have to run the login script **before** running the script in question. 
+1. For most scripts, you will have to run the login script **before** running the script in question. It's also important to note that you should have a desktop or CLI wallet connection open as you run this script, otherwise the connection will be refused. 
 
  ```
    python3 login.py
@@ -73,7 +73,7 @@ Click on the "Gitpod ready-to-code" button above to load a browser based linux d
    
 1. Follow the sub-folder README.md information on how to run the samples.
 
-1. For most scripts, you will have to run the login script **before** running the script in question. 
+1. For most scripts, you will have to run the login script **before** running the script in question. It's also important to note that you should have a desktop or CLI wallet connection open as you run this script, otherwise the connection will be refused. 
 
  ```
    python3 login.py
