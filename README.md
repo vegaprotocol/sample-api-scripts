@@ -44,6 +44,12 @@ Click on the "Gitpod ready-to-code" button above to load a browser based linux d
    ```
    
 1. Follow the sub-folder README.md information on how to run the samples.
+
+1. For most scripts, you will have to run the login script **before** running the script in question. 
+
+ ```
+   python3 login.py
+   ```
    
 # Getting started for Windows
 
@@ -66,6 +72,12 @@ Click on the "Gitpod ready-to-code" button above to load a browser based linux d
    ```
    
 1. Follow the sub-folder README.md information on how to run the samples.
+
+1. For most scripts, you will have to run the login script **before** running the script in question. 
+
+ ```
+   python3 login.py
+   ```
 
 # Future Improvements
 
