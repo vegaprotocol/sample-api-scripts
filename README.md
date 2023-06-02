@@ -78,6 +78,12 @@ Click on the "Gitpod ready-to-code" button above to load a browser based linux d
  ```
    python3 login.py
    ```
+   
+# Video Run-Through
+
+This quick video walks you through how to log in to the sample scripts. 
+
+https://www.loom.com/share/e9beba231e914e7fb8a943fe2cc9a220
 
 # Future Improvements
 
