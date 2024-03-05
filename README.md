@@ -1,13 +1,14 @@
 
 # Sample API Scripts
 
+**This repo is not maintained and scripts may be out of date.**
+
 This repo contains Vega code examples in Python. These scripts use the Vega data-node and wallet APIs to interact with a Vega network.
 
 With Vega users can consume APIs on the network using three different options (navigate through to your desired set of scripts):
  
  * **[REST](./rest#readme)**
  * **[GraphQL](./graphql#readme)**
- * gRPC - *coming soon!*
  
 The purpose of these samples is to give simple and clear code that can be used to illustrate how to do something via Vega's APIs. 
 
